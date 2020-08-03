@@ -1,151 +1,174 @@
 from functools import partial
 import numpy as np
+from simframe.io import Writer
 
 class AbstractGroup(object):
     """This is an abstract class that should not be instanced directly. It only serves as templates for other classes."""
     
-    _fields = {}
-    _Updater = None
-    _SystoleUpdater = None
-    _DiastoleUpdater = None
-    
-    def __getattribute__(self, name):
-        """Getter function to read fields from object."""
-        _fields = super().__getattribute__("_fields")
-        if name in _fields.keys():
-            return self._fields[name]
-        else:
-            return super().__getattribute__(name)
-    
+    __name__ = None
+    _updater = None
+    _systole = None
+    _diastole = None
+    _description = None
+            
     def __setattr__(self, name, value):
-        """Setter function to write fields to object."""
-        if name in self._fields.keys():
-            field = self._fields[name]
-            value = np.asarray(value)
-            field._setvalue(value)
+        """Function to set an attribute including fields."""
+        if isinstance(value, Field):
+            self.__dict__[name] = value
+        elif name in self.__dict__ and isinstance(self.__dict__[name], Field):
+            self.__dict__[name]._setvalue(value)
         else:
             super().__setattr__(name, value)
-            
-    def __delattr__(self, name):
-        """Function to delete fields."""
-        if name in self._fields.keys():
-            self._fields.pop(name, None)
-        super().__delattr__(name)
         
-    def setdescription(self, description):
-        """Sets description of class.
+    def _constructupdater(self, u=None):
+        """Helper method to construct updaters including type checks.
+        Do not call this method directly!"""
 
-        Parameters
-        ----------
-        description : string
-            descriptive string for the class
+        if isinstance(u, Updater):
+            return u
+        if hasattr(u, '__call__'):
+            return Updater(u)
+        if isinstance(u, list):
+            for val in u:
+                if not isinstance(val, str):
+                    raise ValueError("<u> has to be list of str.")
+            return u
+        if u is None:
+            return u
+        raise ValueError("<u> has invalid type.")
 
-        Examples
-        --------
-        >>> sim.setdescription("standard model")
-        """
-        self._description = description
-        
-    def _constructupdater(self, func=None, updater=None):
-        """Helper method for type checks. Don't call this directly."""
+    @property
+    def description(self):
+        return self._description
+    @description.setter
+    def description(self, value):
+        if not isinstance(value, (str, type(None))):
+            raise ValueError("<value> has to be of type str.")
+        self._description = value
 
-        if not (updater or func):
-            raise ValueError("Either <func> or <updater> has to be given.")
-        if (updater and func):
-            raise ValueError("Giving both, <func> and <updater>, is ambiguous.")
-        if updater:
-            if type(updater) is not Updater:
-                raise TypeError("<updater> has to be of type Updater.")
-            updtr = updater
-        if func:
-            if not hasattr(func, '__call__'):
-                raise TypeError("<func> is not callable.")
-            updtr = Updater(func)
-        return updtr
-        
-    def setupdater(self, func=None, updater=None):
-        """Sets Updater of the class.
+    @property
+    def updater(self):
+        return self._updater
+    @updater.setter
+    def updater(self, value):
+        self._updater = self._constructupdater(value)
+
+    @property
+    def systole(self):
+        return self._systole
+    @systole.setter
+    def systole(self, value):
+        self._systole = self._constructupdater(value)
+
+    @property
+    def diastole(self):
+        return self._diastole
+    @diastole.setter
+    def diastole(self, value):
+        self._diastole = self._constructupdater(value)
+
+    def __str__(self):
+        ret = "{:6s}".format(str(self.__name__))
+        if((self.description != "") and (self.description != None)):
+            ret += " ({})".format(self.description)
+        return ret
+
+    def __repr__(self):
+    
+        fields = {}
+        groups = {}
+        misc = {}
+    
+        for key, val in self.__dict__.items():
+    
+            # Don't show private attributes
+            if key.startswith("_"): continue
+    
+            # Sort attributes by group, field and else
+            if isinstance(val, Field):
+                fields[key] = val
+            elif isinstance(val, Group):
+                groups[key] = val
+            else:
+                misc[key] = val
+    
+        ret = self.__str__()+"\n"
+        ret += "-" * (len(ret)-1) + "\n"
+    
+        if len(groups) > 0:
+            for key in sorted(groups.keys(), key=str.casefold):
+                if len(key) > 12:
+                    name = key[:9]+"..."
+                else:
+                    name = key
+                ret += "    {:12s} : {}\n".format(name, groups[key])
+            ret += "  -----\n"
+    
+        if len(fields) > 0:
+            for key in sorted(fields.keys(), key=str.casefold):
+                if len(key) > 12:
+                    name = key[:9]+"..."
+                else:
+                    name = key
+                ret += "    {:12s} : {}\n".format(name, fields[key].__str__())
+            ret += "  -----\n"
+    
+        if len(misc) > 0:
+            for key in sorted(misc.keys(), key=str.casefold):
+                if len(key) > 12:
+                    name = key[:9]+"..."
+                else:
+                    name = key
+                ret += "    {:12s} : {}\n".format(name, type(misc[key]).__name__)
+            ret += "  -----\n"
+    
+        # If the object has an integrator
+        if "_integrator" in self.__dict__.keys():
+            integrator = self.__dict__["_integrator"]
+            txt = "\033[93mnot specified\033[0m"
+            if integrator is not None:
+                txt = integrator.__str__()
+            ret += "    {:12s} : {}".format("Integrator", txt)
+            ret += "\n"
+        #else:
+        #    ret = ret[:-9]
+
+        # If the object has a writer
+        if "_writer" in self.__dict__.keys():
+            writer = self.__dict__["_writer"]
+            txt = "\033[93mnot specified\033[0m"
+            if writer is not None:
+                txt = writer.__str__()
+            ret += "    {:12s} : {}".format("Writer", txt)
+            ret += "\n"
+        #else:
+        #    ret = ret
+    
+        return ret
+
+    def _cyclethrough(self, haystack, needle):
+        """Function that cycles through object structure to find object.
+        This is meant to find an object within a frame structure and replace it with another object.
         
         Parameters
         ----------
-        func : callable, optional, default : None
-            Object that is called when class is updated
-        updater : Updater, optional, default : None
-            Object of type Updater
+        haystack : object
+            Uppermost object to search through
+        needle : object
+            Object to look for in haystack
             
-        Notes
-        -----
-        Exactly one of <func> or <updater> has to be given.
-        
-        See Also
-        --------
-        setsystole : function that sets the systole of the class
-        setdiastole : function that sets the diastole of the class
-        
-        Examples
-        --------
-        >>> sim.setupdater(func=myupdatefunction)
-        
-        >>> sim.setupdater(updater=myupdater)            
-        """
-        updtr = self._constructupdater(func, updater)
-        self._Updater = updtr
-        
-    def setsystole(self, func=None, updater=None):
-        """Sets Updater of the systole of the class. The systole is called immediately before the updater is called.
-        
-        Parameters
-        ----------
-        func : callable, optional, default : None
-            Object that is called before class is updated
-        updater : Updater, optional, default : None
-            Object of type Updater
-            
-        Notes
-        -----
-        Exactly one of <func> or <updater> has to be given.
-        
-        See Also
-        --------
-        setupdater : function that sets the updater of the class
-        setdiastole : function that sets the diastole of the class
-        
-        Examples
-        --------
-        >>> sim.setsystole(func=myupdatefunction)
-        
-        >>> sim.setsystole(updater=myupdater)            
-        """
-        updtr = self._constructupdater(func, updater)
-        self._SystoleUpdater = updtr
-        
-    def setdiastole(self, func=None, updater=None):
-        """Sets Updater of the diastole of the class. The diastole is called immediately after the updater has been called.
-        
-        Parameters
-        ----------
-        func : callable, optional, default : None
-            Object that is called after class has been updated
-        updater : Updater, optional, default : None
-            Object of type Updater
-            
-        Notes
-        -----
-        Exactly one of <func> or <updater> has to be given.
-        
-        See Also
-        --------
-        setupdater : function that sets the updater of the class
-        setsystole : function that sets the systole of the class
-        
-        Examples
-        --------
-        >>> sim.setdiastole(func=myupdatefunction)
-        
-        >>> sim.setdiastole(updater=myupdater)            
-        """
-        updtr = self._constructupdater(func, updater)
-        self._DiasystoleUpdater = updtr
+        Returns
+        -------
+        dict, key
+            Dictionary and key of object location"""
+
+        for key, val in haystack.__dict__.items():
+            if key == "_owner": continue    # To prevent recursion
+            if val is needle:
+                return haystack.__dict__, key
+            else:
+                if hasattr(val, "__dict__"):
+                    self._cyclethrough(val, needle)
 
 
 class Group(AbstractGroup):
@@ -153,45 +176,56 @@ class Group(AbstractGroup):
     
     Parameters
     ----------
-    owner : Simulation
-        Parent simulation object to which the group belongs
-    func : callable, optional, default : None
-        Update function for the group
-    updater : Updater, optional, default : None
-        Updater class for the group
+    owner : Frame
+        Parent frame object to which the group belongs
+    updater : Updater, callable or list, optional, default : None
+        Updater for group update
+    systole : Updater, callable or list, optional, default : None
+        Systole for group update
+    diastole : Updater, callable or list, optional, default : None
+        Diastole for group update 
     description : string, optional, default : None
         Descriptive string for the group
         
     Notes
     -----
-    Only one of <func> or <updater> can be given. If neither one is given, the group does nothing when being updated.
+    When <group>.update() is called the group will be updated according the instruction set by <group>.updater.
+    Before the group is updated the systole updater is called. After the group update the diastole updater is called.
+    The updaters, systoles, and diastoles for groups can either be of type Updater, can be a callable function which
+    executes the desired operation, can be a list of strings with the names of the group's attributes whose update
+    function should be executes in exactly this order, or can be None, if no operation should be performed. If it is
+    set to a callable function the function's only argument has to be the parent Frame object.
     
     Examples
     --------
     >>> grp = Group(sim, description="My group")
     """
     
-    _type = "Group"
+    __name__ = "Group"
     
-    def __init__(self, owner, func=None, updater=None, description=None):
+    def __init__(self, owner, updater=None, systole=None, diastole=None, description=None):
         self._description = description
         self._owner = owner
-        if (func or updater):
-            self.setupdater(func=func, updater=updater)
-        else:
-            self._Updater = None
+        self.updater = updater
+        self.systole = systole
+        self.diastole = diastole
         
-    def update(self):
+    def update(self, *args, **kwargs):
         """Function to update the object."""
         
-        if self._SystoleUpdater is not None:
-            self._SystoleUpdater.update(self._owner)
-        if self._Updater is not None:
-            self._Updater.update(self._owner)
-        if self._DiastoleUpdater is not None:
-            self._DiastoleUpdater.update(self._owner)
+        self._update(self._systole, *args, **kwargs)
+        self._update(self._updater, *args, **kwargs)
+        self._update(self._diastole, *args, **kwargs)
+
+    def _update(self, u, *args, **kwargs):
+        """This functions calls either the updater directly or executes the update functions of the list entries"""
+        if isinstance(u, Updater):
+            u.update(self._owner, *args, **kwargs)
+        elif isinstance(u, list):
+            for val in u:
+                self.__dict__[val].update(*args, **kwargs)
             
-    def addfield(self, name, value, func=None, updater=None, description=None, constant=False):
+    def addfield(self, name, value, updater=None, systole=None, diastole=None, description=None, constant=False):
         """Function to add a field to the object.
         
         Parameters
@@ -199,11 +233,13 @@ class Group(AbstractGroup):
         name : string
             Name of the field
         value : number, array, string
-            Initial value of the field. Needs to have correct type and shape
-        func : callable, optional, default : None
-            Function to be called to update the field
-        updater : Updater, optional, default : None
-            Updater class for the field
+            Initial value of the field. Needs to have already the correct type and shape
+        updater : Updater, callable or list, optional, default : None
+            Updater for field update
+        systole : Updater, callable or list, optional, default : None
+            Systole for field update
+        diastole : Updater, callable or list, optional, default : None
+            Diastole for field update 
         description : string, optional, default : None
             Descriptive string for the field
         constant : boolean, optional, default : False
@@ -211,7 +247,12 @@ class Group(AbstractGroup):
             
         Notes
         -----
-        Only one of <func> or <updater> can be given. If neither one is given, the field does nothing when being updated.
+        When <field>.update() is called the field will be updated according return value of the updater..
+        Before the field is updated the systole updater is called. After the group update the diastole updater is called.
+        The updaters, systoles, and diastoles for fields can either be of type Updater, can be a callable function which
+        executes the desired operation, or can be None, if no operation should be performed. If it is set to a callable
+        function the function's only argument has to be the parent Frame object. The callable function of the updater has
+        to return the new value of the field.
         
         See Also
         --------
@@ -224,26 +265,32 @@ class Group(AbstractGroup):
         Field (My Field):
         [1 1 1 1 1]
         """
-        self._fields[name] = Field(self._owner, value, func=func, updater=updater, description=description, constant=constant)
-        self.__dict__[name] = self._fields[name]
-        
-    def addgroup(self, name, func=None, updater=None, description=None):
+        self.__dict__[name] = Field(self._owner, value, updater=updater, systole=systole, diastole=diastole, description=description, constant=constant)
+
+    def addgroup(self, name, updater=None, systole=None, diastole=None, description=None):
         """Function to add a group to the object.
         
         Parameters
         ----------
         name : string
             Name of the group
-        func : callable, optional, default : None
-            Function to be called to update the group
-        updater : Updater, optional, default : None
-            Updater class for the group
+        updater : Updater, callable or list, optional, default : None
+            Updater for group update
+        systole : Updater, callable or list, optional, default : None
+            Systole for group update
+        diastole : Updater, callable or list, optional, default : None
+            Diastole for group update 
         description : string, optional, default : None
             Descriptive string for the group
             
         Notes
         -----
-        Only one of <func> or <updater> can be given. If neither one is given, the group does nothing when being updated.
+        When <group>.update() is called the group will be updated according the instruction set by <group>.updater.
+        Before the group is updated the systole updater is called. After the group update the diastole updater is called.
+        The updaters, systoles, and diastoles for groups can either be of type Updater, can be a callable function which
+        executes the desired operation, can be a list of strings with the names of the group's attributes whose update
+        function should be executes in exactly this order, or can be None, if no operation should be performed. If it is
+        set to a callable function the function's only argument has to be the parent Frame object.
         
         See Also
         --------
@@ -255,29 +302,7 @@ class Group(AbstractGroup):
         >>> sim.mygroup
         Group (My Group):
         """
-        self.__dict__[name] = Group(self._owner, func=func, updater=updater, description=description)
-        
-    def __repr__(self):
-        s = self._type+"{}\n\n".format(" ("+self._description+"):" if self._description else ":")
-        
-        for key in sorted(self.__dict__.keys(), key=str.casefold):
-            
-            val = self.__dict__[key]
-            
-            if key.startswith("_"): continue
-            
-            if len(key) > 12:
-                name = key[:9]+"..."
-            else:
-                name = key
-            if type(val) is Group:
-                s += "{:11s}{:7s}: {:12s} {}\n".format("", "Group", name, "("+val._description+")" if val._description else "")
-            elif type(val) is Field:
-                s += "{:11s}{:7s}: {:12s} {}\n".format("    Const. " if val._constant else "", "Field", name, "("+val._description+")" if val._description else "")
-            else:
-                s += "{:11s}{:7s}: {:12s}\n".format("", type(val).__name__, name)
-            
-        return s
+        self.__dict__[name] = Group(self._owner, updater=updater, systole=systole, diastole=diastole, description=description)
 
 
 class Field(np.ndarray, AbstractGroup):
@@ -285,22 +310,29 @@ class Field(np.ndarray, AbstractGroup):
     
     Parameters
     ----------
-    owner : Simulation
-        Parent simulation object to which the field belongs
+    owner : Frame
+        Parent frame object to which the field belongs
     value : number, array, string
         Initial value of the field. Needs to have correct type and shape
-    func : callable, optional, default : None
-        Update function for the field
-    updater : Updater, optional, default : None
-        Updater class for the field
+    updater : Updater, callable, optional, default : None
+        Updater for field update
+    systole : Updater, callable, optional, default : None
+        Systole for field update
+    diastole : Updater, callable, optional, default : None
+        Diastole for field update 
     description : string, optional, default : None
         Descriptive string for the field
     constant : boolean, optional, default : False
-        Should this field be a constant?
+        Should this field be constant?
         
     Notes
     -----
-    Only one of <func> or <updater> can be given. If neither one is given, the field does nothing when being updated.
+    When <field>.update() is called the field will be updated according return value of the updater..
+    Before the field is updated the systole updater is called. After the field update the diastole updater is called.
+    The updaters, systoles, and diastoles for fields can either be of type Updater, can be a callable function which
+    executes the desired operation, or can be None, if no operation should be performed. If it is set to a callable
+    function the function's only argument has to be the parent Frame object. The callable function of the updater has
+    to return the new value of the field.
     
     Examples
     --------
@@ -310,34 +342,72 @@ class Field(np.ndarray, AbstractGroup):
     [1 1 1 1 1]
     """
     
-    def __new__(cls, owner, value, func=None, updater=None, description=None, constant=False):
-        # Input array is an already formed ndarray instance
-        # We first cast to be our class type
+    __name__ = "Field"
+
+    def __new__(cls, owner, value, updater=None, systole=None, diastole=None, description=None, constant=False):
         obj = np.asarray(value).view(cls)
-        # add the new attribute to the created instance
         obj._owner = owner
-        if (func or updater):
-            obj._Updater = obj.setupdater(func=func, updater=updater)
-        obj._description = description
+        obj._updater = obj._constructupdater(updater)
+        obj._systole = obj._constructupdater(systole)
+        obj._diastole = obj._constructupdater(diastole)
+        obj.description = description
         obj._constant = constant
-        # Finally, we must return the newly created object:
         return obj
 
     def __array_finalize__(self, obj):
-        # see InfoArray.__array_finalize__ for comments
         if obj is None: return
         self._owner = getattr(obj, "_owner", None)
-        self._Updater = getattr(obj, "Updater", None)
-        self._description = getattr(obj, "description", None)
-        self._constant = getattr(obj, "constant", False)
-        
-    def __repr__(self):
-        return "{}Field{}\n{}".format("Constant " if self._constant else "", " ("+self._description+"):" if self._description else ":", self.getfield(self.dtype))
+        self._updater = getattr(obj, "_updater", None)
+        self._systole = getattr(obj, "_systole", None)
+        self._diastole = getattr(obj, "_diastole", None)
+        self.description = getattr(obj, "description", None)
+        self._constant = getattr(obj, "_constant", False)
     
-    def update(self):
+    @property
+    def constant(self):
+        return self._constant
+    @constant.setter
+    def constant(self, value):
+        if isinstance(value, np.int):
+            if value:
+                self._constant = True
+            else:
+                self._constant = False
+        else:
+            raise TypeError("<value> hat to be of type bool.")
+
+    @property
+    def owner(self):
+        return self._owner
+    @owner.setter
+    def owner(self, value):
+        raise RuntimeError("The owner cannot be set directly.")
+
+    def update(self, *args, **kwargs):
         """Function to update the object."""
-        if self._Updater is not None:
-            self._setvalue(self._Updater.update(self._owner))
+        self._update(self.systole, *args, **kwargs)
+        self._update(self.updater, *args, upd=True, **kwargs)
+        self._update(self.diastole, *args, **kwargs)
+
+    def derivative(self):
+        pass
+
+    def _update(self, u, *args, upd=False, **kwargs):
+        """This functions calls either the updater directly or executes the update functions of the list entries"""
+        if upd:
+            # Here we're not in systole or diastole. So we're updating.
+            if isinstance(u, Updater):
+                self._setvalue(u.update(self._owner, *args, **kwargs))
+            elif isinstance(u, list):
+                # Field updater cannot work with lists
+                raise ValueError("Cannot update field with list.")
+        else:
+            # Here we're in systole or diastole.
+            if isinstance(u, Updater):
+                u.update(self._owner, *args, **kwargs)
+            elif isinstance(u, list):
+                for val in u:
+                    self.__dict__[val].update(*args, **kwargs)
         
     def _setvalue(self, value):
         """Function to set a value to the field. Direct assignement of values does overwrite the Field object.
@@ -347,10 +417,141 @@ class Field(np.ndarray, AbstractGroup):
         value : number, array, string
             Value to be written into the field. Needs to have correct type and shape"""
         if self._constant:
-            raise TypeError("Field is constant.")
+            raise RuntimeError("Field is constant.")
+        value = np.asarray(value)
         if not value.shape == self.shape:
             raise ValueError("Shape mismatch: "+repr(self.shape)+", "+repr(value.shape))
         self.setfield(value, self.dtype)
+
+    def __str__(self):
+        ret = "{:6s}".format(str(self.__name__))
+        if((self._description != "") and (self._description != None)):
+            ret += " ({})".format(self._description)
+        if self._constant:
+            ret += ", \033[95mconstant\033[0m"
+        return ret
+
+    def __repr__(self):
+        ret = "{}\n{}\n{}".format(self.__str__(), "-" * len(self.__str__()), np.ndarray.__str__(self.getfield(self.dtype)))
+        return ret
+
+    def makeintegrationvariable(self, snapshots=[]):
+        """This function converts the field to an integration variable. This action cannot be reverted.
+        Be advised that the updater of an integration variable should return the desired stepsize and
+        the update function is adding the stepsize to the current value.
+        
+        Parameters
+        ----------
+        snapshots, list, array, optional, default : []
+            Snapshots at which outputs should be written"""
+        intvar = Intvar(self._owner, self.getfield(self.dtype), updater=self.updater, systole=self.systole, diastole=self.diastole, snapshots=snapshots, description=self._description)
+        # Replace the old Field with the new Intvar
+        d, k = self._cyclethrough(self._owner, self)
+        d[k] = intvar
+
+
+class Intvar(Field):
+    """Integration variable.
+    
+    Field for storing integration variables. Same as regular Field, but containing infrastructure for getting
+    step size, snapshots, etc.
+    
+    Parameters
+    ----------
+    owner : Frame
+        Parent frame object to which the field belongs
+    value : number, optional, default : 0
+        Initial value of the field
+    snapshots : list, array, optional, default : []
+        List or array of snapshots at which an output file should be written.
+        Has to be monotonously increasing.
+    updater : Updater, callable or list, optional, default : None
+        Updater for field update
+    systole : Updater, callable or list, optional, default : None
+        Systole for field update
+    diastole : Updater, callable or list, optional, default : None
+        Diastole for field update 
+    description : string, optional, default : None
+        Descriptive string for the field
+
+    Notes
+    -----
+    When <Intvar>.update() is called the Intvar will by adding the stepsize to the current value.
+    Before the Intvar is updated the systole updater is called. After the Intvar update the diastole updater is called.
+    The updater, systoles, and diastoles for Intvars can either be of type Updater, can be a callable function which
+    executes the desired operation, or can be None, if no operation should be performed. If it is set to a callable
+    function the function's only argument has to be the parent Frame object. The callable function of the updater has
+    to return the stepsize of the integration variable
+
+    Examples
+    --------
+    >>> t = Intvar(sim, 0., description="Time")
+    >>> t
+    Intvar (Time):
+    0
+    """
+
+    def __new__(cls, owner, value=0, snapshots=[], updater=None, systole=None, diastole=None, description=None):
+        obj = super().__new__(cls, owner, value, updater=updater, systole=systole, diastole=diastole, description=description, constant=False)
+        obj.snapshots = snapshots
+        return obj
+
+    def __array_finalize__(self, obj):
+        # see InfoArray.__array_finalize__ for comments
+        if obj is None: return
+        super().__array_finalize__(obj)
+        self.snapshots = getattr(obj, "snapshots", [])
+
+    def _update(self, u, *args, upd=False, **kwargs):
+        """This functions calls either the updater directly or executes the update functions of the list entries"""
+        if upd:
+            # Here we are not in sytole or diastole. So we're updating.
+            if isinstance(u, Updater):
+                self._setvalue(self+self.stepsize)
+            else:
+                # We actually need an updater for an integration variable to progress the simulation
+                raise TypeError("Can only update field with an updater.")
+        else:
+            # Here we're in systole or diastole
+            if isinstance(u, Updater):
+                u.update(self._owner, *args, **kwargs)
+            elif isinstance(u, list):
+                for val in u:
+                    self.__dict__[val].update(*args, **kwargs)
+
+    @property
+    def stepsize(self):
+        if not isinstance(self.updater, Updater):
+            raise RuntimeError("You need to set an Updater for stepsize function first.")
+        return np.minimum(self.updater.update(self._owner), self.maxstepsize)
+
+    @property
+    def snapshots(self):
+        return self._snapshots
+    @snapshots.setter
+    def snapshots(self, value):
+        snaps = np.asarray(value)
+        if snaps.size > 1:
+            if not all(x<y for x, y in zip(snaps, snaps[1:])):
+                raise ValueError("Snapshots have to be strictly increasing")
+        self._snapshots = snaps
+
+    @property
+    def nextsnapshot(self):
+        if self.snapshots.size < 1:
+            raise ValueError("Snapshots are emtpy")
+        return self.snapshots[np.argmax(self < self.snapshots)]
+
+    @property
+    def maxstepsize(self):
+        return self.nextsnapshot - self.getfield(dtype=self.dtype)
+
+    def __str__(self):
+        ret = "{:6s}".format(str(self.__name__))
+        if((self._description != "") and (self._description != None)):
+            ret += " ({})".format(self._description)
+        ret += ", \033[95mIntegration variable\033[0m"
+        return ret
 
 
 class Updater():
@@ -359,59 +560,73 @@ class Updater():
     Parameter
     ---------
     func : callable
-        Object that is called when group or field is being updated.
-        For field: has to return the new value of the field.
-    simulation : Simulation
-        The Simulation object to which the Updater belongs
+        Function that is called when update function is called.
         
     Examples
     --------
-    >>> myupdater = Updater(myfunction, mysimulation)
-    """
+    >>> myupdater = Updater(myfunction)"""
+
+    __name__ = "Updater"
     
     def __init__(self, func):
         if not hasattr(func, '__call__'):
             raise TypeError("<func> is not callable.")
         self._func = func
         
-    def update(self, owner):
+    def update(self, owner, *args, **kwargs):
         """Function that is called when group or field to which Updater belongs is being updated."""
-        
-        return self._func(owner)
+        return self._func(owner, *args, **kwargs)
+
+    def __str__(self):
+        return "{:6s}".format(str(self.__name__))
+
+    def __repr__(self):
+        return self.__str__()
 
 
-class Simulation(Group):
-    """Simulation class.
+class Frame(Group):
+    """Frame class.
     This is the parent object that contains all other objects
     
     Parameters
     ----------
     description : string, optional, default : None
-        Descriptive string of the simulation object
+        Descriptive string of the frame object
     writer : Writer, optional, default : None
         Object of type Writer fir writing output files
         
     Examples
     --------
-    >>> sim = Simulation(description="My Simulation")
+    >>> sim = Frame(description="My Simulation")
     >>> sim
-    Simulation (My Simulation):"""
+    Frame (My Simulation):"""
+
+    __name__ = "Frame"
+    _integrator = None
+    _writer = None
     
-    _type = "Simulation"
-    
-    def __init__(self, description=None, writer=None):
-        self._description = description
+    def __init__(self, description=None, integrator=None, writer=None):
+        self.description = description
+        self.integrator = integrator
+        self.writer = writer
         self._owner = self
-        self._writer = None
 
-    def setwriter(self, writer):
-        """Function to bind a writer class to the simulation object
-        
-        Parameters
-        ----------
-        writer : Writer
-            Object of type Writer"""
+    @property
+    def integrator(self):
+        return self._integrator
+    @integrator.setter
+    def integrator(self, integrator):
+        if integrator is not None and type(integrator) is not Integrator:
+            raise TypeError("<simframe.Frame.integrator> hat to be of type <simframe.integration.integrator.Integrator> or None.")
+        self._integrator = integrator
 
+    @property
+    def writer(self):
+        return self._writer
+    @writer.setter
+    def writer(self, writer):
+        if writer is not None and type(writer) is not Writer:
+            raise TypeError("<simframe.Frame.writer> hat to be of type <simframe.io.Writer> or None.")
         self._writer = writer
 
     def writeoutput(self, i=0, filename="", forceoverwrite=False, **kwargs):
@@ -426,5 +641,91 @@ class Simulation(Group):
         forceoverwrite : boolean, optional, default : False
             If True, this overrules the seetings of the Writer and enforces the file to be overwritten."""
 
-        if self._writer is not None:
-            self._writer.write(self, i, filename, forceoverwrite, **kwargs)
+        if self.writer is not None:
+            self.writer.write(self, i, filename, forceoverwrite, **kwargs)
+
+    def run(self):
+
+        if not isinstance(self.integrator, Integrator):
+            raise RuntimeError("No integrator set.")
+
+        # Write initial conditions
+        if self.integrator.var <= self.integrator.var.snapshots[0]:
+            self.writeoutput(0)
+
+        starting_index = np.argmin(self.integrator.var >= self.integrator.var.snapshots)
+        for i in range(starting_index, len(self.integrator.var.snapshots)):
+
+            varnext = self.integrator.var.nextsnapshot
+            while self.integrator.var < varnext:
+                self.integrator.integrate()
+                self.integrator.var.update()
+                self.update()
+            
+            self.writeoutput(i+1)
+            
+
+
+class Integrator:
+    
+    __name__ = "Integrator"
+
+    _description = None
+    _instructions = []
+    _var = None
+
+    def __init__(self, var, instructions=[], description=None):
+        self.var = var
+        self.description = description
+        self.instructions = instructions
+
+    def __str__(self):
+        ret = str(self.__name__)
+        if((self.description != "") and (self.description != None)):
+            ret += " ({})".format(self.description)
+        return ret
+
+    def __repr__(self):
+        ret = self.__str__()
+        return ret
+
+    def integrate(self):
+        status = False
+        while(not status):
+            ret = []
+            for inst in self.instructions:
+                ret.append(inst(self.var.stepsize))
+            if not np.any(ret == False):
+                status = True
+        for i, inst in enumerate(self.instructions):
+            if inst.instant: continue
+            if not ret[i]: continue
+            inst.Y += ret[i]
+
+
+    @property
+    def instructions(self):
+        return self._instructions
+    @instructions.setter
+    def instructions(self, value):
+        if not isinstance(value, list):
+            raise TypeError("<instructions> has to be of type list.")
+        self._instructions = value
+
+    @property
+    def description(self):
+        return self._description
+    @description.setter
+    def description(self, value):
+        if not isinstance(value, (str, type(None))):
+            raise ValueError("<value> has to be of type str.")
+        self._description = value
+
+    @property
+    def var(self):
+        return self._var
+    @var.setter
+    def var(self, value):
+        if not isinstance(value, Intvar):
+            raise TypeError("<var> has to be of type Intvar.")
+        self._var = value
