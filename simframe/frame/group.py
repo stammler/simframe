@@ -35,12 +35,10 @@ class Group(AbstractGroup):
     
     __name__ = "Group"
     
-    def __init__(self, owner, updater=None, systole=None, diastole=None, description=None):
+    def __init__(self, owner, updater=None, description=None):
         self._description = description
         self._owner = owner
         self.updater = updater
-        self.systole = systole
-        self.diastole = diastole
             
     def __setattr__(self, name, value):
         """Function to set an attribute including fields."""
@@ -53,20 +51,9 @@ class Group(AbstractGroup):
         
     def update(self, *args, **kwargs):
         """Function to update the object."""
-        
-        self._update(self._systole, *args, **kwargs)
-        self._update(self._updater, *args, **kwargs)
-        self._update(self._diastole, *args, **kwargs)
-
-    def _update(self, u, *args, **kwargs):
-        """This functions calls either the updater directly or executes the update functions of the list entries"""
-        if isinstance(u, Updater):
-            u.update(self._owner, *args, **kwargs)
-        elif isinstance(u, list):
-            for val in u:
-                self.__dict__[val].update(*args, **kwargs)
+        self.updater.beat(self._owner, *args, **kwargs)
             
-    def addfield(self, name, value, updater=None, systole=None, diastole=None, description=None, constant=False):
+    def addfield(self, name, value, updater=None, differentiator=None, description=None, constant=False):
         """Function to add a field to the object.
         
         Parameters
@@ -106,9 +93,9 @@ class Group(AbstractGroup):
         Field (My Field):
         [1 1 1 1 1]
         """
-        self.__dict__[name] = Field(self._owner, value, updater=updater, systole=systole, diastole=diastole, description=description, constant=constant)
+        self.__dict__[name] = Field(self._owner, value, updater=updater, differentiator=differentiator, description=description, constant=constant)
 
-    def addintegrationvariable(self, name, value, snapshots=[], updater=None, systole=None, diastole=None, description=None):
+    def addintegrationvariable(self, name, value, snapshots=[], updater=None, description=None):
         """Function to add a field to the object.
         
         Parameters
@@ -148,9 +135,9 @@ class Group(AbstractGroup):
         Field (My Field):
         [1 1 1 1 1]
         """
-        self.__dict__[name] = IntVar(self._owner, value, updater=updater, systole=systole, diastole=diastole, snapshots=snapshots, description=description)
+        self.__dict__[name] = IntVar(self._owner, value, updater=updater, snapshots=snapshots, description=description)
 
-    def addgroup(self, name, updater=None, systole=None, diastole=None, description=None):
+    def addgroup(self, name, updater=None, description=None):
         """Function to add a group to the object.
         
         Parameters
@@ -185,7 +172,7 @@ class Group(AbstractGroup):
         >>> sim.mygroup
         Group (My Group):
         """
-        self.__dict__[name] = Group(self._owner, updater=updater, systole=systole, diastole=diastole, description=description)
+        self.__dict__[name] = Group(self._owner, updater=updater, description=description)
 
     def __repr__(self):
     

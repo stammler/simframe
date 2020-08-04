@@ -26,10 +26,9 @@ class Frame(Group):
     _writer = None
     
     def __init__(self, description=None, integrator=None, writer=None):
-        self.description = description
+        super().__init__(self, description=description)
         self.integrator = integrator
         self.writer = writer
-        self._owner = self
 
     @property
     def integrator(self):
@@ -79,7 +78,7 @@ class Frame(Group):
             varnext = self.integrator.var.nextsnapshot
             while self.integrator.var < varnext:
                 self.integrator.integrate()
-                self.integrator.var.update()
+                self.integrator.var += self.integrator.var.stepsize
                 self.update()
             
             self.writeoutput(i+1)

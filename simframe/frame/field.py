@@ -41,12 +41,11 @@ class Field(np.ndarray, AbstractGroup):
     
     __name__ = "Field"
 
-    def __new__(cls, owner, value, updater=None, systole=None, diastole=None, description=None, constant=False):
+    def __new__(cls, owner, value, updater=None, differentiator=None, description=None, constant=False):
         obj = np.asarray(value).view(cls)
         obj._owner = owner
-        obj._updater = obj._constructupdater(updater)
-        obj._systole = obj._constructupdater(systole)
-        obj._diastole = obj._constructupdater(diastole)
+        obj._updater = obj._constructheartbeat(updater)
+        obj._differentiator = obj._constructheartbeat(differentiator)
         obj.description = description
         obj._constant = constant
         return obj
@@ -55,11 +54,17 @@ class Field(np.ndarray, AbstractGroup):
         if obj is None: return
         self._owner = getattr(obj, "_owner", None)
         self._updater = getattr(obj, "_updater", None)
-        self._systole = getattr(obj, "_systole", None)
-        self._diastole = getattr(obj, "_diastole", None)
+        self._differentiator = getattr(obj, "_differentiatorystole", None)
         self.description = getattr(obj, "description", None)
         self._constant = getattr(obj, "_constant", False)
-    
+
+    @property
+    def differentiator(self):
+        return self._differentiator
+    @differentiator.setter
+    def differentiator(self, value):
+        self._differentiator = self._constructheartbeat(value)
+
     @property
     def constant(self):
         return self._constant
@@ -81,30 +86,13 @@ class Field(np.ndarray, AbstractGroup):
         raise RuntimeError("The owner cannot be set directly.")
 
     def update(self, *args, **kwargs):
-        """Function to update the object."""
-        self._update(self.systole, *args, **kwargs)
-        self._update(self.updater, *args, upd=True, **kwargs)
-        self._update(self.diastole, *args, **kwargs)
+        """Function to update the field."""
+        ret = self.updater.beat(self._owner, *args, **kwargs)
+        self._setvalue(ret)
 
-    def derivative(self):
-        pass
-
-    def _update(self, u, *args, upd=False, **kwargs):
-        """This functions calls either the updater directly or executes the update functions of the list entries"""
-        if upd:
-            # Here we're not in systole or diastole. So we're updating.
-            if isinstance(u, Updater):
-                self._setvalue(u.update(self._owner, *args, **kwargs))
-            elif isinstance(u, list):
-                # Field updater cannot work with lists
-                raise ValueError("Cannot update field with list.")
-        else:
-            # Here we're in systole or diastole.
-            if isinstance(u, Updater):
-                u.update(self._owner, *args, **kwargs)
-            elif isinstance(u, list):
-                for val in u:
-                    self.__dict__[val].update(*args, **kwargs)
+    def derivative(self, *args, **kwargs):
+        """If differentiator is set, this returns the derivative of the field"""
+        return self.differentiator.beat(self._owner, *args, **kwargs)
         
     def _setvalue(self, value):
         """Function to set a value to the field. Direct assignement of values does overwrite the Field object.

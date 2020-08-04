@@ -1,6 +1,7 @@
 import numpy as np
 
 from simframe.frame.field import Field
+from simframe.frame.heartbeat import Heartbeat
 from simframe.frame.updater import Updater
 
 class IntVar(Field):
@@ -44,8 +45,8 @@ class IntVar(Field):
     0
     """
 
-    def __new__(cls, owner, value=0, snapshots=[], updater=None, systole=None, diastole=None, description=None):
-        obj = super().__new__(cls, owner, value, updater=updater, systole=systole, diastole=diastole, description=description, constant=False)
+    def __new__(cls, owner, value=0, snapshots=[], updater=None, description=None):
+        obj = super().__new__(cls, owner, value, updater=updater, description=description, constant=False)
         obj.snapshots = snapshots
         return obj
 
@@ -55,28 +56,19 @@ class IntVar(Field):
         super().__array_finalize__(obj)
         self.snapshots = getattr(obj, "snapshots", [])
 
+    def update(self):
+        msg = "Warning: Do not update any integration variable by hand."
+        print(msg)
+
     def _update(self, u, *args, upd=False, **kwargs):
-        """This functions calls either the updater directly or executes the update functions of the list entries"""
-        if upd:
-            # Here we are not in sytole or diastole. So we're updating.
-            if isinstance(u, Updater):
-                self._setvalue(self+self.stepsize)
-            else:
-                # We actually need an updater for an integration variable to progress the simulation
-                raise TypeError("Can only update field with an updater.")
-        else:
-            # Here we're in systole or diastole
-            if isinstance(u, Updater):
-                u.update(self._owner, *args, **kwargs)
-            elif isinstance(u, list):
-                for val in u:
-                    self.__dict__[val].update(*args, **kwargs)
+        msg = "Warning: Do not update any integration variable by hand."
+        print(msg)
 
     @property
     def stepsize(self):
-        if not isinstance(self.updater, Updater):
-            raise RuntimeError("You need to set an Updater for stepsize function first.")
-        return np.minimum(self.updater.update(self._owner), self.maxstepsize)
+        if isinstance(self.updater, Heartbeat):
+            return np.minimum(self.updater.beat(self._owner), self.maxstepsize)
+        raise RuntimeError("You need to set an Updater for stepsize function first.")
 
     @property
     def snapshots(self):
@@ -105,17 +97,3 @@ class IntVar(Field):
             ret += " ({})".format(self._description)
         ret += ", \033[95mIntegration variable\033[0m"
         return ret
-
-def makeintegrationvariable(self, snapshots=[]):
-    """This function converts the field to an integration variable. This action cannot be reverted.
-    Be advised that the updater of an integration variable should return the desired stepsize and
-    the update function is adding the stepsize to the current value.
-        
-    Parameters
-    ----------
-    snapshots, list, array, optional, default : []
-        Snapshots at which outputs should be written"""
-    intvar = IntVar(self._owner, self.getfield(self.dtype), updater=self.updater, systole=self.systole, diastole=self.diastole, snapshots=snapshots, description=self._description)
-    # Replace the old Field with the new Intvar
-    d, k = self._cyclethrough(self._owner, self)
-    d[k] = intvar
