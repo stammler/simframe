@@ -27,6 +27,11 @@ def test_field_assignment():
     assert np.all(f.f == B)
     B *= 2.
     assert not np.all(f.f == B)
+    with pytest.raises(ValueError):
+        f.f = 1
+    f.addfield("f", 0)
+    with pytest.raises(ValueError):        
+        f.f = "test"
 
 def test_field_update():
     f = Frame()
