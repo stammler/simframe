@@ -1,21 +1,20 @@
-from numpy.distutils.core import setup
 from setuptools import find_packages
+from setuptools import setup
+from numpy.distutils.core import setup
 import os
 
 package_name = "simframe"
 
 setup(
     name=package_name,
-    use_scm_version=True,
     description="Framework for scientific simulations",
-    long_description=open(os.path.join(
-        os.path.dirname(__file__), "Readme.md")).read(),
     url='https://github.com/stammler/simframe',
     author="Sebastian Stammler & Til Birnstiel",
     author_email="stammler@usm.lmu.de; til.birnstiel@lmu.de",
     packages=find_packages(),
     license="GPLv3",
-    install_requires=["numpy", "h5py", "pytest"],
+    install_requires=["numpy", "glob", "h5py", "pytest", "setuptools_scm"],
     include_package_data=True,
     zip_safe=False,
+    version="0.1.0"
     )

@@ -54,11 +54,11 @@ class IntVar(Field):
         return ret
 
     def update(self):
-        msg = "Warning: Do not update the integration variable by hand."
+        msg = "\033[93mWarning:\033[0m Do not update the integration variable by hand."
         print(msg)
 
     def _update(self, u, *args, upd=False, **kwargs):
-        msg = "Warning: Do not update the integration variable by hand."
+        msg = "\033[93mWarning:\033[0m Do not update the integration variable by hand."
         print(msg)
 
     @property

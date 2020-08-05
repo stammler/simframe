@@ -1,3 +1,5 @@
+from functools import partial
+
 from simframe.frame.abstractgroup import AbstractGroup
 from simframe.frame.field import Field
 from simframe.frame.intvar import IntVar
@@ -26,10 +28,15 @@ class Group(AbstractGroup):
         ----------
         owner : Frame
             Parent frame object to which the group belongs
-        updater : Heartbeat, Updater, callable or None, optional, default : None
+        updater : Heartbeat, Updater, callable, list or None, optional, default : None
             Updater for group update. A Heartbeat object will be created from this.
         description : string, optional, default : ""
-            Descriptive string for the group"""
+            Descriptive string for the group
+            
+        Notes
+        -----
+        The updater of groups can take a list of string with the attribute names that should be updated
+        in the order in which they should be updated. It will create a callable function from that list."""
         self._description = description
         self._owner = owner
         self.updater = updater
@@ -121,7 +128,22 @@ class Group(AbstractGroup):
             ret += "    {:12s} : {}".format("Writer", txt)
             ret += "\n"
         
-        return ret        
+        return ret
+
+    # We need to overwrite the updater property of AbstractGroup, because we want the group to be able
+    # to take lists of attributes as value.
+    @property
+    def updater(self):
+        return self._updater
+    @updater.setter
+    def updater(self, value):
+        if isinstance(value, Heartbeat):
+            self._updater = value
+        elif isinstance(value, list):
+            self._checkupdatelist(value)
+            self._updater = Heartbeat(self._createupdatefromlist(value))
+        else:
+            self._updater = Heartbeat(value)
             
     def addfield(self, name, value, updater=None, differentiator=None, description="", constant=False):
         """Function to add a new field to the object.
@@ -174,3 +196,53 @@ class Group(AbstractGroup):
             Descriptive string for the field
         """
         self.__dict__[name] = IntVar(self._owner, value, updater=updater, snapshots=snapshots, description=description)
+
+    def _checkupdatelist(self, ls):
+        """This function checks if a list is suitable to be used as update.
+        
+        Parameters
+        ----------
+        ls : list
+            list of string with the attribute names that should be updated in that order"""
+        for val in ls:
+            if not isinstance(val, str):
+                raise ValueError("List has to be list of strings.")
+        for val in ls:
+            if val not in self.__dict__:
+                msg = "\033[93mWarning:\033[0m {} is not an attribute of the group".format(val)
+                print(msg)
+
+    def _createupdatefromlist(self, ls):
+        """This method creates an update method from a list.
+        
+        Parameters
+        ----------
+        ls : list
+            list of group attributes that should be updated in that order
+            
+        Returns
+        -------
+        func : callable
+            Function that is reduced by <self> and <ls>."""
+        return partial(_dummyupdatewithlist, self, ls)
+
+
+def _dummyupdatewithlist(grp, ls, owner, *args, **kwargs):
+    """This method is a dummy method that updates all attributes given in ls.
+    
+    Parameters
+    ----------
+    grp : Group
+        group to which the attributes belong
+    ls : list
+        List of string with attributes of group that should be updated in that order
+    owner : Frame
+        Parent frame object
+    args : additional positional arguments
+    kwargs : additional keyword arguments
+    
+    Notes
+    -----
+    args and kwargs are only passed to the updater of the Heartbeat, NOT systole or diastole."""
+    for val in ls:
+        grp.__dict__[val].update(*args, **kwargs)

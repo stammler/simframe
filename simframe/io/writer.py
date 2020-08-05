@@ -101,7 +101,6 @@ class Writer(object):
         return self._reader
     @read.setter
     def read(self, value):
-        print(value)
         if isinstance(value, Reader) or (value is None):
             self._reader = value
         else:

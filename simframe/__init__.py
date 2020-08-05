@@ -4,10 +4,8 @@ from simframe.integration import Integrator
 from simframe.integration import schemes
 from simframe.io import writers
 
-from pkg_resources import get_distribution
-
 __name__ = "simframe"
-__version__ = get_distribution(__name__).version
+__version__ = "0.1.0"
 
 __all__ = ["Frame",
            "Instruction",
