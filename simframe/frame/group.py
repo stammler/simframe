@@ -145,7 +145,7 @@ class Group(AbstractGroup):
         else:
             self._updater = Heartbeat(value)
             
-    def addfield(self, name, value, updater=None, differentiator=None, description="", constant=False):
+    def addfield(self, name, value, updater=None, differentiator=None, description="", constant=False, copy=True):
         """Function to add a new field to the object.
         
         Parameters
@@ -162,8 +162,10 @@ class Group(AbstractGroup):
             Descriptive string for the field
         constant : boolean, optional, default : False
             True if the field is immutable
+        copy : boolean, optional, default : True
+            If True <value> will be copied, not referenced
         """
-        self.__dict__[name] = Field(self._owner, value, updater=updater, differentiator=differentiator, description=description, constant=constant)
+        self.__dict__[name] = Field(self._owner, value, updater=updater, differentiator=differentiator, description=description, constant=constant, copy=copy)
 
     def addgroup(self, name, updater=None, description=""):
         """Function to add a new group to the object.
@@ -179,7 +181,7 @@ class Group(AbstractGroup):
         """
         self.__dict__[name] = Group(self._owner, updater=updater, description=description)
 
-    def addintegrationvariable(self, name, value, snapshots=[], updater=None, description=""):
+    def addintegrationvariable(self, name, value, snapshots=[], updater=None, description="", copy=True):
         """Function to add a new field to the object that acts as integration variable.
         
         Parameters
@@ -194,8 +196,10 @@ class Group(AbstractGroup):
             List of snapshots at which an output file should be written
         description : string, optional, default : ""
             Descriptive string for the field
+        copy : boolean, optional, default : True
+            If True <value> will be copied, not referenced
         """
-        self.__dict__[name] = IntVar(self._owner, value, updater=updater, snapshots=snapshots, description=description)
+        self.__dict__[name] = IntVar(self._owner, value, updater=updater, snapshots=snapshots, description=description, copy=copy)
 
     def _checkupdatelist(self, ls):
         """This function checks if a list is suitable to be used as update.

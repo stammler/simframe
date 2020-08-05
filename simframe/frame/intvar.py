@@ -24,7 +24,7 @@ class IntVar(Field):
 
     _snapshots = []
 
-    def __new__(cls, owner, value=0, snapshots=[], updater=None, description=""):
+    def __new__(cls, owner, value=0, snapshots=[], updater=None, description="", copy=False):
         """Parameters
         ----------
         owner : Frame
@@ -37,8 +37,10 @@ class IntVar(Field):
         updater : Heartbeat, Updater, callable, optional, default : None
             Updater for calculating stepsize
         description : string, optional, default : ""
-            Descriptive string for the field"""
-        obj = super().__new__(cls, owner, value, updater=updater, description=description, constant=False)
+            Descriptive string for the field
+        copy : boolean, optional, default : True
+            If True <value> will be copied, not referenced"""
+        obj = super().__new__(cls, owner, value, updater=updater, description=description, constant=False, copy=copy)
         obj.snapshots = snapshots
         return obj
 

@@ -36,7 +36,7 @@ class Field(np.ndarray, AbstractGroup):
     _differentiator = Heartbeat(None)
     _constant = False
 
-    def __new__(cls, owner, value, updater=None, differentiator=None, description="", constant=False):
+    def __new__(cls, owner, value, updater=None, differentiator=None, description="", constant=False, copy=False):
         """Parameters
         ----------
         owner : Frame
@@ -50,8 +50,10 @@ class Field(np.ndarray, AbstractGroup):
         description : string, optional, default : ""
             Descriptive string for the field
         constant : boolean, optional, default : False
-            True if the field is immutable.?"""
-        obj = np.asarray(value).view(cls)
+            True if the field is immutable.?
+        copy : boolean, optional, default : False
+            If True <value> will be copied, not referenced"""
+        obj = np.array(value, copy=copy).view(cls)
         obj._owner = owner
         obj.updater = Heartbeat(updater)
         obj.differentiator = Heartbeat(differentiator)
