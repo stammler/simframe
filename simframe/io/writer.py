@@ -1,6 +1,8 @@
 import numpy as np
 import os
 
+from simframe.io.reader import Reader
+
 class Writer(object):
     """Class for writing outputs
     
@@ -26,7 +28,9 @@ class Writer(object):
 
     __name__ = "Writer"
 
-    def __init__(self, func, datadir="data", filename="data", zfill=4, extension="out", overwrite=False, description=None, options={}):
+    _reader = None
+
+    def __init__(self, func, datadir="data", filename="data", zfill=4, extension="out", overwrite=False, reader=None, description=None, options={}):
         self._func = func
         self.datadir = datadir
         self.filename = filename
@@ -35,6 +39,7 @@ class Writer(object):
         self.overwrite = overwrite
         self.description = description
         self.options = options
+        self.read = reader(self)
 
     @property
     def overwrite(self):
@@ -47,6 +52,17 @@ class Writer(object):
             self._overwrite = True
         else:
             self._overwrite = False
+
+    @property
+    def read(self):
+        return self._reader
+    @read.setter
+    def read(self, value):
+        print(value)
+        if isinstance(value, Reader) or (value is None):
+            self._reader = value
+        else:
+            raise TypeError("<reader> has to be of type Reader or None.")
 
     def checkdatadir(self, datadir=None, createdir=False):
         """Function checks if data directory exists and creates it if desired.

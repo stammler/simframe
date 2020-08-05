@@ -1,8 +1,12 @@
+import glob
 import h5py
 import numbers
 import numpy as np
+from types import SimpleNamespace
+import os
 
-from simframe.io import Writer
+from simframe.io.reader import Reader
+from simframe.io.writer import Writer
 
 def _hdf5wrapper(obj, filename, com="lzf", comopts=None):
     """Wrapper to write object to hdf5 file.
@@ -118,4 +122,30 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
                               comopts=comopts, prefix=name + "/")
 
 
-hdf5writer = Writer(_hdf5wrapper, extension="hdf5", description="HDF5 file format using h5py", options={"com":"lzf", "comopts":None})
+class hdf5reader(Reader):
+
+    def __init__(self, writer):
+        super().__init__(writer)
+
+    def output(self, filename):
+
+        if not isinstance(filename, str):
+            filename = self._writer._getfilename(filename)
+
+        if not os.path.isfile(filename):
+            raise RuntimeError("File does not exist.")
+
+        with h5py.File(filename, "r") as hdf5file:
+            return self._readgroup(hdf5file)
+
+    def _readgroup(self, gr):
+        ret = {}
+        for ds in gr.keys():
+            if isinstance(gr[ds], h5py._hl.group.Group):
+                ret[ds] = self._readgroup(gr[ds])
+            else:
+                ret[ds] = gr[ds][()]
+        return SimpleNamespace(**ret)
+
+
+hdf5writer = Writer(_hdf5wrapper, extension="hdf5", description="HDF5 file format using h5py", options={"com":"lzf", "comopts":None}, reader=hdf5reader)

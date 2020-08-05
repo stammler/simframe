@@ -30,7 +30,7 @@ class AbstractGroup(object):
         self._updater = self._constructheartbeat(value)
 
     def __str__(self):
-        ret = "{:6s}".format(str(self.__name__))
+        ret = "{:5s}".format(str(self.__name__))
         if((self.description != "") and (self.description != None)):
             ret += " ({})".format(self.description)
         return ret
