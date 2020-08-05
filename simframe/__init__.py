@@ -5,6 +5,12 @@ from simframe.integration import schemes
 from simframe.io import writers
 
 from pkg_resources import get_distribution
+
+__name__ = "simframe"
 __version__ = get_distribution(__name__).version
 
-__all__ = ["Frame", "Instruction", "Integrator", "schemes", "writers"]
+__all__ = ["Frame",
+           "Instruction",
+           "Integrator",
+           "schemes",
+           "writers"]

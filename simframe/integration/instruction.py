@@ -4,6 +4,7 @@ from simframe.frame.field import Field
 from simframe.integration.abstractscheme import AbstractScheme
 
 class Instruction(AbstractScheme):
+    """Integration instruction that controls the execution of integration schemes."""
 
     __name__ = "Instruction"
 
@@ -12,6 +13,25 @@ class Instruction(AbstractScheme):
     _instant = False
 
     def __init__(self, scheme, Y, fstep=1., instant=False, description=""):
+        """Integration instruction
+        
+        Parameters
+        ----------
+        scheme : AbstractScheme
+            Integration scheme
+        Y : Field
+            Variable to be integrated
+        fstep : float, optional, default : 1.0
+            Fraction of stepsize that this scheme should be used
+        instant : boolean, optional, default : False
+            If True the variable Y is updated right after performing the instruction successfully.
+            If False if will be updated after all instructions have be executed.
+        description : str, optional, default : ""
+            Description of integration instruction
+            
+        Notes
+        -----
+        If the integration failed while the instant tag is True, a RuntimeError will be raised."""
         super().__init__(scheme, description)
         self.Y = Y
         self.fstep = fstep
@@ -50,6 +70,17 @@ class Instruction(AbstractScheme):
             self._instant = False
 
     def __call__(self, dx):
+        """Execution of the integration instruction
+        
+        Parameters
+        ----------
+        dx : IntVar
+            Stepsize of the integration variable
+            
+        Return
+        ------
+        dY : Field
+            Delta of the variable to be integrated"""
         ret = self.scheme(self.fstep*dx, self.Y)
         if self.instant:
             if not ret:

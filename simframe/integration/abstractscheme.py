@@ -1,10 +1,29 @@
+from simframe.frame.abstractgroup import AbstractGroup
+
 class AbstractScheme:
+    """Class for an abstract integration scheme that can be used as template for creating custom schemes.
+    
+    Notes
+    -----
+    The integration scheme needs to return False if the integration failed. The integrator will then
+    perform a fail operation and will try it again. This can be used to implement schemes with adaptive
+    step sizes. If the step size was not small enough the fail operation can reduce it further."""
 
     __name__ = "Scheme"
 
+    _description = ""
     _scheme = None
 
     def __init__(self, scheme, description=""):
+        """Abstract integration scheme.
+        The integration scheme itself is callable.
+        
+        Parameters
+        ----------
+        scheme : callable
+            Function that returns the delta of the variable to be integrated
+        description : string, optional, default : ""
+            Descriptive string of the integration scheme"""
         self.scheme = scheme
         self.description = description
 
@@ -22,18 +41,29 @@ class AbstractScheme:
         return self._description
     @description.setter
     def description(self, value):
-        if not isinstance(value, (str, type(None))):
+        if not isinstance(value, str):
             raise ValueError("<value> has to be of type str.")
         self._description = value
 
     def __call__(self, dx, Y):
+        """Method for returning the delta of the variable to be integrated.
+        
+        Parameters
+        ----------
+        dx : Intvar
+            Stepsize
+        Y : Field
+            Variable to be integrated
+            
+        Returns
+        -------
+        dY : Field or False
+            Delta of the integration variable.
+            Functions needs to return False if integration failed."""
         return self.scheme(dx, Y)
 
     def __str__(self):
-        ret = str(self.__name__)
-        if((self.description != "") and (self.description != None)):
-            ret += " ({})".format(self.description)
-        return ret
+        return AbstractGroup.__str__(self)
 
     def __repr__(self):
         return self.__str__()

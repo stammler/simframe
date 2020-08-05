@@ -13,7 +13,7 @@ def _hdf5wrapper(obj, filename, com="lzf", comopts=None):
 
     This function recursively calls a another functions thats goes through the object tree.
 
-    Parameters:
+    Parameters
     ----------
     obj : object
         the object to be stored in a file
@@ -123,11 +123,29 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
 
 
 class hdf5reader(Reader):
+    """Reader class for the HDF5 writer."""
 
     def __init__(self, writer):
+        """HDF5 reader
+        
+        Parameters
+        ----------
+        writer : Writer
+            Writer object to which the reaer belongs."""
         super().__init__(writer)
 
     def output(self, filename):
+        """Reads a single output file.
+        
+        Parameters
+        ----------
+        filename : str
+            Path to filename to be read
+            
+        Returns
+        -------
+        data : SimpleNamespace
+            Namespace of data in file."""
 
         if not isinstance(filename, str):
             filename = self._writer._getfilename(filename)
@@ -139,6 +157,17 @@ class hdf5reader(Reader):
             return self._readgroup(hdf5file)
 
     def _readgroup(self, gr):
+        """Helper function that is interatively called to get the depth of the data set.
+        
+        Parameters
+        ----------
+        gr : Group of type h5py._hl.group.Group
+            The h5py data set to be read
+            
+        Returns
+        -------
+        data : SimpleNamespace
+            Namespace of data"""
         ret = {}
         for ds in gr.keys():
             if isinstance(gr[ds], h5py._hl.group.Group):

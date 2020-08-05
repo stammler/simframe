@@ -2,66 +2,63 @@ import numpy as np
 
 from simframe.frame.field import Field
 from simframe.frame.heartbeat import Heartbeat
-from simframe.frame.updater import Updater
 
 class IntVar(Field):
-    """Integration variable.
-    
-    Field for storing integration variables. Same as regular Field, but containing infrastructure for getting
-    step size, snapshots, etc.
-    
-    Parameters
-    ----------
-    owner : Frame
-        Parent frame object to which the field belongs
-    value : number, optional, default : 0
-        Initial value of the field
-    snapshots : list, array, optional, default : []
-        List or array of snapshots at which an output file should be written.
-        Has to be monotonously increasing.
-    updater : Updater, callable or list, optional, default : None
-        Updater for field update
-    systole : Updater, callable or list, optional, default : None
-        Systole for field update
-    diastole : Updater, callable or list, optional, default : None
-        Diastole for field update 
-    description : string, optional, default : None
-        Descriptive string for the field
+    """This class behaves as Fields but has additional functionality with respect to
+    stepsize management for integration.
 
     Notes
     -----
-    When <Intvar>.update() is called the Intvar will by adding the stepsize to the current value.
-    Before the Intvar is updated the systole updater is called. After the Intvar update the diastole updater is called.
-    The updater, systoles, and diastoles for Intvars can either be of type Updater, can be a callable function which
-    executes the desired operation, or can be None, if no operation should be performed. If it is set to a callable
-    function the function's only argument has to be the parent Frame object. The callable function of the updater has
-    to return the stepsize of the integration variable
+    The updater for integration variables is calculating the stepsize. The function assiciated to the
+    updater needs the parent Frame object as first positional argument and needs to return the
+    desired stepsize.
 
-    Examples
-    --------
-    >>> t = Intvar(sim, 0., description="Time")
-    >>> t
-    Intvar (Time):
-    0
-    """
+    IntVar has additional attribute:
 
-    def __new__(cls, owner, value=0, snapshots=[], updater=None, description=None):
+    maxstepsize : the maximum stepsize until the next snapshot
+    stepsize : minimum of the desired stepsize and maxstepsize
+    nextsnapshot : value of the next snapshot
+
+    update() does not update the integration variable. Try not to update the integration variable by hand.
+    Let the integrator do it for you."""
+
+    _snapshots = []
+
+    def __new__(cls, owner, value=0, snapshots=[], updater=None, description=""):
+        """Parameters
+        ----------
+        owner : Frame
+            Parent frame object to which the field belongs
+        value : number, optional, default : 0
+            Initial value of the field
+        snapshots : list, array, optional, default : []
+            List or array of snapshots at which an output file should be written.
+            Has to be monotonously increasing.
+        updater : Heartbeat, Updater, callable, optional, default : None
+            Updater for calculating stepsize
+        description : string, optional, default : ""
+            Descriptive string for the field"""
         obj = super().__new__(cls, owner, value, updater=updater, description=description, constant=False)
         obj.snapshots = snapshots
         return obj
 
     def __array_finalize__(self, obj):
-        # see InfoArray.__array_finalize__ for comments
         if obj is None: return
         super().__array_finalize__(obj)
         self.snapshots = getattr(obj, "snapshots", [])
 
+    def __str__(self):
+        ret = "{}".format(str(self.__name__))
+        ret = super().__str__()
+        ret += ", \033[95mIntegration variable\033[0m"
+        return ret
+
     def update(self):
-        msg = "Warning: Do not update any integration variable by hand."
+        msg = "Warning: Do not update the integration variable by hand."
         print(msg)
 
     def _update(self, u, *args, upd=False, **kwargs):
-        msg = "Warning: Do not update any integration variable by hand."
+        msg = "Warning: Do not update the integration variable by hand."
         print(msg)
 
     @property
@@ -90,10 +87,3 @@ class IntVar(Field):
     @property
     def maxstepsize(self):
         return self.nextsnapshot - self.getfield(dtype=self.dtype)
-
-    def __str__(self):
-        ret = "{:5s}".format(str(self.__name__))
-        if((self._description != "") and (self._description != None)):
-            ret += " ({})".format(self._description)
-        ret += ", \033[95mIntegration variable\033[0m"
-        return ret
