@@ -45,22 +45,22 @@ class AbstractScheme:
             raise ValueError("<value> has to be of type str.")
         self._description = value
 
-    def __call__(self, dx, Y):
+    def __call__(self, Y, dx=None):
         """Method for returning the delta of the variable to be integrated.
         
         Parameters
         ----------
-        dx : Intvar
-            Stepsize
         Y : Field
             Variable to be integrated
+        dx : Intvar, optional, default : None
+            Stepsize
             
         Returns
         -------
         dY : Field or False
             Delta of the integration variable.
             Functions needs to return False if integration failed."""
-        return self.scheme(dx, Y)
+        return self.scheme(Y, dx)
 
     def __str__(self):
         return AbstractGroup.__str__(self)

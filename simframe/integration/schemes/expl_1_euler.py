@@ -1,14 +1,14 @@
 from simframe.integration import AbstractScheme
 
-def _f_expl_1_euler(dx, Y):
+def _f_expl_1_euler(Y, dx):
     """Simple explicit 1st order Euler integration scheme
     
     Parameters
     ----------
-    dx : IntVar
-        Stepsize of integration variable
     Y : Field
         Variable to be integrated
+    dx : IntVar
+        Stepsize of integration variable
         
     Returns
     -------

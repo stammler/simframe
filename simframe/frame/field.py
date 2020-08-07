@@ -35,6 +35,7 @@ class Field(np.ndarray, AbstractGroup):
 
     _differentiator = Heartbeat(None)
     _constant = False
+    _buffer = 0.
 
     def __new__(cls, owner, value, updater=None, differentiator=None, description="", constant=False, copy=False):
         """Parameters
@@ -77,6 +78,7 @@ class Field(np.ndarray, AbstractGroup):
 
     def __repr__(self):
         ret = "{}\n{}\n{}".format(self.__str__(), "-" * len(self.__str__()), np.ndarray.__str__(self.getfield(self.dtype)))
+        ret = "{}".format(np.ndarray.__str__(self.getfield(self.dtype)))
         return ret
 
     @property
@@ -91,6 +93,13 @@ class Field(np.ndarray, AbstractGroup):
                 self._constant = False
         else:
             raise TypeError("<value> hat to be of type bool.")
+
+    @property
+    def buffer(self):
+        return self._buffer
+    @buffer.setter
+    def buffer(self, value):
+        raise RuntimeError("Do not set the buffer directly.")
 
     @property
     def differentiator(self):

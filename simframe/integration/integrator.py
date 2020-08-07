@@ -4,6 +4,7 @@ from simframe.frame.abstractgroup import AbstractGroup
 from simframe.frame.heartbeat import Heartbeat
 from simframe.frame.intvar import IntVar
 from simframe.integration.instruction import Instruction
+from simframe.integration.schemes import update
 
 class Integrator:
     """Integrator class that manages the integration instructions"""
@@ -143,11 +144,9 @@ class Integrator:
                 status = True
             self._failoperation()
             i += 1
-        # Update the variables without instant tag.
+        # Update the variables.
         for i, inst in enumerate(self.instructions):
-            if inst.instant: continue
-            if not ret[i]: continue
-            inst.Y += ret[i]
+            update(inst.Y)
         # Finalization
         self._finalize()
 
