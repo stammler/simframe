@@ -1,7 +1,11 @@
 from simframe.integration import AbstractScheme
 
-def _f_expl_1_euler(x0, Y0, dx, *args, **kwargs):
-    """Explicit 1st-order Euler integration scheme
+# Butcher coefficients
+a10 = 0.5
+c1  = 0.5
+
+def _f_expl_2_midpoint(x0, Y0, dx, *args, **kwargs):
+    """Explicit 2nd-order midpoint method
     
     Parameters
     ----------
@@ -21,10 +25,14 @@ def _f_expl_1_euler(x0, Y0, dx, *args, **kwargs):
         
     Butcher tableau
     ---------------
-     0 |
-    ---|---
-       | 1 
+      0  |
+     1/2 | 1/2
+    -----|---------
+         |  0   1
     """
-    return dx*Y0.derivative(x0, Y0)
+    k0 = Y0.derivative(x0        , Y0            )
+    k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0*dx)
+    
+    return dx*k1
 
-expl_1_euler = AbstractScheme(_f_expl_1_euler, description="Explicit 1st-order Euler method")
+expl_2_midpoint = AbstractScheme(_f_expl_2_midpoint, description="Explicit 2nd-order midpoint method")
