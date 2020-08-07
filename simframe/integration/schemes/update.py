@@ -1,20 +1,22 @@
 from simframe.integration import AbstractScheme
 
-def _update(Y, dx=None):
+def _update(x0, Y0, dx):
     """Instruction for updating Y
     
     Parameters
     ----------
-    Y : Field
-        Variable to be updated
-    dx : IntVar, optional, default : None
-        not used for this instruction
+    x0 : Intvar
+        Integration variable at beginning of scheme
+    Y0 : Field
+        Variable to be integrated at the beginning of scheme
+    dx : IntVar
+        Stepsize of integration variable
         
     Returns
     -------
     dY : True"""
-    Y += Y._buffer
-    Y._buffer = 0.
+    Y0 += Y0._buffer
+    Y0._buffer = 0.
     return True
 
 update = AbstractScheme(_update, description="Instruction to update Y")

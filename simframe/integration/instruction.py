@@ -60,7 +60,9 @@ class Instruction(AbstractScheme):
         ------
         dY : Field
             Delta of the variable to be integrated"""
-        ret = self.scheme(self.Y, self.fstep*dx)
+        x0 = self.Y._owner.integrator.var
+        Y0 = self.Y
+        ret = self.scheme(x0, Y0, self.fstep*dx)
         if ret is False:
             return False
         if ret is True:

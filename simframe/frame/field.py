@@ -126,11 +126,14 @@ class Field(np.ndarray, AbstractGroup):
         to the field. Shape and data type have to match."""
         self._setvalue(self.updater.beat(self._owner, *args, **kwargs))
 
-    def derivative(self, Y=None, *args, **kwargs):
+    def derivative(self, x=None, Y=None, *args, **kwargs):
         """If differentiator is set, this returns the derivative of the field.
 
         Parameters
         ----------
+        x : IntVar, optional, default : None
+            Integration variable 
+            If None it uses the integration variable of the integrator of the parent Frame
         Y : Field, optional, default : None
             Derivative of Y with respect to the integration variable.
             If None it uses the field itself
@@ -139,10 +142,16 @@ class Field(np.ndarray, AbstractGroup):
         -------
         deriv : derivative of the field according the differetiator
         
-        The function that calculates the derivative needs the parent frame as first positional and the
-        field itself as second positional argument."""
+        The function that calculates the derivative needs the parent frame as first positional, the
+        integration variable as second positional, and the field itself as third positional argument."""
+        if x is None:
+            if self._owner.integrator is None:
+                raise RuntimeError("x not given and no integrator set.")
+            if self._owner.integrator.var is None:
+                raise RuntimeError("x not given and no integration variable set in integrator.")
+            x = self._owner.integrator.var
         Y = Y if Y is not None else self
-        return self.differentiator.beat(self._owner, Y, *args, **kwargs)
+        return self.differentiator.beat(self._owner, x, Y, *args, **kwargs)
         
     def _setvalue(self, value):
         """Function to set a value to the field. Direct assignement of values does overwrite the Field object.

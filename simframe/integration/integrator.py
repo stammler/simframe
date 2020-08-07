@@ -135,6 +135,9 @@ class Integrator:
         while(not status):
             if i >= self.maxit:
                 raise StopIteration("Maximum number of integration tries exceeded.")
+            # Reset buffers
+            for inst in self.instructions:
+                inst.Y._buffer = 0
             # Safe all return values in list
             ret = []
             for inst in self.instructions:
@@ -146,7 +149,7 @@ class Integrator:
             i += 1
         # Update the variables.
         for i, inst in enumerate(self.instructions):
-            update(inst.Y)
+            update(None, inst.Y, None)
         # Finalization
         self._finalize()
 
