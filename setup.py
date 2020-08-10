@@ -1,9 +1,20 @@
 from setuptools import find_packages
 from setuptools import setup
-from numpy.distutils.core import setup
-import os
+import pathlib
 
 package_name = "simframe"
+here = pathlib.Path(__file__).absolute().parent
+
+
+def read_version():
+    with (here / package_name / '__init__.py').open() as fid:
+        for line in fid:
+            if line.startswith('__version__'):
+                delim = '"' if '"' in line else "'"
+                return line.split(delim)[1]
+        else:
+            raise RuntimeError("Unable to find version string.")
+
 
 setup(
     name=package_name,
@@ -13,8 +24,8 @@ setup(
     author_email="stammler@usm.lmu.de; til.birnstiel@lmu.de",
     packages=find_packages(),
     license="GPLv3",
-    install_requires=["numpy", "h5py", "pytest", "setuptools_scm"],
+    install_requires=["numpy", "h5py", "pytest"],
     include_package_data=True,
     zip_safe=False,
-    version="0.1.0"
-    )
+    version=read_version(),
+)

@@ -1,7 +1,7 @@
 import numpy as np
 from simframe.frame.abstractgroup import AbstractGroup
-from simframe.frame.updater import Updater
 from simframe.frame.heartbeat import Heartbeat
+
 
 class Field(np.ndarray, AbstractGroup):
     """Class for quantities or fields.
@@ -11,9 +11,9 @@ class Field(np.ndarray, AbstractGroup):
     the field itself as second positional argument.
 
     Fields behave like numpy.ndarray and can perform the exact same operations.
-    
-    
-        
+
+
+
     Notes
     -----
     When <field>.update() is called the field will be updated according return value of the updater..
@@ -22,7 +22,7 @@ class Field(np.ndarray, AbstractGroup):
     executes the desired operation, or can be None, if no operation should be performed. If it is set to a callable
     function the function's only argument has to be the parent Frame object. The callable function of the updater has
     to return the new value of the field.
-    
+
     Examples
     --------
     >>> fld = Field(sim, np.ones(5), description="My Field")
@@ -30,7 +30,7 @@ class Field(np.ndarray, AbstractGroup):
     Field (My Field):
     [1 1 1 1 1]
     """
-    
+
     __name__ = "Field"
 
     _differentiator = Heartbeat(None)
@@ -63,7 +63,8 @@ class Field(np.ndarray, AbstractGroup):
         return obj
 
     def __array_finalize__(self, obj):
-        if obj is None: return
+        if obj is None:
+            return
         self._owner = getattr(obj, "_owner", None)
         self.updater = getattr(obj, "updater", Heartbeat(None))
         self.differentiator = getattr(obj, "differentiator", Heartbeat(None))
@@ -83,15 +84,16 @@ class Field(np.ndarray, AbstractGroup):
 
     @property
     def intvar(self):
-        #if not isinstance(self._owner.integration, Integrator):
+        # if not isinstance(self._owner.integration, Integrator):
         #    raise RuntimeError("No integrator set.")
-        #if not isinstance(self._owner.integrator.var, Field):
+        # if not isinstance(self._owner.integrator.var, Field):
         #    raise RuntimeError("No integration variable assigned to integrator.")
         return self._owner.integrator.var
 
     @property
     def constant(self):
         return self._constant
+
     @constant.setter
     def constant(self, value):
         if isinstance(value, np.int):
@@ -105,6 +107,7 @@ class Field(np.ndarray, AbstractGroup):
     @property
     def buffer(self):
         return self._buffer
+
     @buffer.setter
     def buffer(self, value):
         raise RuntimeError("Do not set the buffer directly.")
@@ -112,6 +115,7 @@ class Field(np.ndarray, AbstractGroup):
     @property
     def differentiator(self):
         return self._differentiator
+
     @differentiator.setter
     def differentiator(self, value):
         if isinstance(value, Heartbeat):
@@ -126,7 +130,7 @@ class Field(np.ndarray, AbstractGroup):
         ---------
         args : additional positional arguments
         kwargs : additional keyword arguments
-        
+
         Notes
         -----
         Function calls the Heartbeat object of the field. Additional positional and keyword arguments are only
@@ -140,7 +144,7 @@ class Field(np.ndarray, AbstractGroup):
         Parameters
         ----------
         x : IntVar, optional, default : None
-            Integration variable 
+            Integration variable
             If None it uses the integration variable of the integrator of the parent Frame
         Y : Field, optional, default : None
             Derivative of Y with respect to the integration variable.
@@ -149,7 +153,7 @@ class Field(np.ndarray, AbstractGroup):
         Returns
         -------
         deriv : derivative of the field according the differetiator
-        
+
         The function that calculates the derivative needs the parent frame as first positional, the
         integration variable as second positional, and the field itself as third positional argument."""
         if x is None:
@@ -160,10 +164,10 @@ class Field(np.ndarray, AbstractGroup):
             x = self._owner.integrator.var
         Y = Y if Y is not None else self
         return self.differentiator.beat(self._owner, x, Y, *args, **kwargs)
-        
+
     def _setvalue(self, value):
         """Function to set a value to the field. Direct assignement of values does overwrite the Field object.
-        
+
         Parameters
         ----------
         value : number, array, string
@@ -172,5 +176,5 @@ class Field(np.ndarray, AbstractGroup):
             raise RuntimeError("Field is constant.")
         value = np.asarray(value)
         if not value.shape == self.shape:
-            raise ValueError("Shape mismatch: "+repr(self.shape)+", "+repr(value.shape))
+            raise ValueError("Shape mismatch: " + repr(self.shape) + ", " + repr(value.shape))
         self.setfield(value, self.dtype)

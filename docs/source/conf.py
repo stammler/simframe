@@ -18,8 +18,8 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'simframe'
-copyright = '2020, Sebastian Stammler'
-author = 'Sebastian Stammler'
+copyright = '2020, Sebastian Stammler & Til Birnstiel'
+author = 'Sebastian Stammler & Til Birnstiel'
 
 
 # -- General configuration ---------------------------------------------------

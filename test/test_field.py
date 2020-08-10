@@ -4,6 +4,7 @@ from simframe.frame import Field
 import numpy as np
 import pytest
 
+
 def test_field_creationcopy():
     A = np.ones(5)
     f = Frame()
@@ -15,6 +16,7 @@ def test_field_creationcopy():
     assert np.all(f.f == A)
     A *= 2
     assert np.all(f.f == A)
+
 
 def test_field_assignment():
     A = np.ones(5)
@@ -30,24 +32,28 @@ def test_field_assignment():
     with pytest.raises(ValueError):
         f.f = 1
     f.addfield("f", 0)
-    with pytest.raises(ValueError):        
+    with pytest.raises(ValueError):
         f.f = "test"
+
 
 def test_field_update():
     f = Frame()
     f.addfield("f", np.ones(5))
     f.update()
     assert np.all(f.f == np.ones(5))
+
     def upd(f):
-        return 2.*f.f
+        return 2. * f.f
     f.f.updater = upd
     f.f.update()
-    assert np.all(f.f == 2.*np.ones(5))
+    assert np.all(f.f == 2. * np.ones(5))
+
 
 def test_field_differentiator():
     f = Frame()
     f.addfield("f", np.ones(5))
+
     def upd(f, Y):
-        return 2.*Y
+        return 2. * Y
     f.f.differentiator = upd
-    assert np.all(f.f.derivative() == 2.*np.ones(5))
+    assert np.all(f.f.derivative() == 2. * np.ones(5))

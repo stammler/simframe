@@ -4,17 +4,18 @@ class Updater():
     __name__ = "Updater"
 
     _func = None
-    
+
     def __init__(self, func=None):
         """Parameter
         ---------
         func : callable, optional, default : None
             Function that is called when update function is called. None is a null operation."""
         self._func = func
-        
+
     def update(self, owner, *args, **kwargs):
         """Function that is called when group or field to which Updater belongs is being updated."""
-        if self._func is not None:  return self._func(owner, *args, **kwargs)
+        if self._func is not None:
+            return self._func(owner, *args, **kwargs)
 
     def __str__(self):
         return "{}".format(str(self.__name__))

@@ -1,5 +1,6 @@
 from simframe.frame.updater import Updater
 
+
 class Heartbeat(object):
     """This class controls an update including systole and diastole.
 
@@ -9,7 +10,7 @@ class Heartbeat(object):
     The beat function calls systole, updater, diastole in that order and returns the return value
     of the updater. Any positional or keyword arguments are only passed to the updater, NOT to
     systole and diastole.
-    
+
     """
 
     __name__ = "Heartbeat"
@@ -20,7 +21,7 @@ class Heartbeat(object):
 
     def __init__(self, updater=None, systole=None, diastole=None):
         """Heartbeat class
-        
+
         Parameters
         ----------
         updater : Updater, callable, None, optional, default : None
@@ -43,18 +44,20 @@ class Heartbeat(object):
     @property
     def systole(self):
         return self._systole
+
     @systole.setter
     def systole(self, value):
         if isinstance(value, Updater):
             self._systole = value
         elif hasattr(value, "__call__") or value is None:
             self._systole = Updater(value)
-        else:        
+        else:
             raise TypeError("Systole has to be of type Updater, None, or has to be callable.")
 
     @property
     def updater(self):
         return self._updater
+
     @updater.setter
     def updater(self, value):
         if isinstance(value, Updater):
@@ -67,6 +70,7 @@ class Heartbeat(object):
     @property
     def diastole(self):
         return self._diastole
+
     @diastole.setter
     def diastole(self, value):
         if isinstance(value, Updater):
@@ -76,10 +80,9 @@ class Heartbeat(object):
         else:
             raise TypeError("Diastole has to be of type Updater, None, or has to be callable.")
 
-
     def beat(self, owner, *args, **kwargs):
         """This method executes systole, updater, and distole in that order.
-        
+
         Parameters
         ----------
         owner : Frame
@@ -88,7 +91,7 @@ class Heartbeat(object):
         Notes
         -----
             *args and **kwargs are only passed to updater, NOT to systole and diastole
-            
+
         Returns
         -------
         ret : Return value of updater."""

@@ -3,6 +3,7 @@ import numpy as np
 from simframe.frame.field import Field
 from simframe.frame.heartbeat import Heartbeat
 
+
 class IntVar(Field):
     """This class behaves as Fields but has additional functionality with respect to
     stepsize management for integration.
@@ -46,7 +47,8 @@ class IntVar(Field):
         return obj
 
     def __array_finalize__(self, obj):
-        if obj is None: return
+        if obj is None:
+            return
         super().__array_finalize__(obj)
         self.snapshots = getattr(obj, "snapshots", [])
 
@@ -70,21 +72,22 @@ class IntVar(Field):
         For adaptive integration schemes, this function can be used to suggest a step size for the next
         integration step. If many vaiables are integrated this safes the smallest suggested step size
         in a temporary buffer accessible via <IntVar>.suggested.
-        
+
         Parameters
         ----------
         value : Field
             Suggested step size"""
-        self.suggested = value if self._suggested == None else np.minimum(self._suggested, value)
+        self.suggested = value if self._suggested is None else np.minimum(self._suggested, value)
 
     @property
     def suggested(self):
         if self._suggested is None:
             raise RuntimeError("No step size has been suggested, yet.")
         return self._suggested
+
     @suggested.setter
     def suggested(self, value):
-        if value <=0:
+        if value <= 0:
             raise ValueError("Suggested step size has to be greater than zero.")
         self._suggested = value
 
@@ -97,11 +100,12 @@ class IntVar(Field):
     @property
     def snapshots(self):
         return self._snapshots
+
     @snapshots.setter
     def snapshots(self, value):
         snaps = np.asarray(value)
         if snaps.size > 1:
-            if not all(x<y for x, y in zip(snaps, snaps[1:])):
+            if not all(x < y for x, y in zip(snaps, snaps[1:])):
                 raise ValueError("Snapshots have to be strictly increasing")
         self._snapshots = snaps
 

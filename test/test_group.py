@@ -6,6 +6,7 @@ from simframe.frame import Heartbeat
 
 import pytest
 
+
 def test_group_description():
     # Note Frame is sub-class of Group
     f = Frame()
@@ -17,17 +18,20 @@ def test_group_description():
     f = Frame(description="testframe")
     assert f.description == "testframe"
 
+
 def test_group_updater_func():
     f = Frame()
     assert isinstance(f.updater, Heartbeat)
     f.A = 0
     f.update()
     assert f.A == 0
+
     def upd(f):
-        f.A +=1
+        f.A += 1
     f.updater = upd
     f.update()
     assert f.A == 1
+
 
 def test_group_updater_list():
     f = Frame()
@@ -35,10 +39,13 @@ def test_group_updater_list():
     f.addgroup("g1")
     f.addgroup("g2")
     f.addgroup("g3")
+
     def g1(f):
         f.A += 1
+
     def g2(f):
         f.A += 2
+
     def g3(f):
         f.A *= 3
     f.g1.updater = g1
@@ -59,6 +66,7 @@ def test_group_updater_list():
     f.update()
     assert f.A == 6
 
+
 def test_group_addgroup():
     f = Frame()
     f.addgroup("g")
@@ -70,6 +78,7 @@ def test_group_addfield():
     f.addfield("f", 0.)
     assert isinstance(f.f, Field)
     assert f.f == 0.
+
 
 def test_group_addintvar():
     f = Frame()

@@ -6,15 +6,16 @@ from simframe.frame.intvar import IntVar
 from simframe.integration.integrator import Integrator
 from simframe.io.writer import Writer
 
+
 class Frame(Group):
     """Frame class.
     This is the parent object of type Group that contains all other objects.
-    
+
     During integration the update() function of the frame object will be called.
     You have to sub-delegete the updates of your other groups and fields with this function.
-    
+
     Frame has additional functionality for writing output files and for integration.
-    
+
     writeoutput(file) : writes output file according writer instructions
     run() : starts the simulation"""
 
@@ -22,7 +23,7 @@ class Frame(Group):
 
     _integrator = None
     _writer = None
-    
+
     def __init__(self, integrator=None, writer=None, updater=None, description=""):
         """
         The parent Frame object.
@@ -44,6 +45,7 @@ class Frame(Group):
     @property
     def integrator(self):
         return self._integrator
+
     @integrator.setter
     def integrator(self, integrator):
         if integrator is not None and type(integrator) is not Integrator:
@@ -53,6 +55,7 @@ class Frame(Group):
     @property
     def writer(self):
         return self._writer
+
     @writer.setter
     def writer(self, writer):
         if writer is not None and type(writer) is not Writer:
@@ -61,7 +64,7 @@ class Frame(Group):
 
     def writeoutput(self, i=0, forceoverwrite=False, filename="", **kwargs):
         """Writes output to file, if writer is specified.
-        
+
         Parameters
         ----------
         i : int, optional, default : 0
@@ -107,5 +110,5 @@ class Frame(Group):
                 self.integrator.integrate()
                 self.integrator.var += self.integrator.var.stepsize
                 self.update()
-            
-            self.writeoutput(i+1)       
+
+            self.writeoutput(i + 1)
