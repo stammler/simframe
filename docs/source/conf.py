@@ -34,6 +34,7 @@ extensions = [
     'recommonmark',
     'numpydoc',
     'nbsphinx',
+    'sphinx_automodapi.automodapi',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
