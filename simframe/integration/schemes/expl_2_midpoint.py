@@ -25,8 +25,8 @@ def _f_expl_2_midpoint(x0, Y0, dx, *args, **kwargs):
         
     Butcher tableau
     ---------------
-      0  |
-     1/2 | 1/2
+      0  |  0   0
+     1/2 | 1/2  0
     -----|---------
          |  0   1
     """

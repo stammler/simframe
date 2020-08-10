@@ -1,13 +1,14 @@
 from simframe.integration import AbstractScheme
 
 # Butcher coefficients
-a10, a21 = 1/3, 2/3
-c1 , c2  = 1/3, 2/3
-b0 , b2  = 1/4, 3/4
+a10          = 1/2
+a21          = 2.
+b0 , b1, b2  = 1/6, 2/3, 1/6
+c1           = 1/2
 
 
-def _f_expl_3_heun(x0, Y0, dx, *args, **kwargs):
-    """Explicit 3rd-order Heun's method
+def _f_expl_3_kutta(x0, Y0, dx, *args, **kwargs):
+    """Explicit 3rd-order Kutta's method
     
     Parameters
     ----------
@@ -28,15 +29,15 @@ def _f_expl_3_heun(x0, Y0, dx, *args, **kwargs):
     Butcher tableau
     ---------------
       0  |  0   0   0
-     1/3 | 1/3  0   0
-     2/3 |  0  2/3  0
+     1/2 | 1/2  0   0
+      1  | -1   2   0
     -----|-------------
-         | 1/4  0  3/4
+         | 1/6 2/3 1/6
     """
-    k0 = Y0.derivative(x0        , Y0            )
-    k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0*dx)
-    k2 = Y0.derivative(x0 + c2*dx, Y0 + a21*k1*dx)
+    k0 = Y0.derivative(x0        , Y0                       )
+    k1 = Y0.derivative(x0 + c1*dx, Y0 +  a10*k0          *dx)
+    k2 = Y0.derivative(x0 +    dx, Y0 + (   -k0 + a21*k1)*dx)
     
-    return dx*(b0*k0 + b2*k2)
+    return dx*(b0*k0 + b1*k1 + b2*k2)
 
-expl_3_heun = AbstractScheme(_f_expl_3_heun, description="Explicit 3rd-order Heun's method")
+expl_3_kutta = AbstractScheme(_f_expl_3_kutta, description="Explicit 3rd-order Kutta's method")

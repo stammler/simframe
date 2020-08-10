@@ -27,10 +27,10 @@ def _f_expl_2_heun(x0, Y0, dx, *args, **kwargs):
         
     Butcher tableau
     ---------------
-      0  |
-      1  |  1
+      0  |  0   0
+      1  |  1   0
     -----|---------
-         | 0.5 0.5
+         | 1/2 1/2
     """
     k0 = Y0.derivative(x0        , Y0            )
     k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0*dx)

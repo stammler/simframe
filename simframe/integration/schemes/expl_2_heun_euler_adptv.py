@@ -41,10 +41,10 @@ def _f_expl_2_heun_euler_adptv(x0, Y0, dx, econ=0.0324, eps=0.1, pgrow=-0.5, psh
         
     Butcher tableau
     ---------------
-      0  |
-      1  |  1
+      0  |  0   0
+      1  |  1   0
     -----|---------
-         | 0.5 0.5
+         | 1/2 1/2
          |  1   0
     """
     k0 = Y0.derivative(x0        , Y0            )
