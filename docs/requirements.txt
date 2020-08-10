@@ -1,0 +1,11 @@
+numpy
+sphinx>=3.0
+nbsphinx
+numpydoc
+recommonmark
+nbconvert
+ipykernel
+jupyter
+h5py
+pytest
+setuptools_scm
