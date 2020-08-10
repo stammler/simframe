@@ -23,6 +23,7 @@ class IntVar(Field):
     Let the integrator do it for you."""
 
     _snapshots = []
+    _suggested = None
 
     def __new__(cls, owner, value=0, snapshots=[], updater=None, description="", copy=False):
         """Parameters
@@ -62,6 +63,30 @@ class IntVar(Field):
     def _update(self, u, *args, upd=False, **kwargs):
         msg = "\033[93mWarning:\033[0m Do not update the integration variable by hand."
         print(msg)
+
+    def suggest(self, value):
+        """Suggest a step size
+
+        For adaptive integration schemes, this function can be used to suggest a step size for the next
+        integration step. If many vaiables are integrated this safes the smallest suggested step size
+        in a temporary buffer accessible via <IntVar>.suggested.
+        
+        Parameters
+        ----------
+        value : Field
+            Suggested step size"""
+        self.suggested = value if self._suggested == None else np.minimum(self._suggested, value)
+
+    @property
+    def suggested(self):
+        if self._suggested is None:
+            raise RuntimeError("No step size has been suggested, yet.")
+        return self._suggested
+    @suggested.setter
+    def suggested(self, value):
+        if value <=0:
+            raise ValueError("Suggested step size has to be greater than zero.")
+        self._suggested = value
 
     @property
     def stepsize(self):

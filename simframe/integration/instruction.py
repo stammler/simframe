@@ -11,7 +11,7 @@ class Instruction(AbstractScheme):
     _Y = None
     _fstep = 1.
 
-    def __init__(self, scheme, Y, fstep=1., description=""):
+    def __init__(self, scheme, Y, fstep=1., controller={}, description=""):
         """Integration instruction
         
         Parameters
@@ -22,9 +22,11 @@ class Instruction(AbstractScheme):
             Variable to be integrated
         fstep : float, optional, default : 1.0
             Fraction of stepsize that this scheme should be used
+        controller : dict, optional, default : {}
+            Additional keyword arguments passed to integration scheme
         description : str, optional, default : ""
             Description of integration instruction"""
-        super().__init__(scheme, description)
+        super().__init__(scheme, controller, description)
         self.Y = Y
         self.fstep = fstep
 
@@ -47,6 +49,7 @@ class Instruction(AbstractScheme):
             msg = "\033[93mWarning:\033[0m <fstep> is not in (0, 1]."
             print(msg)
         self._fstep = value
+        
 
     def __call__(self, dx=None):
         """Execution of the integration instruction

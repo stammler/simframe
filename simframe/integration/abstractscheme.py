@@ -12,9 +12,10 @@ class AbstractScheme:
     __name__ = "Scheme"
 
     _description = ""
+    _controller = {}
     _scheme = None
 
-    def __init__(self, scheme, description=""):
+    def __init__(self, scheme, controller={}, description=""):
         """Abstract integration scheme.
         The integration scheme itself is callable.
         
@@ -25,6 +26,7 @@ class AbstractScheme:
         description : string, optional, default : ""
             Descriptive string of the integration scheme"""
         self.scheme = scheme
+        self.controller = controller
         self.description = description
 
     @property
@@ -37,6 +39,15 @@ class AbstractScheme:
         self._scheme = value
 
     @property
+    def controller(self):
+        return self._controller
+    @controller.setter
+    def controller(self, value):
+        if not isinstance(value, dict):
+            raise TypeError("controller has to be of type dict.")
+        self._controller = value
+
+    @property
     def description(self):
         return self._description
     @description.setter
@@ -45,7 +56,7 @@ class AbstractScheme:
             raise ValueError("<value> has to be of type str.")
         self._description = value
 
-    def __call__(self, x0, Y0, dx):
+    def __call__(self, x0, Y0, dx, controller={}):
         """Method for returning the delta of the variable to be integrated.
         
         Parameters
@@ -56,13 +67,16 @@ class AbstractScheme:
             Variable to be integrated at the beginning of scheme
         dx : IntVar
             Stepsize of integration variable
+        controller : dict, optional, default : {}
+            Additional keyword arguments passed to integration scheme
+
             
         Returns
         -------
         dY : Field or False
             Delta of the integration variable.
             Functions needs to return False if integration failed."""
-        return self.scheme(x0, Y0, dx)
+        return self.scheme(x0, Y0, dx, controller=self.controller)
 
     def __str__(self):
         return AbstractGroup.__str__(self)

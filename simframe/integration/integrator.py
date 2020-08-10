@@ -134,7 +134,7 @@ class Integrator:
         status = False
         while(not status):
             if i >= self.maxit:
-                raise StopIteration("Maximum number of integration tries exceeded.")
+                raise StopIteration("Maximum number of integration attempts exceeded.")
             # Reset buffers
             for inst in self.instructions:
                 inst.Y._buffer = 0
@@ -143,10 +143,11 @@ class Integrator:
             for inst in self.instructions:
                 ret.append(inst(self.var.stepsize))
             # If no instruction returned False, Integration was successful. Exit the loop.
-            if not np.any(ret == False):
+            if not np.any(np.array(ret) == False):
                 status = True
-            self._failoperation()
-            i += 1
+            else:
+                self._failoperation()
+                i += 1
         # Update the variables.
         for i, inst in enumerate(self.instructions):
             update(None, inst.Y, None)

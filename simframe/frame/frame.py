@@ -101,7 +101,7 @@ class Frame(Group):
         starting_index = np.argmin(self.integrator.var >= self.integrator.var.snapshots)
         for i in range(starting_index, len(self.integrator.var.snapshots)):
 
-            # NExtsnapshot cannot be referenced directly, because it dynamically changes.
+            # Nextsnapshot cannot be referenced directly, because it dynamically changes.
             nextsnapshot = self.integrator.var.nextsnapshot
             while self.integrator.var < nextsnapshot:
                 self.integrator.integrate()

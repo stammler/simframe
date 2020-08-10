@@ -82,6 +82,14 @@ class Field(np.ndarray, AbstractGroup):
         return ret
 
     @property
+    def intvar(self):
+        #if not isinstance(self._owner.integration, Integrator):
+        #    raise RuntimeError("No integrator set.")
+        #if not isinstance(self._owner.integrator.var, Field):
+        #    raise RuntimeError("No integration variable assigned to integrator.")
+        return self._owner.integrator.var
+
+    @property
     def constant(self):
         return self._constant
     @constant.setter
