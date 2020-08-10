@@ -3,11 +3,15 @@ from simframe.integration import AbstractScheme
 import numpy as np
 
 # Butcher coefficients
-b0, b1  =  1/2, 1/2
-e0, e1  = -1/2, 1/2
+a10           = 1/2
+a20, a21      = 1/256 , 255/256
+b0 , b1 , b2  = 1/512 , 255/256, 1/512
+bs0, bs1      = 1/256 , 255/256
+e0 , e1 , e2  = b0-bs0, b1-bs1 , b2
+c1            = 1/2
 
-def _f_expl_2_heun_euler_adptv(x0, Y0, dx, *args, econ=0.0324, eps=0.1, pgrow=-0.5, pshrink=-1., safety=0.9, **kwargs):
-    """Explicit adaptive 2nd-order Heun-Euler method
+def _f_expl_2_fehlberg_adptv(x0, Y0, dx, *args, econ=0.0324, eps=0.1, pgrow=-0.5, pshrink=-1., safety=0.9, **kwargs):
+    """Explicit adaptive 2nd-order Fehlberg's method
     
     Parameters
     ----------
@@ -38,18 +42,20 @@ def _f_expl_2_heun_euler_adptv(x0, Y0, dx, *args, econ=0.0324, eps=0.1, pgrow=-0
         
     Butcher tableau
     ---------------
-      0  |  0   0
-      1  |  1   0
-    -----|---------
-         | 1/2 1/2
-         |  1   0
+      0  | 0     0       0
+     1/2 | 1/2   0       0
+      1  | 1/256 255/256 0
+    -----|---------------------
+         | 1/512 255/256 1/512
+         | 1/256 255/256 0
     """
-    k0 = Y0.derivative(x0     , Y0        )
-    k1 = Y0.derivative(x0 + dx, Y0 + k0*dx)
+    k0 = Y0.derivative(x0        , Y0                       )
+    k1 = Y0.derivative(x0 + c1*dx, Y0 +  a10*k0          *dx)
+    k2 = Y0.derivative(x0 +    dx, Y0 + (a20*k0 + a21*k1)*dx)
 
     Yscale  = np.abs(Y0) + np.abs(dx*k0)
 
-    e = dx*(e0*k0 + e1*k1)
+    e = dx*(e0*k0 + e1*k1 + e2*k2)
     emax = np.max(np.abs(e/Yscale)) / eps
 
     # Integration successful
@@ -57,11 +63,11 @@ def _f_expl_2_heun_euler_adptv(x0, Y0, dx, *args, econ=0.0324, eps=0.1, pgrow=-0
         # Suggest new stepsize
         dxnew = safety*dx*emax**pgrow if econ > emax else 5.*dx
         x0.suggest(dxnew)
-        return dx*(b0*k0 + b1*k1)
+        return dx*(b0*k0 + b1*k1 + b2*k2)
     else:
         # Suggest new stepsize
         dxnew = np.maximum(safety*dx*emax**pshrink, 0.1*dx)
         x0.suggest(dxnew)
         return False
 
-expl_2_heun_euler_adptv = AbstractScheme(_f_expl_2_heun_euler_adptv, description="Explicit adaptive 2nd-order Heun-Euler method")
+expl_2_fehlberg_adptv = AbstractScheme(_f_expl_2_fehlberg_adptv, description="Explicit adaptive 2nd-order Fehlberg's method")
