@@ -119,14 +119,14 @@ def _converttodict(o):
 
     # These things are written directy into the dictionary.
     direct = (numbers.Number, np.number, tuple,
-              list, dict, np.ndarray, str, None)
+              list, dict, np.ndarray, str)
 
     for key, val in o.__dict__.items():
 
         if key.startswith("_"):
             continue
 
-        if isinstance(val, direct):
+        if val is not None and isinstance(val, direct):
             ret[key] = copy.copy(val)
         else:
             ret[key] = _converttodict(val)
