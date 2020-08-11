@@ -4,6 +4,7 @@ import os
 from simframe.io.reader import Reader
 from simframe.frame.abstractgroup import AbstractGroup
 
+
 class Writer(object):
     """General class for writing outputs. It should be used as wrapper for customized writer."""
 
@@ -43,11 +44,12 @@ class Writer(object):
         self.overwrite = overwrite
         self.description = description
         self.options = options
-        self.read = reader(self)
+        self.read = reader(self) if reader is not None else None
 
     @property
     def datadir(self):
         return self._datadir
+
     @datadir.setter
     def datadir(self, value):
         if not isinstance(value, str):
@@ -57,6 +59,7 @@ class Writer(object):
     @property
     def description(self):
         return self._description
+
     @description.setter
     def description(self, value):
         if value is None:
@@ -68,6 +71,7 @@ class Writer(object):
     @property
     def extension(self):
         return self._extension
+
     @extension.setter
     def extension(self, value):
         if not isinstance(value, str):
@@ -79,6 +83,7 @@ class Writer(object):
     @property
     def filename(self):
         return self._filename
+
     @filename.setter
     def filename(self, value):
         if not isinstance(value, str):
@@ -90,6 +95,7 @@ class Writer(object):
     @property
     def options(self):
         return self._options
+
     @options.setter
     def options(self, value):
         if not isinstance(value, dict):
@@ -99,6 +105,7 @@ class Writer(object):
     @property
     def read(self):
         return self._reader
+
     @read.setter
     def read(self, value):
         if isinstance(value, Reader) or (value is None):
@@ -109,6 +116,7 @@ class Writer(object):
     @property
     def overwrite(self):
         return self._overwrite
+
     @overwrite.setter
     def overwrite(self, value):
         if not isinstance(value, np.int):
@@ -121,6 +129,7 @@ class Writer(object):
     @property
     def zfill(self):
         return self._zfill
+
     @zfill.setter
     def zfill(self, value):
         value = np.int(value)
@@ -130,19 +139,19 @@ class Writer(object):
 
     def checkdatadir(self, datadir=None, createdir=False):
         """Function checks if data directory exists and creates it if necessary.
-        
+
         Parameters
         ----------
         datadir : string or None, optinal, default : None
             Data directory to be checked. If None it assumes the data directory of the parent writer.
         createdir : boolen, optional, default : False
             If True function creates data directory if it does not exist.
-            
+
         Returns
         -------
         datadirexists : boolean
             True if directory exists, False if not"""
-        
+
         datadir = self.datadir if datadir is None else datadir
 
         if not os.path.exists(self.datadir) and createdir:
@@ -161,7 +170,8 @@ class Writer(object):
         ret += "-" * (len(ret)-1) + "\n"
         ret += "    Data directory : {}\n".format(self.datadir)
         ret += "    File names     : {}\n".format(self._getfilename(0))
-        ret += "    Overwrite      : {}\n".format("\033[93m{}\033[0m".format(self.overwrite) if self.overwrite else self.overwrite)
+        ret += "    Overwrite      : {}\n".format("\033[93m{}\033[0m".format(
+            self.overwrite) if self.overwrite else self.overwrite)
         ret += "    options        : {}".format(self.options)
         return ret
 
@@ -191,7 +201,7 @@ class Writer(object):
 
     def write(self, owner, i, forceoverwrite, filename=""):
         """Writes output to file
-        
+
         Parameters
         ----------
         owner : Frame
@@ -202,14 +212,15 @@ class Writer(object):
             If True it will forces and overwrite of the file if it exists.
         filename : string
             If this is not "" the writer will use this filename instead of the standard scheme"""
-        
+
         if filename == "":
             filename = self._getfilename(i)
             self.checkdatadir(createdir=True)
         if not forceoverwrite:
             if not self.overwrite:
                 if os.path.isfile(filename):
-                    raise RuntimeError("File {} already exists.".format(filename))
+                    raise RuntimeError(
+                        "File {} already exists.".format(filename))
         self._func(owner, filename, **self.options)
         msg = "Writing file \033[94m'{}'\033[0m".format(filename)
         print(msg)

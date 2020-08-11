@@ -57,10 +57,10 @@ class Frame(Group):
         return self._writer
 
     @writer.setter
-    def writer(self, writer):
-        if writer is not None and type(writer) is not Writer:
+    def writer(self, value):
+        if value is not None and not isinstance(value, Writer):
             raise TypeError("writer hat to be of type Writer or None.")
-        self._writer = writer
+        self._writer = value
 
     def writeoutput(self, i=0, forceoverwrite=False, filename="", **kwargs):
         """Writes output to file, if writer is specified.
@@ -87,21 +87,25 @@ class Frame(Group):
 
         # Check if integration variable is set
         if not isinstance(self.integrator.var, IntVar):
-            raise RuntimeError("No integration variable assigned to integrator.")
+            raise RuntimeError(
+                "No integration variable assigned to integrator.")
 
         # If there are no snapshots set
         if not len(self.integrator.var.snapshots):
-            raise RuntimeError("No snapshots set. At least one snapshot has to be given.")
+            raise RuntimeError(
+                "No snapshots set. At least one snapshot has to be given.")
 
         # If integration variable passed maximum value of snapshots
         if self.integrator.var >= self.integrator.var.snapshots[-1]:
-            raise RuntimeError("Integration variable already passed the largest snapshot.")
+            raise RuntimeError(
+                "Integration variable already passed the largest snapshot.")
 
         # Write initial conditions
         if self.integrator.var < self.integrator.var.snapshots[0]:
             self.writeoutput(0)
 
-        starting_index = np.argmin(self.integrator.var >= self.integrator.var.snapshots)
+        starting_index = np.argmin(
+            self.integrator.var >= self.integrator.var.snapshots)
         for i in range(starting_index, len(self.integrator.var.snapshots)):
 
             # Nextsnapshot cannot be referenced directly, because it dynamically changes.
