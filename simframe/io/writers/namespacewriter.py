@@ -38,7 +38,8 @@ class _namespacewriter(Writer):
         ret += "-" * (len(ret)-1) + "\n"
         ret += "    Writer to convert Frame objects into namespace.\n"
         ret += "    Can be accessed with <Writer>.read.output(i) and\n"
-        ret += "    <Writer>.read.all()."
+        ret += "    <Writer>.read.all().\n\n"
+        ret += "    Verbosity      : {}".format(self.verbose)
         return ret
 
     def _getfilename(self):
@@ -59,9 +60,10 @@ class _namespacewriter(Writer):
         filename : string
             Not used in this class"""
         self._buffer.append(self._func(owner))
-        num = str(i).zfill(self._zfill)
-        msg = "Saving frame {}".format(num)
-        print(msg)
+        if self.verbose > 0:
+            num = str(i).zfill(self._zfill)
+            msg = "Saving frame {}".format(num)
+            print(msg)
 
 
 class namespacereader(Reader):

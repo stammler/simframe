@@ -17,9 +17,11 @@ class Writer(object):
     _options = {}
     _read = None
     _overwrite = False
+    _verbose = 1
     _zfill = 4
 
-    def __init__(self, func, datadir="data", filename="data", zfill=4, extension="out", overwrite=False, reader=None, description="", options={}):
+    def __init__(self, func, datadir="data", filename="data", zfill=4, extension="out", overwrite=False,
+                 reader=None, verbose=1, description="", options={}):
         """Parameters
         ----------
         func : callable
@@ -34,6 +36,10 @@ class Writer(object):
             filename extension of the data files
         overwrite : boolean, optional, default : False
             If existing files should be overwritten
+        reader : Reader, optional, default : None
+            reader to read files
+        verbose : int, optional, default : 1
+            Verbosity of writer
         options : dict, optional, default : {}
             Optional keyword arguments that need to be passed to writing algorithm"""
         self._func = func
@@ -44,6 +50,7 @@ class Writer(object):
         self.overwrite = overwrite
         self.description = description
         self.options = options
+        self.verbose = verbose
         self.read = reader(self) if reader is not None else None
 
     @property
@@ -127,6 +134,16 @@ class Writer(object):
             self._overwrite = False
 
     @property
+    def verbose(self):
+        return self._verbose
+
+    @verbose.setter
+    def verbose(self, value):
+        if not isinstance(value, np.int):
+            raise TypeError("<verbose> has to be of type int.")
+        self._verbose = value
+
+    @property
     def zfill(self):
         return self._zfill
 
@@ -172,7 +189,8 @@ class Writer(object):
         ret += "    File names     : {}\n".format(self._getfilename(0))
         ret += "    Overwrite      : {}\n".format("\033[93m{}\033[0m".format(
             self.overwrite) if self.overwrite else self.overwrite)
-        ret += "    options        : {}".format(self.options)
+        ret += "    Options        : {}\n".format(self.options)
+        ret += "    Verbosity      : {}".format(self.verbose)
         return ret
 
     def _getfilename(self, i):
@@ -222,5 +240,6 @@ class Writer(object):
                     raise RuntimeError(
                         "File {} already exists.".format(filename))
         self._func(owner, filename, **self.options)
-        msg = "Writing file \033[94m'{}'\033[0m".format(filename)
-        print(msg)
+        if self.verbose > 0:
+            msg = "Writing file \033[94m'{}'\033[0m".format(filename)
+            print(msg)
