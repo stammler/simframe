@@ -119,7 +119,7 @@ def _converttodict(o):
 
     # These things are written directy into the dictionary.
     direct = (numbers.Number, np.number, tuple,
-              list, dict, np.ndarray, str)
+              list, np.ndarray, str)
 
     for key, val in o.__dict__.items():
 
@@ -145,15 +145,15 @@ def _zip(dicts):
     Returns
     -------
     n : SimpleNamespace
-        Namespace of contanuated dicts
+        Namespace of concatenated dicts
     """
     N = len(dicts)
     ret = {}
     for key, val in dicts[0].items():
-        if isinstance(val, SimpleNamespace):
+        if isinstance(val, dict):
             d = []
             for i in range(N):
-                d.append(dicts[i][key].__dict__)
+                d.append(dicts[i][key])
             ret[key] = _zip(d)
         else:
             l = []
