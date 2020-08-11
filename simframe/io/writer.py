@@ -172,8 +172,9 @@ class Writer(object):
         datadir = self.datadir if datadir is None else datadir
 
         if not os.path.exists(self.datadir) and createdir:
-            msg = "Creating data directory '{:s}'.".format(self.datadir)
-            print(msg)
+            if self.verbose > 0:
+                msg = "Creating data directory '{:s}'.".format(self.datadir)
+                print(msg)
             os.makedirs(self.datadir)
 
         return os.path.exists(self.datadir)
