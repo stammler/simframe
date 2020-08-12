@@ -65,6 +65,14 @@ class _namespacewriter(Writer):
             msg = "Saving frame {}".format(num)
             print(msg)
 
+    def reset(self):
+        """This resets the namespace.
+
+        Notes
+        -----
+        WARNING: This cannot be undone."""
+        self._buffer = []
+
 
 class namespacereader(Reader):
     """Class to read namespaceoutputs"""
