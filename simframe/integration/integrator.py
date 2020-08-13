@@ -6,9 +6,10 @@ from simframe.frame.intvar import IntVar
 from simframe.integration.instruction import Instruction
 from simframe.integration.schemes import update
 
+
 class Integrator:
     """Integrator class that manages the integration instructions"""
-    
+
     __name__ = "Integrator"
 
     _description = ""
@@ -21,7 +22,7 @@ class Integrator:
 
     def __init__(self, var, instructions=[], failop=None, preparation=None, finalization=None, maxit=500, description=""):
         """Integrator
-        
+
         Parameters
         ----------
         var : IntVar
@@ -55,6 +56,7 @@ class Integrator:
     @property
     def description(self):
         return self._description
+
     @description.setter
     def description(self, value):
         if not isinstance(value, str):
@@ -64,6 +66,7 @@ class Integrator:
     @property
     def failop(self):
         return self._failop
+
     @failop.setter
     def failop(self, value):
         if isinstance(value, Heartbeat):
@@ -74,6 +77,7 @@ class Integrator:
     @property
     def finalization(self):
         return self._finalization
+
     @finalization.setter
     def finalization(self, value):
         if isinstance(value, Heartbeat):
@@ -84,30 +88,34 @@ class Integrator:
     @property
     def instructions(self):
         return self._instructions
+
     @instructions.setter
     def instructions(self, value):
         if not isinstance(value, list):
             raise TypeError("<instructions> has to be of type list.")
         for val in value:
             if not isinstance(val, Instruction):
-                raise TypeError("<instructions> has to be list of Instructions")
+                raise TypeError(
+                    "<instructions> has to be list of Instructions")
         self._instructions = value
 
     @property
     def maxit(self):
         return self._maxit
+
     @maxit.setter
     def maxit(self, value):
         value = np.int(value)
         if not isinstance(value, np.int):
             raise TypeError("maxit has to be of type int.")
-        if value <=0:
+        if value <= 0:
             raise ValueError("maxit has to be larger 0.")
         self._maxit = value
 
     @property
     def preparation(self):
         return self._preparation
+
     @preparation.setter
     def preparation(self, value):
         if isinstance(value, Heartbeat):
@@ -118,11 +126,12 @@ class Integrator:
     @property
     def var(self):
         return self._var
+
     @var.setter
     def var(self, value):
         if not isinstance(value, IntVar):
             raise TypeError("<var> has to be of type Intvar.")
-        self._var = value    
+        self._var = value
 
     def integrate(self):
         """Method that executes one integration step."""
@@ -134,7 +143,8 @@ class Integrator:
         status = False
         while(not status):
             if i >= self.maxit:
-                raise StopIteration("Maximum number of integration attempts exceeded.")
+                raise StopIteration(
+                    "Maximum number of integration attempts exceeded.")
             # Reset buffers
             for inst in self.instructions:
                 inst.Y._buffer = 0
@@ -150,6 +160,8 @@ class Integrator:
                 i += 1
         # Update the variables.
         for i, inst in enumerate(self.instructions):
+            if inst.Y._buffer is None:
+                continue
             update(None, inst.Y, None)
         # Finalization
         self._finalize()
@@ -157,12 +169,12 @@ class Integrator:
     def _failoperation(self, *args, **kwargs):
         """This operation will be executed if any integration instruction failed and before the
         integrator tries it again. It will execute the Heartbeat of Integrator.failop.
-        
+
         Parameters
         ----------
         args : additional positional arguments
         kwargs : additional keyword arguments
-        
+
         Notes
         -----
         args, and kwargs will only be passed to the updater, NOT systole and diastole."""
@@ -171,12 +183,12 @@ class Integrator:
     def _prepare(self, *args, **kwargs):
         """This operation will be executed before the integration. It will execute the
         Heartbeat of Integrator.preparation.
-        
+
         Parameters
         ----------
         args : additional positional arguments
         kwargs : additional keyword arguments
-        
+
         Notes
         -----
         args, and kwargs will only be passed to the updater, NOT systole and diastole."""
@@ -185,12 +197,12 @@ class Integrator:
     def _finalize(self, *args, **kwargs):
         """This operation will be executed before the integration. It will execute the
         Heartbeat of Integrator.finalization.
-        
+
         Parameters
         ----------
         args : additional positional arguments
         kwargs : additional keyword arguments
-        
+
         Notes
         -----
         args, and kwargs will only be passed to the updater, NOT systole and diastole."""

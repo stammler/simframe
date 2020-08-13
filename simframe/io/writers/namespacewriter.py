@@ -14,32 +14,32 @@ class _namespacewriter(Writer):
 
     _buffer = []
 
-    def __init__(self, func, zfill=0, reader=None, description="Temporary namespace writer"):
+    def __init__(self, func, datadir="data", zfill=0, dumping=True, reader=None, description="Temporary namespace writer"):
         """
         Parameters
         ----------
         func : callable
             Function that writes Frame object.
+        datadir : str, optional, default : "data"
+            Path to data directory. Only used for dump files
         zfill : int, optional default : 4
             leading zeros of output numbers
+        dumping : boolean, optional, default : True
+            if True dump files are written
         reader, Reader, optional, default : None
             Reader to read the outputs
         description : str, optional, default : "Namespace writer"
         """
-        super().__init__(func, datadir="", filename="_", zfill=zfill, extension="",
-                         overwrite=False, reader=reader, description=description)
-
-    def __str__(self):
-        ret = AbstractGroup.__str__(self)
-        return ret
+        super().__init__(func, datadir=datadir, filename="_", zfill=zfill, extension="",
+                         overwrite=False, dumping=dumping, reader=reader, description=description)
 
     def __repr__(self):
         ret = self.__str__()+"\n"
         ret += "-" * (len(ret)-1) + "\n"
-        ret += "    Writer to convert Frame objects into namespace.\n"
-        ret += "    Can be accessed with <Writer>.read.output(i) and\n"
-        ret += "    <Writer>.read.all().\n\n"
-        ret += "    Verbosity      : {}".format(self.verbose)
+        ret += "    Data directory : {}\n".format(self.datadir)
+        ret += "    Dumping        : {}\n".format("\033[93m{}\033[0m".format(
+            self.dumping) if not self.dumping else self.dumping)
+        ret += "    Verbosity      : {}".format(self.verbosity)
         return ret
 
     def _getfilename(self):
@@ -60,10 +60,12 @@ class _namespacewriter(Writer):
         filename : string
             Not used in this class"""
         self._buffer.append(self._func(owner))
-        if self.verbose > 0:
+        if self.verbosity > 0:
             num = str(i).zfill(self._zfill)
             msg = "Saving frame {}".format(num)
             print(msg)
+        if self.dumping:
+            self.writedump(owner)
 
     def reset(self):
         """This resets the namespace.

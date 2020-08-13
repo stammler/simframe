@@ -42,7 +42,8 @@ class IntVar(Field):
             Descriptive string for the field
         copy : boolean, optional, default : True
             If True <value> will be copied, not referenced"""
-        obj = super().__new__(cls, owner, value, updater=updater, description=description, constant=False, copy=copy)
+        obj = super().__new__(cls, owner, value, updater=updater,
+                              description=description, constant=False, copy=copy)
         obj.snapshots = snapshots
         return obj
 
@@ -77,7 +78,8 @@ class IntVar(Field):
         ----------
         value : Field
             Suggested step size"""
-        self.suggested = value if self._suggested is None else np.minimum(self._suggested, value)
+        self.suggested = value if self._suggested is None else np.minimum(
+            self._suggested, value)
 
     @property
     def suggested(self):
@@ -88,14 +90,16 @@ class IntVar(Field):
     @suggested.setter
     def suggested(self, value):
         if value <= 0:
-            raise ValueError("Suggested step size has to be greater than zero.")
+            raise ValueError(
+                "Suggested step size has to be greater than zero.")
         self._suggested = value
 
     @property
     def stepsize(self):
         if isinstance(self.updater, Heartbeat):
             return np.minimum(self.updater.beat(self._owner), self.maxstepsize)
-        raise RuntimeError("You need to set an Updater for stepsize function first.")
+        raise RuntimeError(
+            "You need to set an Updater for stepsize function first.")
 
     @property
     def snapshots(self):

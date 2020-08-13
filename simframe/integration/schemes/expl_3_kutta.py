@@ -1,15 +1,15 @@
 from simframe.integration import AbstractScheme
 
 # Butcher coefficients
-a10          = 1/2
-a21          = 2.
-b0 , b1, b2  = 1/6, 2/3, 1/6
-c1           = 1/2
+a10 = 1/2
+a21 = 2.
+b0, b1, b2 = 1/6, 2/3, 1/6
+c1 = 1/2
 
 
 def _f_expl_3_kutta(x0, Y0, dx, *args, **kwargs):
     """Explicit 3rd-order Kutta's method
-    
+
     Parameters
     ----------
     x0 : Intvar
@@ -20,12 +20,12 @@ def _f_expl_3_kutta(x0, Y0, dx, *args, **kwargs):
         Stepsize of integration variable
     args : additional positional arguments
     kwargs : additional keyworda arguments
-        
+
     Returns
     -------
-    dY : Field
-        Delta of variable to be integrated
-        
+    Y1 : Field
+        New value of Y
+
     Butcher tableau
     ---------------
       0  |  0   0   0
@@ -34,10 +34,12 @@ def _f_expl_3_kutta(x0, Y0, dx, *args, **kwargs):
     -----|-------------
          | 1/6 2/3 1/6
     """
-    k0 = Y0.derivative(x0        , Y0                       )
-    k1 = Y0.derivative(x0 + c1*dx, Y0 +  a10*k0          *dx)
-    k2 = Y0.derivative(x0 +    dx, Y0 + (   -k0 + a21*k1)*dx)
-    
-    return dx*(b0*k0 + b1*k1 + b2*k2)
+    k0 = Y0.derivative(x0, Y0)
+    k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0 * dx)
+    k2 = Y0.derivative(x0 + dx, Y0 + (-k0 + a21*k1)*dx)
 
-expl_3_kutta = AbstractScheme(_f_expl_3_kutta, description="Explicit 3rd-order Kutta's method")
+    return Y0 + dx*(b0*k0 + b1*k1 + b2*k2)
+
+
+expl_3_kutta = AbstractScheme(
+    _f_expl_3_kutta, description="Explicit 3rd-order Kutta's method")

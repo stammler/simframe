@@ -1,13 +1,14 @@
 from simframe.integration import AbstractScheme
 
 # Butcher coefficients
-a10    = 2/3
+a10 = 2/3
 b0, b1 = 1/4, 3/4
-c1     = 2/3
+c1 = 2/3
+
 
 def _f_expl_2_ralston(x0, Y0, dx, *args, **kwargs):
     """Explicit 2nd-order Ralston's method
-    
+
     Parameters
     ----------
     x0 : Intvar
@@ -18,12 +19,12 @@ def _f_expl_2_ralston(x0, Y0, dx, *args, **kwargs):
         Stepsize of integration variable
     args : additional positional arguments
     kwargs : additional keyworda arguments
-        
+
     Returns
     -------
-    dY : Field
-        Delta of variable to be integrated
-        
+    Y1 : Field
+        New value of Y
+
     Butcher tableau
     ---------------
       0  |  0   0
@@ -31,9 +32,11 @@ def _f_expl_2_ralston(x0, Y0, dx, *args, **kwargs):
     -----|---------
          | 1/4 3/4
     """
-    k0 = Y0.derivative(x0        , Y0            )
+    k0 = Y0.derivative(x0, Y0)
     k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0*dx)
-    
-    return dx*(b0*k0 + b1*k1)
 
-expl_2_ralston = AbstractScheme(_f_expl_2_ralston, description="Explicit 2nd-order Ralston's method")
+    return Y0 + dx*(b0*k0 + b1*k1)
+
+
+expl_2_ralston = AbstractScheme(
+    _f_expl_2_ralston, description="Explicit 2nd-order Ralston's method")

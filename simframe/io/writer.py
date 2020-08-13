@@ -1,7 +1,9 @@
+import dill
 import numpy as np
 import os
 
 from simframe.io.reader import Reader
+from simframe.io.dump import writedump
 from simframe.frame.abstractgroup import AbstractGroup
 
 
@@ -12,16 +14,17 @@ class Writer(object):
 
     _datadir = "data"
     _description = ""
+    _dumping = True
     _extension = "out"
     _filename = "data"
     _options = {}
     _read = None
     _overwrite = False
-    _verbose = 1
+    _verbosity = 1
     _zfill = 4
 
-    def __init__(self, func, datadir="data", filename="data", zfill=4, extension="out", overwrite=False,
-                 reader=None, verbose=1, description="", options={}):
+    def __init__(self, func, datadir="data", filename="data", zfill=4, extension="out", overwrite=False, dumping=True,
+                 reader=None, verbosity=1, description="", options={}):
         """Parameters
         ----------
         func : callable
@@ -36,9 +39,11 @@ class Writer(object):
             filename extension of the data files
         overwrite : boolean, optional, default : False
             If existing files should be overwritten
+        dumping : boolean, optional, default : True
+            If True dump files will be written
         reader : Reader, optional, default : None
             reader to read files
-        verbose : int, optional, default : 1
+        verbosity : int, optional, default : 1
             Verbosity of writer
         options : dict, optional, default : {}
             Optional keyword arguments that need to be passed to writing algorithm"""
@@ -48,9 +53,10 @@ class Writer(object):
         self.zfill = zfill
         self.extension = extension
         self.overwrite = overwrite
+        self.dumping = dumping
         self.description = description
         self.options = options
-        self.verbose = verbose
+        self.verbosity = verbosity
         self.read = reader(self) if reader is not None else None
 
     @property
@@ -134,14 +140,27 @@ class Writer(object):
             self._overwrite = False
 
     @property
-    def verbose(self):
-        return self._verbose
+    def dumping(self):
+        return self._dumping
 
-    @verbose.setter
-    def verbose(self, value):
+    @dumping.setter
+    def dumping(self, value):
         if not isinstance(value, np.int):
-            raise TypeError("<verbose> has to be of type int.")
-        self._verbose = value
+            raise TypeError("<dumping> has to be of type bool.")
+        if value:
+            self._dumping = True
+        else:
+            self._dumping = False
+
+    @property
+    def verbosity(self):
+        return self._verbosity
+
+    @verbosity.setter
+    def verbosity(self, value):
+        if not isinstance(value, np.int):
+            raise TypeError("<verbosity> has to be of type int.")
+        self._verbosity = value
 
     @property
     def zfill(self):
@@ -172,7 +191,7 @@ class Writer(object):
         datadir = self.datadir if datadir is None else datadir
 
         if not os.path.exists(self.datadir) and createdir:
-            if self.verbose > 0:
+            if self.verbosity > 0:
                 msg = "Creating data directory '{:s}'.".format(self.datadir)
                 print(msg)
             os.makedirs(self.datadir)
@@ -190,8 +209,10 @@ class Writer(object):
         ret += "    File names     : {}\n".format(self._getfilename(0))
         ret += "    Overwrite      : {}\n".format("\033[93m{}\033[0m".format(
             self.overwrite) if self.overwrite else self.overwrite)
+        ret += "    Dumping        : {}\n".format("\033[93m{}\033[0m".format(
+            self.dumping) if not self.dumping else self.dumping)
         ret += "    Options        : {}\n".format(self.options)
-        ret += "    Verbosity      : {}".format(self.verbose)
+        ret += "    Verbosity      : {}".format(self.verbosity)
         return ret
 
     def _getfilename(self, i):
@@ -218,6 +239,27 @@ class Writer(object):
 
         return os.path.join(self.datadir, filename)
 
+    def writedump(self, frame, filename=""):
+        """Writes the frame to dump file
+
+        Parameters
+        ----------
+        frame : object
+            object to be written to file
+        filename : str, optional, default : ""
+            path to file to be written
+            if not set, filename will be <writer.datadir>/frame.dmp."""
+
+        filename = os.path.join(
+            self.datadir, "frame.dmp") if filename == "" else filename
+        self.checkdatadir(createdir=True)
+
+        if self.verbosity > 0:
+            msg = "Writing dump file \033[94m'{}'\033[0m".format(filename)
+            print(msg)
+
+        writedump(frame, filename)
+
     def write(self, owner, i, forceoverwrite, filename=""):
         """Writes output to file
 
@@ -241,6 +283,8 @@ class Writer(object):
                     raise RuntimeError(
                         "File {} already exists.".format(filename))
         self._func(owner, filename, **self.options)
-        if self.verbose > 0:
+        if self.verbosity > 0:
             msg = "Writing file \033[94m'{}'\033[0m".format(filename)
             print(msg)
+        if self.dumping:
+            self.writedump(owner)

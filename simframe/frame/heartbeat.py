@@ -52,7 +52,8 @@ class Heartbeat(object):
         elif hasattr(value, "__call__") or value is None:
             self._systole = Updater(value)
         else:
-            raise TypeError("Systole has to be of type Updater, None, or has to be callable.")
+            raise TypeError(
+                "Systole has to be of type Updater, None, or has to be callable.")
 
     @property
     def updater(self):
@@ -65,7 +66,8 @@ class Heartbeat(object):
         elif hasattr(value, "__call__") or value is None:
             self._updater = Updater(value)
         else:
-            raise TypeError("Updater has to be of type Updater, None, or has to be callable.")
+            raise TypeError(
+                "Updater has to be of type Updater, None, or has to be callable.")
 
     @property
     def diastole(self):
@@ -78,15 +80,20 @@ class Heartbeat(object):
         elif hasattr(value, "__call__") or value is None:
             self._diastole = Updater(value)
         else:
-            raise TypeError("Diastole has to be of type Updater, None, or has to be callable.")
+            raise TypeError(
+                "Diastole has to be of type Updater, None, or has to be callable.")
 
-    def beat(self, owner, *args, **kwargs):
+    def beat(self, owner, *args, Y=None, update=False, **kwargs):
         """This method executes systole, updater, and distole in that order.
 
         Parameters
         ----------
         owner : Frame
             Parent frame object to which updater belongs
+        Y : Field, optional, default : None
+            Field that should be updated
+        update : boolean, optional, default : True
+            If True Y is updated immediately
 
         Notes
         -----
@@ -98,6 +105,7 @@ class Heartbeat(object):
 
         self.systole.update(owner)
         ret = self.updater.update(owner, *args, **kwargs)
+        if update:
+            Y._setvalue(ret)
         self.diastole.update(owner)
-
         return ret

@@ -2,13 +2,13 @@ from simframe.integration import AbstractScheme
 
 # Butcher coefficients
 a10, a21 = 1/3, 2/3
-c1 , c2  = 1/3, 2/3
-b0 , b2  = 1/4, 3/4
+c1, c2 = 1/3, 2/3
+b0, b2 = 1/4, 3/4
 
 
 def _f_expl_3_heun(x0, Y0, dx, *args, **kwargs):
     """Explicit 3rd-order Heun's method
-    
+
     Parameters
     ----------
     x0 : Intvar
@@ -19,12 +19,12 @@ def _f_expl_3_heun(x0, Y0, dx, *args, **kwargs):
         Stepsize of integration variable
     args : additional positional arguments
     kwargs : additional keyworda arguments
-        
+
     Returns
     -------
-    dY : Field
-        Delta of variable to be integrated
-        
+    Y1 : Field
+        New value of Y
+
     Butcher tableau
     ---------------
       0  |  0   0   0
@@ -33,10 +33,12 @@ def _f_expl_3_heun(x0, Y0, dx, *args, **kwargs):
     -----|-------------
          | 1/4  0  3/4
     """
-    k0 = Y0.derivative(x0        , Y0            )
+    k0 = Y0.derivative(x0, Y0)
     k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0*dx)
     k2 = Y0.derivative(x0 + c2*dx, Y0 + a21*k1*dx)
-    
-    return dx*(b0*k0 + b2*k2)
 
-expl_3_heun = AbstractScheme(_f_expl_3_heun, description="Explicit 3rd-order Heun's method")
+    return Y0 + dx*(b0*k0 + b2*k2)
+
+
+expl_3_heun = AbstractScheme(
+    _f_expl_3_heun, description="Explicit 3rd-order Heun's method")

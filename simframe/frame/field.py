@@ -35,7 +35,7 @@ class Field(np.ndarray, AbstractGroup):
 
     _differentiator = Heartbeat(None)
     _constant = False
-    _buffer = 0.
+    _buffer = None
 
     def __new__(cls, owner, value, updater=None, differentiator=None, description="", constant=False, copy=False):
         """Parameters
@@ -78,7 +78,8 @@ class Field(np.ndarray, AbstractGroup):
         return ret
 
     def __repr__(self):
-        ret = "{}\n{}\n{}".format(self.__str__(), "-" * len(self.__str__()), np.ndarray.__str__(self.getfield(self.dtype)))
+        ret = "{}\n{}\n{}".format(self.__str__(
+        ), "-" * len(self.__str__()), np.ndarray.__str__(self.getfield(self.dtype)))
         ret = "{}".format(np.ndarray.__str__(self.getfield(self.dtype)))
         return ret
 
@@ -110,7 +111,7 @@ class Field(np.ndarray, AbstractGroup):
 
     @buffer.setter
     def buffer(self, value):
-        raise RuntimeError("Do not set the buffer directly.")
+        raise RuntimeError("Do not set buffer directly.")
 
     @property
     def differentiator(self):
@@ -134,9 +135,8 @@ class Field(np.ndarray, AbstractGroup):
         Notes
         -----
         Function calls the Heartbeat object of the field. Additional positional and keyword arguments are only
-        passed to the updater, NOT to systole and diastole. The return value of the updater will be assigned
-        to the field. Shape and data type have to match."""
-        self._setvalue(self.updater.beat(self._owner, *args, **kwargs))
+        passed to the updater, NOT to systole and diastole."""
+        self.updater.beat(self._owner, *args, Y=self, update=True, **kwargs)
 
     def derivative(self, x=None, Y=None, *args, **kwargs):
         """If differentiator is set, this returns the derivative of the field.
@@ -160,7 +160,8 @@ class Field(np.ndarray, AbstractGroup):
             if self._owner.integrator is None:
                 raise RuntimeError("x not given and no integrator set.")
             if self._owner.integrator.var is None:
-                raise RuntimeError("x not given and no integration variable set in integrator.")
+                raise RuntimeError(
+                    "x not given and no integration variable set in integrator.")
             x = self._owner.integrator.var
         Y = Y if Y is not None else self
         return self.differentiator.beat(self._owner, x, Y, *args, **kwargs)
@@ -175,6 +176,7 @@ class Field(np.ndarray, AbstractGroup):
         if self._constant:
             raise RuntimeError("Field is constant.")
         value = np.asarray(value)
-        if not value.shape == self.shape:
-            raise ValueError("Shape mismatch: " + repr(self.shape) + ", " + repr(value.shape))
+        # if self.shape is not () and not value.shape == self.shape:
+        #    raise ValueError("Shape mismatch: " +
+        #                     repr(self.shape) + ", " + repr(value.shape))
         self.setfield(value, self.dtype)

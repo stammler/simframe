@@ -3,12 +3,13 @@ from simframe.integration import AbstractScheme
 import numpy as np
 
 # Butcher coefficients
-b0, b1  =  1/2, 1/2
-e0, e1  = -1/2, 1/2
+b0, b1 = 1/2, 1/2
+e0, e1 = -1/2, 1/2
+
 
 def _f_expl_2_heun_euler_adptv(x0, Y0, dx, *args, econ=0.0324, eps=0.1, pgrow=-0.5, pshrink=-1., safety=0.9, **kwargs):
     """Explicit adaptive 2nd-order Heun-Euler method
-    
+
     Parameters
     ----------
     x0 : Intvar
@@ -29,13 +30,13 @@ def _f_expl_2_heun_euler_adptv(x0, Y0, dx, *args, econ=0.0324, eps=0.1, pgrow=-0
         Safety factor when changing step size
     args : additional positional arguments
     kwargs : additional keyworda arguments
-        
+
     Returns
     -------
-    dY : Field or False
-        Delta of variable to be integrated if integration successfule
+    Y1 : Field or False
+        New value of Y
         False if step size too large
-        
+
     Butcher tableau
     ---------------
       0  |  0   0
@@ -44,10 +45,11 @@ def _f_expl_2_heun_euler_adptv(x0, Y0, dx, *args, econ=0.0324, eps=0.1, pgrow=-0
          | 1/2 1/2
          |  1   0
     """
-    k0 = Y0.derivative(x0     , Y0        )
+    k0 = Y0.derivative(x0, Y0)
     k1 = Y0.derivative(x0 + dx, Y0 + k0*dx)
 
-    Yscale  = np.abs(Y0) + np.abs(dx*k0)
+    Yscale = np.abs(Y0) + np.abs(dx*k0)
+    Yscale[Yscale == 0.] = 1.e100       # Deactivate zero crossings
 
     e = dx*(e0*k0 + e1*k1)
     emax = np.max(np.abs(e/Yscale)) / eps
@@ -57,11 +59,13 @@ def _f_expl_2_heun_euler_adptv(x0, Y0, dx, *args, econ=0.0324, eps=0.1, pgrow=-0
         # Suggest new stepsize
         dxnew = safety*dx*emax**pgrow if econ > emax else 5.*dx
         x0.suggest(dxnew)
-        return dx*(b0*k0 + b1*k1)
+        return Y0 + dx*(b0*k0 + b1*k1)
     else:
         # Suggest new stepsize
         dxnew = np.maximum(safety*dx*emax**pshrink, 0.1*dx)
         x0.suggest(dxnew)
         return False
 
-expl_2_heun_euler_adptv = AbstractScheme(_f_expl_2_heun_euler_adptv, description="Explicit adaptive 2nd-order Heun-Euler method")
+
+expl_2_heun_euler_adptv = AbstractScheme(
+    _f_expl_2_heun_euler_adptv, description="Explicit adaptive 2nd-order Heun-Euler method")

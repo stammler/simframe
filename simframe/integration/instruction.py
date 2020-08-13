@@ -3,6 +3,7 @@ import numpy as np
 from simframe.frame.field import Field
 from simframe.integration.abstractscheme import AbstractScheme
 
+
 class Instruction(AbstractScheme):
     """Integration instruction that controls the execution of integration schemes."""
 
@@ -13,7 +14,7 @@ class Instruction(AbstractScheme):
 
     def __init__(self, scheme, Y, fstep=1., controller={}, description=""):
         """Integration instruction
-        
+
         Parameters
         ----------
         scheme : AbstractScheme
@@ -33,6 +34,7 @@ class Instruction(AbstractScheme):
     @property
     def Y(self):
         return self._Y
+
     @Y.setter
     def Y(self, value):
         if not isinstance(value, Field):
@@ -42,6 +44,7 @@ class Instruction(AbstractScheme):
     @property
     def fstep(self):
         return self._fstep
+
     @fstep.setter
     def fstep(self, value):
         value = np.float(value)
@@ -49,16 +52,15 @@ class Instruction(AbstractScheme):
             msg = "\033[93mWarning:\033[0m <fstep> is not in (0, 1]."
             print(msg)
         self._fstep = value
-        
 
     def __call__(self, dx=None):
         """Execution of the integration instruction
-        
+
         Parameters
         ----------
         dx : IntVar, optional, default : None
             Stepsize of the integration variable
-            
+
         Return
         ------
         dY : Field
@@ -71,5 +73,5 @@ class Instruction(AbstractScheme):
         if ret is True:
             return ret
         else:
-            self.Y._buffer += ret
+            self.Y._buffer = ret
             return True
