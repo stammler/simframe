@@ -8,3 +8,4 @@ ipykernel
 jupyter
 h5py
 pytest
+sphinx-automodapi
