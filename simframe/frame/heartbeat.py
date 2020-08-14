@@ -83,7 +83,7 @@ class Heartbeat(object):
             raise TypeError(
                 "Diastole has to be of type Updater, None, or has to be callable.")
 
-    def beat(self, owner, *args, Y=None, update=False, **kwargs):
+    def beat(self, owner, *args, Y=None, **kwargs):
         """This method executes systole, updater, and distole in that order.
 
         Parameters
@@ -92,8 +92,6 @@ class Heartbeat(object):
             Parent frame object to which updater belongs
         Y : Field, optional, default : None
             Field that should be updated
-        update : boolean, optional, default : True
-            If True Y is updated immediately
 
         Notes
         -----
@@ -105,7 +103,7 @@ class Heartbeat(object):
 
         self.systole.update(owner)
         ret = self.updater.update(owner, *args, **kwargs)
-        if update:
+        if Y is not None:
             Y._setvalue(ret)
         self.diastole.update(owner)
         return ret

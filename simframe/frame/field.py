@@ -136,7 +136,7 @@ class Field(np.ndarray, AbstractGroup):
         -----
         Function calls the Heartbeat object of the field. Additional positional and keyword arguments are only
         passed to the updater, NOT to systole and diastole."""
-        self.updater.beat(self._owner, *args, Y=self, update=True, **kwargs)
+        self.updater.beat(self._owner, *args, Y=self, **kwargs)
 
     def derivative(self, x=None, Y=None, *args, **kwargs):
         """If differentiator is set, this returns the derivative of the field.
