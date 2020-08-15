@@ -2,6 +2,8 @@ import dill
 import numpy as np
 import os
 
+from simframe.frame.field import Field
+from simframe.frame.intvar import IntVar
 from simframe.io.reader import Reader
 from simframe.io.dump import writedump
 from simframe.frame.abstractgroup import AbstractGroup
@@ -149,6 +151,7 @@ class Writer(object):
             raise TypeError("<dumping> has to be of type bool.")
         if value:
             self._dumping = True
+            self._preparedump()
         else:
             self._dumping = False
 
@@ -259,6 +262,21 @@ class Writer(object):
             print(msg)
 
         writedump(frame, filename)
+
+    def _preparedump(self):
+        """This function dumps a template <simframe.frame.Field> and <simframe.frame.IntVar> to file
+        and deletes the file afterwards. For some reason dill does not correctly save Fields and IntVars
+        correctly the first time. This function is called everytime <Writer.dumping> is set to True
+        to make sure dumping works correctly when needed.
+
+        This is a dirty fix. The reason why dill does not work correctly the first time is unknown.
+        """
+        filename = "temp.dmp"
+        temp = IntVar(None, 0., snapshots=[0.])
+        writedump(temp, filename)
+        temp = Field(None, 0.)
+        writedump(temp, filename)
+        os.remove(filename)
 
     def write(self, owner, i, forceoverwrite, filename=""):
         """Writes output to file
