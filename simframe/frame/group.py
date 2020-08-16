@@ -105,7 +105,8 @@ class Group(AbstractGroup):
                     name = key[:9] + "..."
                 else:
                     name = key
-                ret += "    {:12s} : {}\n".format(name, type(misc[key]).__name__)
+                ret += "    {:12s} : {}\n".format(name,
+                                                  type(misc[key]).__name__)
             ret += "  -----\n"
 
         # The Frame object should have an integrator and writer which are displayed separately.
@@ -147,6 +148,14 @@ class Group(AbstractGroup):
         else:
             self._updater = Heartbeat(value)
 
+    @property
+    def toc(self):
+        self._toc()
+
+    @toc.setter
+    def toc(self, value):
+        pass
+
     def addfield(self, name, value, updater=None, differentiator=None, description="", constant=False, copy=True):
         """Function to add a new field to the object.
 
@@ -167,7 +176,8 @@ class Group(AbstractGroup):
         copy : boolean, optional, default : True
             If True <value> will be copied, not referenced
         """
-        self.__dict__[name] = Field(self._owner, value, updater=updater, differentiator=differentiator, description=description, constant=constant, copy=copy)
+        self.__dict__[name] = Field(self._owner, value, updater=updater,
+                                    differentiator=differentiator, description=description, constant=constant, copy=copy)
 
     def addgroup(self, name, updater=None, description=""):
         """Function to add a new group to the object.
@@ -181,7 +191,8 @@ class Group(AbstractGroup):
         description : string, optional, default : ""
             Descriptive string for the group
         """
-        self.__dict__[name] = Group(self._owner, updater=updater, description=description)
+        self.__dict__[name] = Group(
+            self._owner, updater=updater, description=description)
 
     def addintegrationvariable(self, name, value, snapshots=[], updater=None, description="", copy=True):
         """Function to add a new field to the object that acts as integration variable.
@@ -201,7 +212,8 @@ class Group(AbstractGroup):
         copy : boolean, optional, default : True
             If True <value> will be copied, not referenced
         """
-        self.__dict__[name] = IntVar(self._owner, value, updater=updater, snapshots=snapshots, description=description, copy=copy)
+        self.__dict__[name] = IntVar(
+            self._owner, value, updater=updater, snapshots=snapshots, description=description, copy=copy)
 
     def _checkupdatelist(self, ls):
         """This function checks if a list is suitable to be used as update.
@@ -215,7 +227,8 @@ class Group(AbstractGroup):
                 raise ValueError("List has to be list of strings.")
         for val in ls:
             if val not in self.__dict__:
-                msg = "\033[93mWarning:\033[0m {} is not an attribute of the group".format(val)
+                msg = "\033[93mWarning:\033[0m {} is not an attribute of the group".format(
+                    val)
                 print(msg)
 
     def _createupdatefromlist(self, ls):
@@ -231,6 +244,25 @@ class Group(AbstractGroup):
         func : callable
             Function that is reduced by <self> and <ls>."""
         return partial(_dummyupdatewithlist, self, ls)
+
+    def _toc(self):
+        ret = _toc_tree(self)
+        print(ret)
+
+
+def _toc_tree(obj, prefix=""):
+    ret = "\033[94m{}\033[0m".format(obj.__str__())
+    prefix = prefix + 4*" "
+    for key in sorted(obj.__dict__.keys(), key=str.casefold):
+        if key.startswith("_"):
+            continue
+        val = obj.__dict__[key]
+        ret += "\n{}- \033[94m{}\033[0m: ".format(prefix, key)
+        if isinstance(val, Group):
+            ret += _toc_tree(val, prefix=prefix)
+        else:
+            ret += val.__str__()
+    return ret
 
 
 def _dummyupdatewithlist(grp, ls, owner, *args, **kwargs):
