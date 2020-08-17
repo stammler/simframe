@@ -1,8 +1,9 @@
 from simframe.frame.abstractgroup import AbstractGroup
 
-class AbstractScheme:
+
+class Scheme:
     """Class for an abstract integration scheme that can be used as template for creating custom schemes.
-    
+
     Notes
     -----
     The integration scheme needs to return False if the integration failed. The integrator will then
@@ -18,7 +19,7 @@ class AbstractScheme:
     def __init__(self, scheme, controller={}, description=""):
         """Abstract integration scheme.
         The integration scheme itself is callable.
-        
+
         Parameters
         ----------
         scheme : callable
@@ -32,6 +33,7 @@ class AbstractScheme:
     @property
     def scheme(self):
         return self._scheme
+
     @scheme.setter
     def scheme(self, value):
         if not hasattr(value, "__call__"):
@@ -41,6 +43,7 @@ class AbstractScheme:
     @property
     def controller(self):
         return self._controller
+
     @controller.setter
     def controller(self, value):
         if not isinstance(value, dict):
@@ -50,6 +53,7 @@ class AbstractScheme:
     @property
     def description(self):
         return self._description
+
     @description.setter
     def description(self, value):
         if not isinstance(value, str):
@@ -58,7 +62,7 @@ class AbstractScheme:
 
     def __call__(self, x0, Y0, dx, controller={}):
         """Method for returning the delta of the variable to be integrated.
-        
+
         Parameters
         ----------
         x0 : Intvar
@@ -70,7 +74,7 @@ class AbstractScheme:
         controller : dict, optional, default : {}
             Additional keyword arguments passed to integration scheme
 
-            
+
         Returns
         -------
         dY : Field or False

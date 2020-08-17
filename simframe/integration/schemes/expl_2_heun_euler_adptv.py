@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 import numpy as np
 
@@ -49,7 +49,7 @@ def _f_expl_2_heun_euler_adptv(x0, Y0, dx, *args, econ=0.0324, eps=0.1, pgrow=-0
     k1 = Y0.derivative(x0 + dx, Y0 + k0*dx)
 
     Yscale = np.abs(Y0) + np.abs(dx*k0)
-    Yscale[Yscale == 0.] = 1.e100       # Deactivate zero crossings
+    Yscale[Yscale == 0.] = 1.e100       # Deactivate for zero crossings
 
     e = dx*(e0*k0 + e1*k1)
     emax = np.max(np.abs(e/Yscale)) / eps
@@ -67,5 +67,5 @@ def _f_expl_2_heun_euler_adptv(x0, Y0, dx, *args, econ=0.0324, eps=0.1, pgrow=-0
         return False
 
 
-expl_2_heun_euler_adptv = AbstractScheme(
+expl_2_heun_euler_adptv = Scheme(
     _f_expl_2_heun_euler_adptv, description="Explicit adaptive 2nd-order Heun-Euler method")

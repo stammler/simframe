@@ -34,10 +34,11 @@ class Field(np.ndarray, AbstractGroup):
     __name__ = "Field"
 
     _differentiator = Heartbeat(None)
+    _jacobinator = Heartbeat(None)
     _constant = False
     _buffer = None
 
-    def __new__(cls, owner, value, updater=None, differentiator=None, description="", constant=False, copy=False):
+    def __new__(cls, owner, value, updater=None, differentiator=None, jacobinator=None, description="", constant=False, copy=False):
         """Parameters
         ----------
         owner : Frame
@@ -48,6 +49,8 @@ class Field(np.ndarray, AbstractGroup):
             Instruction for field update
         differentiator : Heartbeat, Updater, callable or None, optional, default : None
             Instruction for calculating derivative
+        jacobinator : Heartbeat, Updater, callable or None, optional, default : None
+            Instruction for calculating the Jacobi matrix
         description : string, optional, default : ""
             Descriptive string for the field
         constant : boolean, optional, default : False
@@ -55,9 +58,12 @@ class Field(np.ndarray, AbstractGroup):
         copy : boolean, optional, default : False
             If True <value> will be copied, not referenced"""
         obj = np.array(value, copy=copy).view(cls)
+        if obj.shape == ():
+            obj = np.array([value], copy=copy).view(cls)
         obj._owner = owner
         obj.updater = Heartbeat(updater)
         obj.differentiator = Heartbeat(differentiator)
+        obj.jacobinator = Heartbeat(jacobinator)
         obj.description = description
         obj.constant = constant
         return obj
@@ -68,6 +74,7 @@ class Field(np.ndarray, AbstractGroup):
         self._owner = getattr(obj, "_owner", None)
         self.updater = getattr(obj, "updater", Heartbeat(None))
         self.differentiator = getattr(obj, "differentiator", Heartbeat(None))
+        self.jacobinator = getattr(obj, "jacobinator", Heartbeat(None))
         self.description = getattr(obj, "description", "")
         self.constant = getattr(obj, "constant", False)
 
@@ -124,6 +131,17 @@ class Field(np.ndarray, AbstractGroup):
         else:
             self._differentiator = Heartbeat(value)
 
+    @property
+    def jacobinator(self):
+        return self._jacobinator
+
+    @jacobinator.setter
+    def jacobinator(self, value):
+        if isinstance(value, Heartbeat):
+            self._jacobinator = value
+        else:
+            self._jacobinator = Heartbeat(value)
+
     def update(self, *args, **kwargs):
         """Function to update the field.
 
@@ -152,10 +170,15 @@ class Field(np.ndarray, AbstractGroup):
 
         Returns
         -------
-        deriv : derivative of the field according the differetiator
+        deriv : derivative of the field according the differetiator or jacobinator
 
+        Notes
+        -----
         The function that calculates the derivative needs the parent frame as first positional, the
-        integration variable as second positional, and the field itself as third positional argument."""
+        integration variable as second positional, and the field itself as third positional argument.
+
+        The the differentiator is not set, it will try to calculate the derivative from the Jacobian.
+        If the jacobinator is also not set, it will return False"""
         if x is None:
             if self._owner.integrator is None:
                 raise RuntimeError("x not given and no integrator set.")
@@ -164,7 +187,38 @@ class Field(np.ndarray, AbstractGroup):
                     "x not given and no integration variable set in integrator.")
             x = self._owner.integrator.var
         Y = Y if Y is not None else self
-        return self.differentiator.beat(self._owner, x, Y, *args, **kwargs)
+        deriv = self.differentiator.beat(self._owner, x, Y, *args, **kwargs)
+        if deriv is not None:
+            return deriv
+        jac = self.jacobinator.beat(self._owner, x)
+        if jac is not None:
+            return np.dot(jac, Y)
+        else:
+            return None
+
+    def jacobian(self, x=None, *args, **kwargs):
+        """If jacobinator is set, this returns the Jacobi matrix of the field.
+
+        Parameters
+        ----------
+        x : IntVar, optional, default : None
+            Integration variable
+            If None it uses the integration variable of the integrator of the parent Frame
+
+        Returns
+        -------
+        jac : Jacobi matrix of the field according the differetiator
+
+        The function that calculates the Jacobian needs the parent frame as first positional and the
+        integration variable as second positional."""
+        if x is None:
+            if self._owner.integrator is None:
+                raise RuntimeError("x not given and no integrator set.")
+            if self._owner.integrator.var is None:
+                raise RuntimeError(
+                    "x not given and no integration variable set in integrator.")
+            x = self._owner.integrator.var
+        return self.jacobinator.beat(self._owner, x, *args, **kwargs)
 
     def _setvalue(self, value):
         """Function to set a value to the field. Direct assignement of values does overwrite the Field object.

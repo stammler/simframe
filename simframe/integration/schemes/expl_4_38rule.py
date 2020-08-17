@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 # Butcher coefficients
 a10 = 1/3
@@ -44,5 +44,5 @@ def _f_expl_4_38rule(x0, Y0, dx, *args, **kwargs):
     return Y0 + dx*(b0*k0 + b1*k1 + b2*k2 + b3*k3)
 
 
-expl_4_38rule = AbstractScheme(
+expl_4_38rule = Scheme(
     _f_expl_4_38rule, description="Explicit 4th-order 3/8 rule method")

@@ -1,10 +1,11 @@
 from simframe.integration.scheme import Scheme
 
 import numpy as np
+from scipy.sparse import linalg
 
 
-def _f_impl_1_euler_direct(x0, Y0, dx, *args, **kwargs):
-    """Implicit 1st-order Euler integration scheme with direct matrix inversion
+def _f_impl_1_euler_gmres(x0, Y0, dx, gmres_opt={}, *args, **kwargs):
+    """Implicit 1st-order Euler integration scheme with GMRES solver
 
     Parameters
     ----------
@@ -14,6 +15,8 @@ def _f_impl_1_euler_direct(x0, Y0, dx, *args, **kwargs):
         Variable to be integrated at the beginning of scheme
     dx : IntVar
         Stepsize of integration variable
+    gmres_opt : dict, optional, default : {}
+        dictionary with options for scipy GMRES solver
     args : additional positional arguments
     kwargs : additional keyworda arguments
 
@@ -32,8 +35,12 @@ def _f_impl_1_euler_direct(x0, Y0, dx, *args, **kwargs):
     N = jac.shape[0]
     eye = np.eye(N)
     A = eye - dx*jac
-    return np.dot(np.linalg.inv(A), Y0)
+    res, state = linalg.gmres(A, Y0, **gmres_opt)
+    if state != 0:
+        return False
+    else:
+        return res
 
 
-impl_1_euler_direct = Scheme(
-    _f_impl_1_euler_direct, description="Implicit 1st-order direct Euler method")
+impl_1_euler_gmres = Scheme(
+    _f_impl_1_euler_gmres, description="Implicit 1st-order Euler method with GMRES solver")

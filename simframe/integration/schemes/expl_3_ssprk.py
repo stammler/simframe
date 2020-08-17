@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 # Butcher coefficients
 a20, a21 = 1/4, 1/4
@@ -40,5 +40,5 @@ def _f_expl_3_ssprk(x0, Y0, dx, *args, **kwargs):
     return Y0 + dx*(b0*k0 + b1*k1 + b2*k2)
 
 
-expl_3_ssprk = AbstractScheme(
+expl_3_ssprk = Scheme(
     _f_expl_3_ssprk, description="Explicit 3rd-order Strong Stability Preserving Runge-Kutta method")

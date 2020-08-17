@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 # Butcher coefficients
 a10 = 1/2
@@ -41,5 +41,5 @@ def _f_expl_3_kutta(x0, Y0, dx, *args, **kwargs):
     return Y0 + dx*(b0*k0 + b1*k1 + b2*k2)
 
 
-expl_3_kutta = AbstractScheme(
+expl_3_kutta = Scheme(
     _f_expl_3_kutta, description="Explicit 3rd-order Kutta's method")

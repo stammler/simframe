@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 # Butcher coefficients
 a10 = 0.4
@@ -45,5 +45,5 @@ def _f_expl_4_ralston(x0, Y0, dx, *args, **kwargs):
     return Y0 + dx*(b0*k0 + b1*k1 + b2*k2 + b3*k3)
 
 
-expl_4_ralston = AbstractScheme(
+expl_4_ralston = Scheme(
     _f_expl_4_ralston, description="Explicit 4th-order Ralston's method")

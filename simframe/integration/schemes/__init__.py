@@ -11,9 +11,12 @@ from simframe.integration.schemes.expl_3_ralston import expl_3_ralston
 from simframe.integration.schemes.expl_3_ssprk import expl_3_ssprk
 from simframe.integration.schemes.expl_4_38rule import expl_4_38rule
 from simframe.integration.schemes.expl_4_ralston import expl_4_ralston
-from simframe.integration.schemes.expl_4_rungekutta import expl_4_rungekutta
+from simframe.integration.schemes.expl_4_runge_kutta import expl_4_runge_kutta
+from simframe.integration.schemes.expl_5_cash_karp_adptv import expl_5_cash_karp_adptv
 
 from simframe.integration.schemes.impl_1_euler_direct import impl_1_euler_direct
+from simframe.integration.schemes.impl_1_euler_gmres import impl_1_euler_gmres
+from simframe.integration.schemes.impl_2_midpoint_direct import impl_2_midpoint_direct
 
 from simframe.integration.schemes.update import update
 
@@ -30,9 +33,12 @@ __all__ = ["expl_1_euler",
            "expl_3_ssprk",
            "expl_4_38rule",
            "expl_4_ralston",
-           "expl_4_rungekutta",
+           "expl_4_runge_kutta",
+           "expl_5_cash_karp_adptv",
 
            "impl_1_euler_direct",
+           "impl_1_euler_gmres",
+           "impl_2_midpoint_direct",
 
            "update"
            ]

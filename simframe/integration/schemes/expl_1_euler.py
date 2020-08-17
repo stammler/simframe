@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 
 def _f_expl_1_euler(x0, Y0, dx, *args, **kwargs):
@@ -29,5 +29,5 @@ def _f_expl_1_euler(x0, Y0, dx, *args, **kwargs):
     return Y0 + dx*Y0.derivative(x0, Y0)
 
 
-expl_1_euler = AbstractScheme(
+expl_1_euler = Scheme(
     _f_expl_1_euler, description="Explicit 1st-order Euler method")

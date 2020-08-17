@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 
 def _update(x0, Y0, dx, *args, **kwargs):
@@ -23,4 +23,4 @@ def _update(x0, Y0, dx, *args, **kwargs):
     return True
 
 
-update = AbstractScheme(_update, description="Instruction to update Y")
+update = Scheme(_update, description="Instruction to update Y")

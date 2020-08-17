@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 import numpy as np
 
@@ -58,6 +58,7 @@ def _f_expl_3_bogacki_shampine_adptv(x0, Y0, dx, *args, econ=0.005832, eps=0.1, 
     k3 = Y0.derivative(x0 + dx, Y0 + (a30*k0 + a31*k1 + a32*k2)*dx)
 
     Yscale = np.abs(Y0) + np.abs(dx*k0)
+    Yscale[Yscale == 0.] = 1.e100       # Deactivate for zero crossings
 
     e = dx*(e0*k0 + e1*k1 + e2*k2 + e3*k3)
     emax = np.max(np.abs(e/Yscale)) / eps
@@ -75,5 +76,5 @@ def _f_expl_3_bogacki_shampine_adptv(x0, Y0, dx, *args, econ=0.005832, eps=0.1, 
         return False
 
 
-expl_3_bogacki_shampine_adptv = AbstractScheme(
+expl_3_bogacki_shampine_adptv = Scheme(
     _f_expl_3_bogacki_shampine_adptv, description="Explicit adaptive 3rd-order Bogacki-Shampine method")

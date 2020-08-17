@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 # Butcher coefficients
 a10 = 1/2
@@ -7,7 +7,7 @@ b0, b1, b2, b3 = 1/6, 1/3, 1/3, 1/6
 c1, c2 = 1/2, 1/2
 
 
-def _f_expl_4_rungekutta(x0, Y0, dx, *args, **kwargs):
+def _f_expl_4_runge_kutta(x0, Y0, dx, *args, **kwargs):
     """Explicit 4th-order classical Runge-Kutta method
 
     Parameters
@@ -44,5 +44,5 @@ def _f_expl_4_rungekutta(x0, Y0, dx, *args, **kwargs):
     return Y0 + dx*(b0*k0 + b1*k1 + b2*k2 + b3*k3)
 
 
-expl_4_rungekutta = AbstractScheme(
-    _f_expl_4_rungekutta, description="Explicit 4th-order classical Runge-Kutta method")
+expl_4_runge_kutta = Scheme(
+    _f_expl_4_runge_kutta, description="Explicit 4th-order classical Runge-Kutta method")

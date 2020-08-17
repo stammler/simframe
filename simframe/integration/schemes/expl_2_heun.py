@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 # Butcher coefficients
 a10 = 1.0
@@ -39,5 +39,5 @@ def _f_expl_2_heun(x0, Y0, dx, *args, **kwargs):
     return Y0 + dx*(b0*k0 + b1*k1)
 
 
-expl_2_heun = AbstractScheme(
+expl_2_heun = Scheme(
     _f_expl_2_heun, description="Explicit 2nd-order Heun's method")

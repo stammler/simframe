@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 # Butcher coefficients
 a10 = 0.5
@@ -37,5 +37,5 @@ def _f_expl_2_midpoint(x0, Y0, dx, *args, **kwargs):
     return Y0 + dx*k1
 
 
-expl_2_midpoint = AbstractScheme(
+expl_2_midpoint = Scheme(
     _f_expl_2_midpoint, description="Explicit 2nd-order midpoint method")

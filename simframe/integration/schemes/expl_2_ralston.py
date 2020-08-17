@@ -1,4 +1,4 @@
-from simframe.integration import AbstractScheme
+from simframe.integration.scheme import Scheme
 
 # Butcher coefficients
 a10 = 2/3
@@ -38,5 +38,5 @@ def _f_expl_2_ralston(x0, Y0, dx, *args, **kwargs):
     return Y0 + dx*(b0*k0 + b1*k1)
 
 
-expl_2_ralston = AbstractScheme(
+expl_2_ralston = Scheme(
     _f_expl_2_ralston, description="Explicit 2nd-order Ralston's method")
