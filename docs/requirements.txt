@@ -11,3 +11,5 @@ h5py
 pytest
 sphinx-automodapi
 scipy
+dill
+pytest
