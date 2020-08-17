@@ -24,7 +24,7 @@ setup(
     author_email="stammler@usm.lmu.de; til.birnstiel@lmu.de",
     packages=find_packages(),
     license="GPLv3",
-    install_requires=["dill", "h5py", "numpy", "pytest"],
+    install_requires=["dill", "h5py", "numpy", "pytest", "scipy"],
     include_package_data=True,
     zip_safe=False,
     version=read_version(),
