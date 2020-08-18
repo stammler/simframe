@@ -53,7 +53,7 @@ def test_field_differentiator():
     f = Frame()
     f.addfield("f", np.ones(5))
 
-    def upd(f, Y):
-        return 2. * Y
+    def upd(f, x, Y):
+        return 2. * x * Y
     f.f.differentiator = upd
-    assert np.all(f.f.derivative() == 2. * np.ones(5))
+    assert np.all(f.f.derivative(x=2.) == 4. * np.ones(5))

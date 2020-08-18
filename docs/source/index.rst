@@ -1,7 +1,13 @@
 Welcome to simframe's documentation!
 ====================================
 
-``simframe`` is a framework to flexibly build scientific simulations.
+| ``simframe`` is a framework to flexibly build scientific simulations.
+| It comes with a variety of integration schemes and some infrastrcuture for writing and reading data files.
+
+| To install ``simframe`` simply type
+| ``pip install simframe``
+
+| Please have a look at the following examples to learn how to use ``simframe``.
 
 .. toctree::
    :maxdepth: 2

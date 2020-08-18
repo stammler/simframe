@@ -7,5 +7,11 @@ Module Reference
 .. automodapi:: simframe.integration
     :no-inheritance-diagram:
 
+.. automodapi:: simframe.integration.schemes
+    :no-inheritance-diagram:
+
 .. automodapi:: simframe.io
+    :no-inheritance-diagram:
+
+.. automodapi:: simframe.io.writers
     :no-inheritance-diagram:

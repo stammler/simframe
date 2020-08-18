@@ -130,6 +130,9 @@ class Reader(object):
             else:
                 l = []
                 for i in range(N):
-                    l.append(dicts[i][key])
+                    v = dicts[i][key]
+                    if hasattr(v, "shape") and v.shape == (1,):
+                        v = v[0]
+                    l.append(v)
                 ret[key] = np.array(l)
         return SimpleNamespace(**ret)

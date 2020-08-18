@@ -85,10 +85,17 @@ class Field(np.ndarray, AbstractGroup):
         return ret
 
     def __repr__(self):
-        ret = "{}\n{}\n{}".format(self.__str__(
-        ), "-" * len(self.__str__()), np.ndarray.__str__(self.getfield(self.dtype)))
-        ret = "{}".format(np.ndarray.__str__(self.getfield(self.dtype)))
+        val = self.getfield(self.dtype)
+        if val.shape == (1,):
+            val = np.array(val[0])
+        ret = "{}".format(np.ndarray.__str__(val))
         return ret
+
+    def __format__(self, format_spec):
+        if self.shape == (1,):
+            return self[0].__format__(format_spec)
+        else:
+            return super().__format__(format_spec)
 
     @property
     def intvar(self):
@@ -230,7 +237,9 @@ class Field(np.ndarray, AbstractGroup):
         if self._constant:
             raise RuntimeError("Field is constant.")
         value = np.asarray(value)
-        # if self.shape is not () and not value.shape == self.shape:
-        #    raise ValueError("Shape mismatch: " +
-        #                     repr(self.shape) + ", " + repr(value.shape))
+        if value.shape == ():
+            value = np.array([value])
+        if value.shape != self.shape:
+            raise ValueError("Shape mismatch: " +
+                             repr(self.shape) + ", " + repr(value.shape))
         self.setfield(value, self.dtype)
