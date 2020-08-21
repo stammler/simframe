@@ -8,8 +8,9 @@ import os
 from simframe.io.reader import Reader
 from simframe.io.writer import Writer
 
+
 def _hdf5wrapper(obj, filename, com="lzf", comopts=None):
-    """Wrapper to write object to hdf5 file.
+    """Wrapper to write object to HDF5 file.
 
     This function recursively calls a another functions thats goes through the object tree.
 
@@ -19,7 +20,7 @@ def _hdf5wrapper(obj, filename, com="lzf", comopts=None):
         the object to be stored in a file
     filename : string
         path to file 
-    
+
     Keywords
     --------
     com : string
@@ -30,6 +31,7 @@ def _hdf5wrapper(obj, filename, com="lzf", comopts=None):
 
     with h5py.File(filename, "w") as hdf5file:
         _writehdf5(obj, hdf5file, com=com, comopts=comopts)
+
 
 def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
     """Writes a given object to a h5py file.
@@ -42,7 +44,7 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
         the object to be stored in a file
     file : hdf5 file
         open hdf5 file object
-    
+
     Keywords
     --------
     com : string
@@ -72,7 +74,7 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
             file.create_dataset(
                 name,
                 data=val
-                )
+            )
         # Check for tuple/list/dict
         elif type(val) in [tuple, list, dict]:
             # special case for list of strings
@@ -89,37 +91,37 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
                     data=val,
                     compression=com,
                     compression_opts=comopts
-                    )
+                )
         # Check for string
         elif type(val) is str:
             file.create_dataset(
                 name,
                 data=val
-                )
+            )
         # Check for Numpy array
         elif isinstance(val, np.ndarray):
             if val.shape == ():
                 file.create_dataset(
                     name,
                     data=val,
-                    )
+                )
             else:
                 file.create_dataset(
                     name,
                     data=val,
                     compression=com,
                     compression_opts=comopts
-                    )
+                )
         # Check for None
         elif val is None:
             file.create_dataset(
                 name,
                 data=0
-                )
+            )
         # Other objects
         else:
             _writehdf5(val, file, com=com,
-                              comopts=comopts, prefix=name + "/")
+                       comopts=comopts, prefix=name + "/")
 
 
 class hdf5reader(Reader):
@@ -127,7 +129,7 @@ class hdf5reader(Reader):
 
     def __init__(self, writer):
         """HDF5 reader
-        
+
         Parameters
         ----------
         writer : Writer
@@ -136,12 +138,12 @@ class hdf5reader(Reader):
 
     def output(self, filename):
         """Reads a single output file.
-        
+
         Parameters
         ----------
         filename : str
             Path to filename to be read
-            
+
         Returns
         -------
         data : SimpleNamespace
@@ -158,12 +160,12 @@ class hdf5reader(Reader):
 
     def _readgroup(self, gr):
         """Helper function that is interatively called to get the depth of the data set.
-        
+
         Parameters
         ----------
         gr : Group of type h5py._hl.group.Group
             The h5py data set to be read
-            
+
         Returns
         -------
         data : SimpleNamespace
@@ -177,4 +179,5 @@ class hdf5reader(Reader):
         return SimpleNamespace(**ret)
 
 
-hdf5writer = Writer(_hdf5wrapper, extension="hdf5", description="HDF5 file format using h5py", options={"com":"lzf", "comopts":None}, reader=hdf5reader)
+hdf5writer = Writer(_hdf5wrapper, extension="hdf5", description="HDF5 file format using h5py", options={
+                    "com": "lzf", "comopts": None}, reader=hdf5reader)

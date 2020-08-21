@@ -4,22 +4,16 @@ from simframe.frame.abstractgroup import AbstractGroup
 from simframe.frame.field import Field
 from simframe.frame.intvar import IntVar
 from simframe.frame.heartbeat import Heartbeat
+from simframe.utils.color import colorize
 
 
 class Group(AbstractGroup):
-    """Class for grouping data.
-    Group is a data frame that has additional functionality for updating its attributes.
+    """Class for grouping data. ``Group`` is a data frame that has additional functionality for updating its attributes.
 
     Notes
     -----
-    When <group>.update() is called the instructions of the group's heartbeat will be performed.
-    The function that is determing the update operation needs the parent frame object as first positional argument.
-
-
-    Examples
-    --------
-    >>> grp = Group(sim, description="My group")
-    """
+    When ``Group.update()`` is called the instructions of the group's ``Heartbeat`` object will be performed.
+    The function that is determing the update operation needs the parent ``Frame`` object as first positional argument."""
 
     __name__ = "Group"
 
@@ -114,7 +108,7 @@ class Group(AbstractGroup):
         if "_integrator" in self.__dict__.keys():
             integrator = self.__dict__["_integrator"]
             # If not set, print warning
-            txt = "\033[93mnot specified\033[0m"
+            txt = colorize("not specified", "yellow")
             if integrator is not None:
                 txt = integrator.__str__()
             ret += "    {:12s} : {}".format("Integrator", txt)
@@ -124,7 +118,7 @@ class Group(AbstractGroup):
         if "_writer" in self.__dict__.keys():
             writer = self.__dict__["_writer"]
             # If not set print warning
-            txt = "\033[93mnot specified\033[0m"
+            txt = colorize("not specified", "yellow")
             if writer is not None:
                 txt = writer.__str__()
             ret += "    {:12s} : {}".format("Writer", txt)
@@ -136,6 +130,10 @@ class Group(AbstractGroup):
     # to take lists of attributes as value.
     @property
     def updater(self):
+        '''``Heartbeat`` object with update instructions.
+
+        You can either set a ``Heartbeat`` object directly, a callable functions that will be automatically transformed into
+        a ``Heartbeat`` object, or a list of attribute names of the ``Group`` that will be updated in that order.'''
         return self._updater
 
     @updater.setter
@@ -150,6 +148,7 @@ class Group(AbstractGroup):
 
     @property
     def toc(self):
+        '''Complete table of contents starting from this object.'''
         self._toc()
 
     @toc.setter
@@ -157,7 +156,7 @@ class Group(AbstractGroup):
         pass
 
     def addfield(self, name, value, updater=None, differentiator=None, description="", constant=False, copy=True):
-        """Function to add a new field to the object.
+        """Function to add a new ``Field`` to the object.
 
         Parameters
         ----------
@@ -180,7 +179,7 @@ class Group(AbstractGroup):
                                     differentiator=differentiator, description=description, constant=constant, copy=copy)
 
     def addgroup(self, name, updater=None, description=""):
-        """Function to add a new group to the object.
+        """Function to add a new ``Group`` to the object.
 
         Parameters
         ----------
@@ -195,7 +194,7 @@ class Group(AbstractGroup):
             self._owner, updater=updater, description=description)
 
     def addintegrationvariable(self, name, value, snapshots=[], updater=None, description="", copy=True):
-        """Function to add a new field to the object that acts as integration variable.
+        """Function to add a new integration variable ``IntVar`` to the object.
 
         Parameters
         ----------
@@ -227,8 +226,8 @@ class Group(AbstractGroup):
                 raise ValueError("List has to be list of strings.")
         for val in ls:
             if val not in self.__dict__:
-                msg = "\033[93mWarning:\033[0m {} is not an attribute of the group".format(
-                    val)
+                msg = "{}: {} is not an attribute of the group".format(colorize("Warning", "yellow"),
+                                                                       val)
                 print(msg)
 
     def _createupdatefromlist(self, ls):
@@ -251,13 +250,14 @@ class Group(AbstractGroup):
 
 
 def _toc_tree(obj, prefix=""):
-    ret = "\033[94m{}\033[0m".format(obj.__str__())
+    ret = colorize(obj.__str__(), "blue")
     prefix = prefix + 4*" "
     for key in sorted(obj.__dict__.keys(), key=str.casefold):
         if key.startswith("_"):
             continue
         val = obj.__dict__[key]
-        ret += "\n{}- \033[94m{}\033[0m: ".format(prefix, key)
+        ret += "\n{}- {}: ".format(
+            prefix, colorize(key, "blue"))
         if isinstance(val, Group):
             ret += _toc_tree(val, prefix=prefix)
         else:

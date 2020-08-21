@@ -2,7 +2,9 @@ from simframe.frame.abstractgroup import AbstractGroup
 from simframe.frame.group import Group
 from simframe.io.reader import Reader
 from simframe.io.writer import Writer
+from simframe.utils.color import colorize
 
+from collections import deque
 import copy
 import numbers
 import numpy as np
@@ -10,9 +12,9 @@ from types import SimpleNamespace
 
 
 class _namespacewriter(Writer):
-    """Modified class to write Frame object to namespace"""
+    """Modified class to write ``Frame`` object to namespace"""
 
-    _buffer = []
+    _buffer = deque([])
 
     def __init__(self, func, datadir="data", zfill=0, dumping=True, reader=None, description="Temporary namespace writer"):
         """
@@ -37,8 +39,8 @@ class _namespacewriter(Writer):
         ret = self.__str__()+"\n"
         ret += "-" * (len(ret)-1) + "\n"
         ret += "    Data directory : {}\n".format(self.datadir)
-        ret += "    Dumping        : {}\n".format("\033[93m{}\033[0m".format(
-            self.dumping) if not self.dumping else self.dumping)
+        ret += "    Dumping        : {}\n".format(
+            colorize(self.dumping, "yellow") if not self.dumping else self.dumping)
         ret += "    Verbosity      : {}".format(self.verbosity)
         return ret
 
@@ -73,11 +75,11 @@ class _namespacewriter(Writer):
         Notes
         -----
         WARNING: This cannot be undone."""
-        self._buffer = []
+        self._buffer = deque([])
 
 
 class namespacereader(Reader):
-    """Class to read namespaceoutputs"""
+    """Class to read namespace outputs"""
 
     def __init__(self, writer):
         super().__init__(writer)
@@ -161,12 +163,12 @@ def _zip(dicts):
     ret = {}
     for key, val in dicts[0].items():
         if isinstance(val, dict):
-            d = []
+            d = deque([])
             for i in range(N):
                 d.append(dicts[i][key])
             ret[key] = _zip(d)
         else:
-            l = []
+            l = deque([])
             for i in range(N):
                 v = dicts[i][key]
                 if hasattr(v, "shape") and v.shape == (1,):

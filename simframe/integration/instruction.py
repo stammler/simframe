@@ -2,10 +2,11 @@ import numpy as np
 
 from simframe.frame.field import Field
 from simframe.integration.scheme import Scheme
+from simframe.utils.color import colorize
 
 
 class Instruction(Scheme):
-    """Integration instruction that controls the execution of integration schemes."""
+    """Integration ``Instruction`` that controls the execution of an integration ``Scheme``."""
 
     __name__ = "Instruction"
 
@@ -17,7 +18,7 @@ class Instruction(Scheme):
 
         Parameters
         ----------
-        scheme : AbstractScheme
+        scheme : Scheme
             Integration scheme
         Y : Field
             Variable to be integrated
@@ -33,6 +34,7 @@ class Instruction(Scheme):
 
     @property
     def Y(self):
+        '''The ``Field`` to be integrated'''
         return self._Y
 
     @Y.setter
@@ -43,13 +45,15 @@ class Instruction(Scheme):
 
     @property
     def fstep(self):
+        '''Fraction of step size the ``Scheme`` will be applied to ``Field``'''
         return self._fstep
 
     @fstep.setter
     def fstep(self, value):
         value = np.float(value)
         if value <= 0. or value > 1.:
-            msg = "\033[93mWarning:\033[0m <fstep> is not in (0, 1]."
+            msg = "{}: {}".format(
+                colorize("Warning", "yellow"), "<fstep> is not in (0, 1].")
             print(msg)
         self._fstep = value
 
@@ -63,8 +67,8 @@ class Instruction(Scheme):
 
         Return
         ------
-        dY : Field
-            Delta of the variable to be integrated"""
+        Y1 : Field
+            New value of the variable to be integrated"""
         x0 = self.Y._owner.integrator.var
         Y0 = self.Y
         ret = self.scheme(x0, Y0, self.fstep*dx, self.controller)

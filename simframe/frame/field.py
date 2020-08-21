@@ -4,32 +4,20 @@ from simframe.frame.heartbeat import Heartbeat
 
 
 class Field(np.ndarray, AbstractGroup):
-    """Class for quantities or fields.
+    """Class for storing simulation quantities.
 
-    In addition to groups, field can have an differentiator for calculating it's derivative.
-    The function that is calculating the derivative needs the parent frame object as first positional argument and
-    the field itself as second positional argument.
+    In addition to ``Group``, ``Field`` can have an ``differentiator`` for calculating its derivative and/or an
+    ``jacobinator`` for calculating its Jacobian. The function that is calculating the derivative needs the parent
+    ``Frame`` object as first, the integration variable of type ``IntVar`` as second, and the ``Field`` itself as
+    third positional argument
 
-    Fields behave like numpy.ndarray and can perform the exact same operations.
-
-
+    ``Field`` behaves like ``numpy.ndarray`` and can perform the same numerical operations.
 
     Notes
     -----
-    When <field>.update() is called the field will be updated according return value of the updater..
-    Before the field is updated the systole updater is called. After the field update the diastole updater is called.
-    The updaters, systoles, and diastoles for fields can either be of type Updater, can be a callable function which
-    executes the desired operation, or can be None, if no operation should be performed. If it is set to a callable
-    function the function's only argument has to be the parent Frame object. The callable function of the updater has
-    to return the new value of the field.
-
-    Examples
-    --------
-    >>> fld = Field(sim, np.ones(5), description="My Field")
-    >>> fld
-    Field (My Field):
-    [1 1 1 1 1]
-    """
+    When ``Field.update()`` is called ``Field`` will be updated according return value of the ``updater`` of the
+    ``Heartbeat`` object assigned to the ``Field``. The function that is updating ``Field`` needs the parent ``Frame``
+    object as first positional argument."""
 
     __name__ = "Field"
 
@@ -81,7 +69,7 @@ class Field(np.ndarray, AbstractGroup):
     def __str__(self):
         ret = AbstractGroup.__str__(self)
         if self.constant:
-            ret += ", \033[95mconstant\033[0m"
+            ret += ","  # ", {}".format(colorize("constant", "purple"))
         return ret
 
     def __repr__(self):
@@ -98,15 +86,8 @@ class Field(np.ndarray, AbstractGroup):
             return super().__format__(format_spec)
 
     @property
-    def intvar(self):
-        # if not isinstance(self._owner.integration, Integrator):
-        #    raise RuntimeError("No integrator set.")
-        # if not isinstance(self._owner.integrator.var, Field):
-        #    raise RuntimeError("No integration variable assigned to integrator.")
-        return self._owner.integrator.var
-
-    @property
     def constant(self):
+        '''If True, ``Field`` is immutable.'''
         return self._constant
 
     @constant.setter
@@ -121,6 +102,7 @@ class Field(np.ndarray, AbstractGroup):
 
     @property
     def buffer(self):
+        '''Temporary buffer that stores the new value of ``Field`` after successful integration.'''
         return self._buffer
 
     @buffer.setter
@@ -129,6 +111,7 @@ class Field(np.ndarray, AbstractGroup):
 
     @property
     def differentiator(self):
+        '''``Heartbeat`` object with instructions for calculating the derivative of ``Field``'''
         return self._differentiator
 
     @differentiator.setter
@@ -140,6 +123,7 @@ class Field(np.ndarray, AbstractGroup):
 
     @property
     def jacobinator(self):
+        '''``Heartbeat`` object with instructions for calculating the Jacobian of ``Field``'''
         return self._jacobinator
 
     @jacobinator.setter
@@ -150,7 +134,7 @@ class Field(np.ndarray, AbstractGroup):
             self._jacobinator = Heartbeat(value)
 
     def update(self, *args, **kwargs):
-        """Function to update the field.
+        """Function to update the ``Field``.
 
         Parameter
         ---------
@@ -159,12 +143,12 @@ class Field(np.ndarray, AbstractGroup):
 
         Notes
         -----
-        Function calls the Heartbeat object of the field. Additional positional and keyword arguments are only
-        passed to the updater, NOT to systole and diastole."""
+        Function calls the Heartbeat object of the ``Field``. Additional positional and keyword arguments are only
+        passed to the ``updater``, NOT to ``systole`` and ``diastole``."""
         self.updater.beat(self._owner, *args, Y=self, **kwargs)
 
     def derivative(self, x=None, Y=None, *args, **kwargs):
-        """If differentiator is set, this returns the derivative of the field.
+        """If ``differentiator`` or ``jacobinator`` is set, this returns the derivative of the ``Field``.
 
         Parameters
         ----------
@@ -181,11 +165,11 @@ class Field(np.ndarray, AbstractGroup):
 
         Notes
         -----
-        The function that calculates the derivative needs the parent frame as first positional, the
-        integration variable as second positional, and the field itself as third positional argument.
+        The function that calculates the derivative needs the parent ``Frame`` as first positional, the
+        integration variable ``IntVar`` as second positional, and the ``Field`` itself as third positional argument.
 
-        The the differentiator is not set, it will try to calculate the derivative from the Jacobian.
-        If the jacobinator is also not set, it will return False"""
+        The ``differentiator`` is not set, it will try to calculate the derivative from the Jacobian.
+        If ``jacobinator`` is also not set, it will return ``False``"""
         if x is None:
             if self._owner.integrator is None:
                 raise RuntimeError("x not given and no integrator set.")
@@ -204,7 +188,7 @@ class Field(np.ndarray, AbstractGroup):
             return None
 
     def jacobian(self, x=None, *args, **kwargs):
-        """If jacobinator is set, this returns the Jacobi matrix of the field.
+        """If ``jacobinator`` is set, this returns the Jacobi matrix of the ``Field``.
 
         Parameters
         ----------

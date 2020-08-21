@@ -1,8 +1,8 @@
-Welcome to simframe's documentation!
-====================================
+Welcome to documentation of ``simframe``!
+=========================================
 
 | ``simframe`` is a framework to flexibly build scientific simulations.
-| It comes with a variety of integration schemes and some infrastrcuture for writing and reading data files.
+| It comes with a variety of integration schemes and some infrastructure for writing and reading data files.
 
 | To install ``simframe`` simply type
 | ``pip install simframe``

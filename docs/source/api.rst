@@ -15,3 +15,6 @@ Module Reference
 
 .. automodapi:: simframe.io.writers
     :no-inheritance-diagram:
+
+.. automodapi:: simframe.utils
+    :no-inheritance-diagram:

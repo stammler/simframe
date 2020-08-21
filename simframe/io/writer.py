@@ -7,10 +7,11 @@ from simframe.frame.intvar import IntVar
 from simframe.io.reader import Reader
 from simframe.io.dump import writedump
 from simframe.frame.abstractgroup import AbstractGroup
+from simframe.utils.color import colorize
 
 
 class Writer(object):
-    """General class for writing outputs. It should be used as wrapper for customized writer."""
+    """General class for writing output files. It should be used as wrapper for customized ``Writer``."""
 
     __name__ = "Writer"
 
@@ -63,6 +64,7 @@ class Writer(object):
 
     @property
     def datadir(self):
+        '''Data directory of output files.'''
         return self._datadir
 
     @datadir.setter
@@ -73,6 +75,7 @@ class Writer(object):
 
     @property
     def description(self):
+        '''Description of ``Writer``.'''
         return self._description
 
     @description.setter
@@ -85,6 +88,7 @@ class Writer(object):
 
     @property
     def extension(self):
+        '''Filename extension of output files.'''
         return self._extension
 
     @extension.setter
@@ -97,6 +101,7 @@ class Writer(object):
 
     @property
     def filename(self):
+        '''Base filename of output files.'''
         return self._filename
 
     @filename.setter
@@ -109,6 +114,7 @@ class Writer(object):
 
     @property
     def options(self):
+        '''Dictionary of keyword arguments passed to customized writing routine.'''
         return self._options
 
     @options.setter
@@ -119,6 +125,7 @@ class Writer(object):
 
     @property
     def read(self):
+        '''``Reader`` object for reading output files.'''
         return self._reader
 
     @read.setter
@@ -130,6 +137,7 @@ class Writer(object):
 
     @property
     def overwrite(self):
+        '''If ``True`` existing output files will be overwritten.'''
         return self._overwrite
 
     @overwrite.setter
@@ -143,6 +151,7 @@ class Writer(object):
 
     @property
     def dumping(self):
+        '''If ``True`` dump files will be written.'''
         return self._dumping
 
     @dumping.setter
@@ -157,6 +166,7 @@ class Writer(object):
 
     @property
     def verbosity(self):
+        '''Verbosity of the writer.'''
         return self._verbosity
 
     @verbosity.setter
@@ -167,6 +177,7 @@ class Writer(object):
 
     @property
     def zfill(self):
+        '''Zero padding of numbered files names.'''
         return self._zfill
 
     @zfill.setter
@@ -210,16 +221,16 @@ class Writer(object):
         ret += "-" * (len(ret)-1) + "\n"
         ret += "    Data directory : {}\n".format(self.datadir)
         ret += "    File names     : {}\n".format(self._getfilename(0))
-        ret += "    Overwrite      : {}\n".format("\033[93m{}\033[0m".format(
-            self.overwrite) if self.overwrite else self.overwrite)
-        ret += "    Dumping        : {}\n".format("\033[93m{}\033[0m".format(
-            self.dumping) if not self.dumping else self.dumping)
+        ret += "    Overwrite      : {}\n".format(
+            colorize(self.overwrite, "yellow") if self.overwrite else self.overwrite)
+        ret += "    Dumping        : {}\n".format(
+            colorize(self.dumping, "yellow") if not self.dumping else self.dumping)
         ret += "    Options        : {}\n".format(self.options)
         ret += "    Verbosity      : {}".format(self.verbosity)
         return ret
 
     def _getfilename(self, i):
-        """This function creates <path>/<filename> for a given output number
+        """This function creates ``<path>/<filename>`` for a given output number
 
         Parameters
         ----------
@@ -243,7 +254,7 @@ class Writer(object):
         return os.path.join(self.datadir, filename)
 
     def writedump(self, frame, filename=""):
-        """Writes the frame to dump file
+        """Writes the ``Frame`` to dump file
 
         Parameters
         ----------
@@ -258,18 +269,18 @@ class Writer(object):
         self.checkdatadir(createdir=True)
 
         if self.verbosity > 0:
-            msg = "Writing dump file \033[94m'{}'\033[0m".format(filename)
+            msg = "Writing dump file {}".format(colorize(filename, "blue"))
             print(msg)
 
         writedump(frame, filename)
 
     def _preparedump(self):
-        """This function dumps a template <simframe.frame.Field> and <simframe.frame.IntVar> to file
-        and deletes the file afterwards. For some reason dill does not correctly save Fields and IntVars
-        correctly the first time. This function is called everytime <Writer.dumping> is set to True
+        """This function dumps a template ``<simframe.frame.Field>`` and ``<simframe.frame.IntVar>`` to file
+        and deletes the file directly afterwards. For some reason ``dill`` does not correctly save ``Field`` and ``IntVar``
+        correctly the first time. This function is called everytime ``<Writer.dumping>`` is set to ``True``
         to make sure dumping works correctly when needed.
 
-        This is a dirty fix. The reason why dill does not work correctly the first time is unknown.
+        This is a "dirty fix". The reason why ``dill`` does not work correctly the first time is unknown.
         """
         filename = "temp.dmp"
         temp = IntVar(None, 0., snapshots=[0.])
@@ -284,11 +295,11 @@ class Writer(object):
         Parameters
         ----------
         owner : Frame
-            Parent frame object
+            Parent ``Frame`` object
         i : int
             Number of output
         forceoverwrite : boolean
-            If True it will forces and overwrite of the file if it exists.
+            If ``True`` it will forces and overwrite of the file if it exists.
         filename : string
             If this is not "" the writer will use this filename instead of the standard scheme"""
 
@@ -302,7 +313,7 @@ class Writer(object):
                         "File {} already exists.".format(filename))
         self._func(owner, filename, **self.options)
         if self.verbosity > 0:
-            msg = "Writing file \033[94m'{}'\033[0m".format(filename)
+            msg = "Writing file {}".format(colorize(filename, "blue"))
             print(msg)
         if self.dumping:
             self.writedump(owner)

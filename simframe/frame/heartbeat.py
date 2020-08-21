@@ -2,14 +2,14 @@ from simframe.frame.updater import Updater
 
 
 class Heartbeat(object):
-    """This class controls an update including systole and diastole.
+    """This class controls an update including ``systole`` and ``diastole``.
 
-    A full cardiac cycle constists on a systole operation, the actual update and a systole operation.
-    All three are of type Updater.
+    A full cardiac cycle constists of a systole operation, the actual update and a systole operation.
+    All three are of type ``Updater``.
 
-    The beat function calls systole, updater, diastole in that order and returns the return value
-    of the updater. Any positional or keyword arguments are only passed to the updater, NOT to
-    systole and diastole.
+    The ``beat`` function calls ``systole``, ``updater``, ``diastole`` in that order and returns the return value
+    of the ``updater``. Any positional or keyword arguments are only passed to the ``updater``, NOT to
+    ``systole`` and ``diastole``.
 
     """
 
@@ -20,7 +20,7 @@ class Heartbeat(object):
     _diastole = None
 
     def __init__(self, updater=None, systole=None, diastole=None):
-        """Heartbeat class
+        """``Heartbeat`` class
 
         Parameters
         ----------
@@ -43,6 +43,7 @@ class Heartbeat(object):
 
     @property
     def systole(self):
+        '''``Updater`` that is called in the beginning of cardiac cycle.'''
         return self._systole
 
     @systole.setter
@@ -57,6 +58,7 @@ class Heartbeat(object):
 
     @property
     def updater(self):
+        '''``Updater`` that is performing the update instruction.'''
         return self._updater
 
     @updater.setter
@@ -71,6 +73,7 @@ class Heartbeat(object):
 
     @property
     def diastole(self):
+        '''``Updater`` that is called at the end of the cardiac cycle.'''
         return self._diastole
 
     @diastole.setter
@@ -84,7 +87,8 @@ class Heartbeat(object):
                 "Diastole has to be of type Updater, None, or has to be callable.")
 
     def beat(self, owner, *args, Y=None, **kwargs):
-        """This method executes systole, updater, and distole in that order.
+        """This method executes ``systole``, ``updater``, and ``distole`` in that order and returns the return value of
+        the ``updater``.
 
         Parameters
         ----------

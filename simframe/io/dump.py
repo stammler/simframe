@@ -3,6 +3,7 @@ import dill
 
 def writedump(object, filename="object.dmp"):
     """Writes object to dump file
+
     Parameters
     ----------
     object : object
@@ -14,7 +15,7 @@ def writedump(object, filename="object.dmp"):
 
 
 def readdump(filename):
-    """Reads dumpfile and returns object
+    """Reads dumpfile and returns ``Frame`` object
 
     Parameters
     ----------

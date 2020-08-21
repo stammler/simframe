@@ -2,11 +2,11 @@ from simframe.frame.abstractgroup import AbstractGroup
 
 
 class Scheme:
-    """Class for an abstract integration scheme that can be used as template for creating custom schemes.
+    """Class for an integration ``Scheme`` that can be used as template for creating custom schemes.
 
     Notes
     -----
-    The integration scheme needs to return False if the integration failed. The integrator will then
+    The integration ``Scheme`` needs to return ``False`` if the integration failed. The ``Integrator`` will then
     perform a fail operation and will try it again. This can be used to implement schemes with adaptive
     step sizes. If the step size was not small enough the fail operation can reduce it further."""
 
@@ -24,6 +24,8 @@ class Scheme:
         ----------
         scheme : callable
             Function that returns the delta of the variable to be integrated
+        controller : dict, optional, default : {}
+            Additional keyword arguments passed to integration scheme
         description : string, optional, default : ""
             Descriptive string of the integration scheme"""
         self.scheme = scheme
@@ -32,6 +34,7 @@ class Scheme:
 
     @property
     def scheme(self):
+        '''Integration ``Scheme``.'''
         return self._scheme
 
     @scheme.setter
@@ -42,6 +45,7 @@ class Scheme:
 
     @property
     def controller(self):
+        '''Dictionary with keyword arguments that is passed to the integration ``Scheme``.'''
         return self._controller
 
     @controller.setter
@@ -52,6 +56,7 @@ class Scheme:
 
     @property
     def description(self):
+        '''Description of the ``Scheme``.'''
         return self._description
 
     @description.setter
@@ -61,7 +66,7 @@ class Scheme:
         self._description = value
 
     def __call__(self, x0, Y0, dx, controller={}):
-        """Method for returning the delta of the variable to be integrated.
+        """Method for returning the new value of the variable to be integrated.
 
         Parameters
         ----------
@@ -77,9 +82,9 @@ class Scheme:
 
         Returns
         -------
-        dY : Field or False
-            Delta of the integration variable.
-            Functions needs to return False if integration failed."""
+        Y1 : Field or False
+            New value of the variable to be integrated.
+            Functions needs to return ``False`` if integration failed."""
         return self.scheme(x0, Y0, dx, controller=self.controller)
 
     def __str__(self):

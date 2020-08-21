@@ -5,26 +5,25 @@ from simframe.frame.intvar import IntVar
 
 from simframe.integration.integrator import Integrator
 from simframe.io.writer import Writer
+from simframe.io.progress import Progressbar
 
 
 class Frame(Group):
-    """Frame class.
-    This is the parent object of type Group that contains all other objects.
+    """This is the parent object of type ``Group`` that contains all other objects.
 
-    During integration the update() function of the frame object will be called.
-    You have to sub-delegete the updates of your other groups and fields with this function.
+    During integration the ``update()`` function of the ``Frame`` object will be called.
+    You have to sub-delegete the updates of your other ``Group`` and ``Field`` objects within this function.
 
-    Frame has additional functionality for writing output files and for integration.
-
-    writeoutput(file) : writes output file according writer instructions
-    run() : starts the simulation"""
+    ``Frame`` has additional functionality for writing output files and for integration."""
 
     __name__ = "Frame"
 
     _integrator = None
+    _verbosity = None
+    _progressbar = None
     _writer = None
 
-    def __init__(self, integrator=None, writer=None, updater=None, description=""):
+    def __init__(self, integrator=None, writer=None, updater=None, verbosity=1, progressbar=None, description=""):
         """
         The parent Frame object.
 
@@ -36,14 +35,21 @@ class Frame(Group):
             Integrator with integration instructions
         updater : Heartbeat, Updater, callable, list or None, optional, default : None
             Updater for updating the frame
+        verbosity : int, optional, default : 1
+            Level of verbosity
+        progressbar : Progresbar or None, optional, default : None
+            Progressbar. If None, standard is used
         description : string, optional, default : ""
             Descriptive string of the frame object"""
-        super().__init__(self, updater=None, description=description)
+        super().__init__(self, updater=updater, description=description)
         self.integrator = integrator
+        self.progressbar = progressbar
+        self.verbosity = verbosity
         self.writer = writer
 
     @property
     def integrator(self):
+        '''``Integrator`` that controls the simulation.'''
         return self._integrator
 
     @integrator.setter
@@ -53,7 +59,33 @@ class Frame(Group):
         self._integrator = integrator
 
     @property
+    def progressbar(self):
+        '''``Progressbar`` for displaying current status.'''
+        return self._progressbar
+
+    @progressbar.setter
+    def progressbar(self, value):
+        if value is None:
+            self._progressbar = Progressbar()
+        else:
+            if not isinstance(value, Progressbar):
+                raise TypeError("<progressbar> has to be of type Progressbar.")
+            self._progressbar = value
+
+    @property
+    def verbosity(self):
+        '''Verbosity of the ``Frame`` objects.'''
+        return self._verbosity
+
+    @verbosity.setter
+    def verbosity(self, value):
+        if not isinstance(value, np.int):
+            raise TypeError("<verbosity> has to be of type int.")
+        self._verbosity = value
+
+    @property
     def writer(self):
+        '''``Writer`` object for writing output files.'''
         return self._writer
 
     @writer.setter
@@ -63,16 +95,16 @@ class Frame(Group):
         self._writer = value
 
     def writeoutput(self, i=0, forceoverwrite=False, filename="", **kwargs):
-        """Writes output to file, if writer is specified.
+        """Writes output to file, if ``Writer`` is specified.
 
         Parameters
         ----------
         i : int, optional, default : 0
             Number of output
-        filename : string, optional, default = ""
-            if given this will write the output to this file. Otherwise, it uses the standard scheme.
         forceoverwrite : boolean, optional, default : False
             If True, this overrules the seetings of the Writer and enforces the file to be overwritten.
+        filename : string, optional, default = ""
+            if given this will write the output to this file. Otherwise, it uses the standard scheme.
         kwargs : additional keyword arguments
             Additional options that can be passed to the writer"""
 
@@ -80,7 +112,7 @@ class Frame(Group):
             self.writer.write(self, i, forceoverwrite, filename, **kwargs)
 
     def run(self):
-        """This method starts the simulation run. An integrator has to be set beforehand."""
+        """This method starts the simulation. An ``Integrator`` has to be set beforehand."""
 
         if not isinstance(self.integrator, Integrator):
             raise RuntimeError("No integrator set.")
@@ -104,15 +136,31 @@ class Frame(Group):
         if self.integrator.var < self.integrator.var.snapshots[0]:
             self.writeoutput(0)
 
+        # Staring index of snapshots
         starting_index = np.argmin(
             self.integrator.var >= self.integrator.var.snapshots)
+        # Starting value of integration variable
+        startingvalue = self.integrator.var.copy()
         for i in range(starting_index, len(self.integrator.var.snapshots)):
 
             # Nextsnapshot cannot be referenced directly, because it dynamically changes.
             nextsnapshot = self.integrator.var.nextsnapshot
+            prevsnapshot = self.integrator.var.prevsnapshot if self.integrator.var.prevsnapshot is not None else startingvalue
+
             while self.integrator.var < nextsnapshot:
+
+                if self.verbosity > 0:
+                    self.progressbar(self.integrator.var,
+                                     prevsnapshot,
+                                     nextsnapshot,
+                                     startingvalue,
+                                     self.integrator.var.snapshots[-1])
+
                 self.integrator.integrate()
                 self.integrator.var += self.integrator.var.stepsize
                 self.update()
+
+            if self.verbosity > 0:
+                self.progressbar._reset()
 
             self.writeoutput(i + 1)

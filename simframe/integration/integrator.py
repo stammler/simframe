@@ -1,3 +1,4 @@
+from collections import deque
 import numpy as np
 
 from simframe.frame.abstractgroup import AbstractGroup
@@ -8,7 +9,7 @@ from simframe.integration.schemes import update
 
 
 class Integrator:
-    """Integrator class that manages the integration instructions"""
+    """``Integrator`` class that manages the integration instructions"""
 
     __name__ = "Integrator"
 
@@ -55,6 +56,7 @@ class Integrator:
 
     @property
     def description(self):
+        '''Description of integrator'''
         return self._description
 
     @description.setter
@@ -65,6 +67,7 @@ class Integrator:
 
     @property
     def failop(self):
+        '''``Heartbeat`` objects that is called if any integration ``Instruction`` returned ``False``'''
         return self._failop
 
     @failop.setter
@@ -76,6 +79,7 @@ class Integrator:
 
     @property
     def finalization(self):
+        '''``Heartbeat`` object that is called after the integration was successful.'''
         return self._finalization
 
     @finalization.setter
@@ -87,6 +91,7 @@ class Integrator:
 
     @property
     def instructions(self):
+        '''List of integration ``Instructions`` that will be executed in that order.'''
         return self._instructions
 
     @instructions.setter
@@ -101,6 +106,7 @@ class Integrator:
 
     @property
     def maxit(self):
+        '''Maximum number of integration tries until program will be aborted.'''
         return self._maxit
 
     @maxit.setter
@@ -114,6 +120,7 @@ class Integrator:
 
     @property
     def preparation(self):
+        '''``Heartbeat`` object that is called before the integration instructions will be executed.'''
         return self._preparation
 
     @preparation.setter
@@ -125,6 +132,7 @@ class Integrator:
 
     @property
     def var(self):
+        '''The integration variable ``IntVar`` that is associated with this ``Integrator``.'''
         return self._var
 
     @var.setter
@@ -149,7 +157,7 @@ class Integrator:
             for inst in self.instructions:
                 inst.Y._buffer = 0
             # Safe all return values in list
-            ret = []
+            ret = deque([])
             for inst in self.instructions:
                 ret.append(inst(self.var.stepsize))
             # If no instruction returned False, Integration was successful. Exit the loop.
@@ -167,8 +175,8 @@ class Integrator:
         self._finalize()
 
     def _failoperation(self, *args, **kwargs):
-        """This operation will be executed if any integration instruction failed and before the
-        integrator tries it again. It will execute the Heartbeat of Integrator.failop.
+        """This operation will be executed if any integration ``Instruction`` failed and before the
+        ``Integrator`` tries it again. It will execute the ``Heartbeat`` of ``Integrator.failop``.
 
         Parameters
         ----------
@@ -177,12 +185,12 @@ class Integrator:
 
         Notes
         -----
-        args, and kwargs will only be passed to the updater, NOT systole and diastole."""
+        args, and kwargs will only be passed to the ``updater``, NOT ``systole`` and ``diastole``."""
         self.failop.beat(self.var._owner, *args, **kwargs)
 
     def _prepare(self, *args, **kwargs):
         """This operation will be executed before the integration. It will execute the
-        Heartbeat of Integrator.preparation.
+        ``Heartbeat`` of ``Integrator.preparation``.
 
         Parameters
         ----------
@@ -191,12 +199,12 @@ class Integrator:
 
         Notes
         -----
-        args, and kwargs will only be passed to the updater, NOT systole and diastole."""
+        args, and kwargs will only be passed to the ``updater``, NOT ``systole`` and ``diastole``."""
         self.preparation.beat(self.var._owner, *args, **kwargs)
 
     def _finalize(self, *args, **kwargs):
         """This operation will be executed before the integration. It will execute the
-        Heartbeat of Integrator.finalization.
+        ``Heartbeat`` of ``Integrator.finalization``.
 
         Parameters
         ----------
@@ -205,5 +213,5 @@ class Integrator:
 
         Notes
         -----
-        args, and kwargs will only be passed to the updater, NOT systole and diastole."""
+        args, and kwargs will only be passed to the ``updater``, NOT ``systole`` and ``diastole``."""
         self.finalization.beat(self.var._owner, *args, **kwargs)

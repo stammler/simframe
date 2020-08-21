@@ -1,3 +1,9 @@
+"""This package contains pre-defined instances of integration schemes that can be used in ``simframe``.
+The naming convention is ``<expl/impl>_<order>_<name>(<_additonal>)``.
+
+For example: The fifth-order adaptive Cash-Karp scheme is ``expl_5_cash_karp_adptv``, the 1st-order implicit Euler
+scheme using a GMRES solver is ``impl_1_euler_gmres``."""
+
 from simframe.integration.schemes.expl_1_euler import expl_1_euler
 from simframe.integration.schemes.expl_2_fehlberg_adptv import expl_2_fehlberg_adptv
 from simframe.integration.schemes.expl_2_heun import expl_2_heun

@@ -2,15 +2,15 @@ from simframe.frame.heartbeat import Heartbeat
 
 
 class AbstractGroup(object):
-    """This is an abstract class that should not be instanced directly. It only serves as template for other classes.
+    """This is an abstract class that serves as template for other classes.
 
-    AbstractGroup has a descriptive string, an owner and an updater.
-    The owner is the parent frame object and is hidden. The updater is of type Heartbeat.
+    ``AbstractGroup`` has a descriptive string, an owner and an updater.
+    The owner is the parent ``Frame`` object and is hidden. The updater is of type ``Heartbeat``.
 
-    AbstractGroup has an update function that is calling systole, updater, and diastole of the heartbeat object,
-    which manages the update of AbstractGroup.
+    ``AbstractGroup`` has an ``update`` method that is calling ``systole``, ``updater``, and ``diastole``
+    of the ``Heartbeat`` object, which manages the update of ``AbstractGroup``.
 
-    AbstractGroup should not be instanciated directly."""
+    ``AbstractGroup`` should not be instanciated directly."""
 
     __name__ = ""
 
@@ -20,6 +20,7 @@ class AbstractGroup(object):
 
     @property
     def description(self):
+        '''Description of the instance.'''
         return self._description
 
     @description.setter
@@ -30,6 +31,7 @@ class AbstractGroup(object):
 
     @property
     def updater(self):
+        '''``Heatbeat`` object with instructions for updating the instance.'''
         return self._updater
 
     @updater.setter
@@ -41,7 +43,8 @@ class AbstractGroup(object):
 
     def __str__(self):
         ret = "{}".format(str(self.__name__))
-        description = " (" + self.description + ")" if self.description != "" else self.description
+        description = " (" + self.description + \
+            ")" if self.description != "" else self.description
         ret = "{}{}".format(self.__name__, description)
         return ret
 
@@ -59,6 +62,6 @@ class AbstractGroup(object):
 
         Notes
         -----
-        Positional arguments and keyword arguemnts are only passed to the updater,
-        NOT to systole and diastole."""
+        Positional arguments and keyword arguments are only passed to the ``updater``,
+        NOT to ``systole`` and ``diastole``."""
         self.updater.beat(self._owner, *args, **kwargs)

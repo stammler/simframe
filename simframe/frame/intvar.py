@@ -2,26 +2,21 @@ import numpy as np
 
 from simframe.frame.field import Field
 from simframe.frame.heartbeat import Heartbeat
+from simframe.utils.color import colorize
 
 
 class IntVar(Field):
-    """This class behaves as Fields but has additional functionality with respect to
+    """Cclass for integration variables that behaves as ``Field`` but has additional functionality with respect to
     stepsize management for integration.
 
     Notes
     -----
-    The updater for integration variables is calculating the stepsize. The function assiciated to the
-    updater needs the parent Frame object as first positional argument and needs to return the
+    The ``updater`` for integration variables is calculating the stepsize. The function associated to the
+    ``updater`` needs the parent ``Frame`` object as first positional argument and needs to return the
     desired stepsize.
 
-    IntVar has additional attribute:
-
-    maxstepsize : the maximum stepsize until the next snapshot
-    stepsize : minimum of the desired stepsize and maxstepsize
-    nextsnapshot : value of the next snapshot
-
-    update() does not update the integration variable. Try not to update the integration variable by hand.
-    Let the integrator do it for you."""
+    ``IntVar.update()`` does not update the integration variable. Try not to update the integration variable by hand.
+    Let the ``Integrator`` do it for you."""
 
     _snapshots = []
     _suggested = None
@@ -56,15 +51,18 @@ class IntVar(Field):
     def __str__(self):
         ret = "{}".format(str(self.__name__))
         ret = super().__str__()
-        ret += ", \033[95mIntegration variable\033[0m"
+        ret += ", {}".format(colorize("Integration variable", "purple"))
         return ret
 
     def update(self):
-        msg = "\033[93mWarning:\033[0m Do not update the integration variable by hand."
+        '''Not used for ``IntVar``.'''
+        msg = "{}: {}".format(colorize("Warning", "yellow"),
+                              "Do not update the integration variable by hand.")
         print(msg)
 
     def _update(self, u, *args, upd=False, **kwargs):
-        msg = "\033[93mWarning:\033[0m Do not update the integration variable by hand."
+        msg = "{}: {}".format(colorize("Warning", "yellow"),
+                              "Do not update the integration variable by hand.")
         print(msg)
 
     def suggest(self, value):
@@ -72,7 +70,7 @@ class IntVar(Field):
 
         For adaptive integration schemes, this function can be used to suggest a step size for the next
         integration step. If many vaiables are integrated this safes the smallest suggested step size
-        in a temporary buffer accessible via <IntVar>.suggested.
+        in a temporary buffer accessible via ``IntVar.suggested``.
 
         Parameters
         ----------
@@ -83,6 +81,7 @@ class IntVar(Field):
 
     @property
     def suggested(self):
+        '''Suggested step size.'''
         if self._suggested is None:
             raise RuntimeError("No step size has been suggested, yet.")
         return self._suggested
@@ -96,6 +95,7 @@ class IntVar(Field):
 
     @property
     def stepsize(self):
+        '''Current stepsize.'''
         if isinstance(self.updater, Heartbeat):
             return np.minimum(self.updater.beat(self._owner), self.maxstepsize)
         raise RuntimeError(
@@ -103,6 +103,10 @@ class IntVar(Field):
 
     @property
     def snapshots(self):
+        '''Snapshots at which output should be written.
+
+        Even if no outputs are written it needs to contain at least one value that specifies the end point of the
+        simulation.'''
         return self._snapshots
 
     @snapshots.setter
@@ -115,10 +119,22 @@ class IntVar(Field):
 
     @property
     def nextsnapshot(self):
+        '''Value of the next snapshot.'''
         if self.snapshots.size < 1:
             raise ValueError("Snapshots are emtpy")
         return self.snapshots[np.argmax(self < self.snapshots)]
 
     @property
+    def prevsnapshot(self):
+        '''Value of the previous snapshot.'''
+        if self.snapshots.size < 1:
+            raise ValueError("Snapshots are emtpy")
+        if self < self.snapshots[0]:
+            return None
+        else:
+            return self.snapshots[np.argmin(self >= self.snapshots)-1]
+
+    @property
     def maxstepsize(self):
+        '''Maximum possible step size, i.e., to next snapshot.'''
         return self.nextsnapshot - self.getfield(dtype=self.dtype)

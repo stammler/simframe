@@ -1,3 +1,4 @@
+from collections import deque
 import glob
 import numpy as np
 from types import SimpleNamespace
@@ -7,15 +8,15 @@ from simframe.frame.abstractgroup import AbstractGroup
 
 
 class Reader(object):
-    """General class for reading outputs that can be used as template.
-    Every writer class should also provide a reader for its data files.
+    """General class for reading output files.
+    Every ``Writer`` class should also provide a reader for its data files.
 
-    Custom readers must provide a method <output> that reads a single output file
-    and returns the data set as type SimpleNamespace.
+    Custom ``Reader`` must provide a method ``Reader.output()`` that reads a single output file
+    and returns the data set as type ``SimpleNamespace``.
 
-    The general reader class provides a function that can stitch together all SimpleNamespaces
-    the <output> method provides into a single SimpleNamespace by adding another dimension
-    along the integration variable."""
+    The general ``Reader`` class provides a function that stitches together all ``SimpleNamespaces``
+    the ``Reader.output()`` method provides into a single ``SimpleNamespace`` by adding another dimension
+    along the integration variable ``IntVar``."""
 
     __name__ = "Reader"
 
@@ -23,7 +24,7 @@ class Reader(object):
     _writer = None
 
     def __init__(self, writer, description=""):
-        """General reader class
+        """General ``Reader`` class
 
         Parameters
         ----------
@@ -36,6 +37,7 @@ class Reader(object):
 
     @property
     def description(self):
+        '''Description of the ``Reader``.'''
         return self._description
 
     @description.setter
@@ -78,8 +80,8 @@ class Reader(object):
 
         Notes
         -----
-        Function only searches for files that match the pattern specified by the writers
-        filename and extension attributes."""
+        Function only searches for files that match the pattern specified by the ``Writer``'s
+        ``filename`` and ``extension`` attributes."""
         datadir = datadir or self._writer.datadir
         ext = self._writer.extension if self._writer.extension != "" else "." + \
             self._writer.extension
@@ -89,25 +91,25 @@ class Reader(object):
         return files
 
     def all(self, datadir=None):
-        """Functions that reads all output files and combines them into a single namespace.
+        """Functions that reads all output files and combines them into a single ``SimpleNamespace``.
 
         Parameters
         ----------
         datadir : str, optional, default : None
-            Path to data directory. File need to be found by Reader.listfiles()
+            Path to data directory. File need to be found by ``Reader.listfiles()``
 
         Returns
         -------
         dataset : SimpleNamespace
             Namespace of data set."""
         files = self.listfiles(datadir)
-        dicts = []
+        dicts = deque([])
         for file in files:
             dicts.append(self.output(file).__dict__)
         return self._zip(dicts)
 
     def _zip(self, dicts):
-        """Helper function that stitches toghether SimpleNamespaces. The depth of the data sets is caught by iteratively
+        """Helper function that stitches toghether ``SimpleNamespaces``. The depth of the data sets is caught by iteratively
         calling the function.
 
         Parameters
@@ -123,12 +125,12 @@ class Reader(object):
         ret = {}
         for key, val in dicts[0].items():
             if isinstance(val, SimpleNamespace):
-                d = []
+                d = deque([])
                 for i in range(N):
                     d.append(dicts[i][key].__dict__)
                 ret[key] = self._zip(d)
             else:
-                l = []
+                l = deque([])
                 for i in range(N):
                     v = dicts[i][key]
                     if hasattr(v, "shape") and v.shape == (1,):
