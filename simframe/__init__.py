@@ -5,7 +5,7 @@ from simframe.integration import schemes
 from simframe.io import writers
 
 __name__ = "simframe"
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 __all__ = ["Frame",
            "Instruction",

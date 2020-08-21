@@ -18,17 +18,41 @@ def read_version():
 
 setup(
     name=package_name,
+
     description="Framework for scientific simulations",
-    summary="Framework for scientific simulations",
-    keywords="numerical,simulation,integration",
-    home_page="https://github.com/stammler/simframe",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
+    keywords="numerical,simulation,integration,science,mathematics,physics",
+
     url="https://github.com/stammler/simframe",
+    project_urls={"Source Code": "https://github.com/stammler/simframe/",
+                  "Documentation": "https://simframe.readthedocs.io/"
+                  },
+
     author="Sebastian Stammler, Til Birnstiel",
     author_email="stammler@usm.lmu.de, til.birnstiel@lmu.de",
-    packages=find_packages(),
+    maintainer="Sebastian Stammler",
+
+    version=read_version(),
     license="GPLv3",
+
+    classifiers=["Development Status :: 3 - Alpha",
+                 "Environment :: Console",
+                 "Intended Audience :: Developers",
+                 "Intended Audience :: Science/Research",
+                 "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+                 "Natural Language :: English",
+                 "Operating System :: OS Independent",
+                 "Programming Language :: Python",
+                 "Programming Language :: Python :: 3 :: Only",
+                 "Topic :: Education",
+                 "Topic :: Scientific/Engineering",
+                 "Topic :: Scientific/Engineering :: Mathematics",
+                 "Topic :: Scientific/Engineering :: Physics",
+                 ],
+
+    packages=find_packages(),
     install_requires=["dill", "h5py", "numpy", "pytest", "scipy"],
     include_package_data=True,
     zip_safe=False,
-    version=read_version(),
 )
