@@ -69,6 +69,10 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
 
         name = prefix + key
 
+        # Check if numpy.ndarray of strings and convert to list
+        if isinstance(val, np.ndarray) and val.dtype.type is np.str_:
+            val = val.tolist()
+
         # Check for number
         if isinstance(val, (numbers.Number, np.number)):
             file.create_dataset(
