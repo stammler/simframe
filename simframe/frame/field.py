@@ -1,6 +1,7 @@
 import numpy as np
 from simframe.frame.abstractgroup import AbstractGroup
 from simframe.frame.heartbeat import Heartbeat
+from simframe.utils.color import colorize
 
 
 class Field(np.ndarray, AbstractGroup):
@@ -69,7 +70,7 @@ class Field(np.ndarray, AbstractGroup):
     def __str__(self):
         ret = AbstractGroup.__str__(self)
         if self.constant:
-            ret += ","  # ", {}".format(colorize("constant", "purple"))
+            ret += ", {}".format(colorize("constant", "purple"))
         return ret
 
     def __repr__(self):
