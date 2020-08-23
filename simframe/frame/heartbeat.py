@@ -107,7 +107,7 @@ class Heartbeat(object):
 
         self.systole.update(owner)
         ret = self.updater.update(owner, *args, **kwargs)
-        if Y is not None:
+        if Y is not None and ret is not None:
             Y._setvalue(ret)
         self.diastole.update(owner)
         return ret
