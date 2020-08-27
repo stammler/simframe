@@ -150,6 +150,11 @@ class Integrator:
         i = 0
         status = False
         while(not status):
+            # The suggested stepsize has to be reset in the beginning of every try.
+            # We therefore have to copy the current stepsize in case the user is returning
+            # the suggested stepsize in the stepsize function.
+            stepsize = self.var.stepsize.copy()
+            self.var._suggested = None
             if i >= self.maxit:
                 raise StopIteration(
                     "Maximum number of integration attempts exceeded.")
@@ -159,7 +164,7 @@ class Integrator:
             # Safe all return values in list
             ret = deque([])
             for inst in self.instructions:
-                ret.append(inst(self.var.stepsize))
+                ret.append(inst(stepsize))
             # If no instruction returned False, Integration was successful. Exit the loop.
             if not np.any(np.array(ret) == False):
                 status = True

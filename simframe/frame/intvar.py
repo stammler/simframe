@@ -55,7 +55,7 @@ class IntVar(Field):
         return ret
 
     def update(self):
-        '''Not used for ``IntVar``.'''
+        """Not used for ``IntVar``."""
         msg = "{}: {}".format(colorize("Warning", "yellow"),
                               "Do not update the integration variable by hand.")
         print(msg)
@@ -65,7 +65,7 @@ class IntVar(Field):
                               "Do not update the integration variable by hand.")
         print(msg)
 
-    def suggest(self, value):
+    def suggest(self, value, reset=False):
         """Suggest a step size
 
         For adaptive integration schemes, this function can be used to suggest a step size for the next
@@ -75,13 +75,17 @@ class IntVar(Field):
         Parameters
         ----------
         value : Field
-            Suggested step size"""
+            Suggested step size
+        reset : boolean, optional, default : False
+            If True, the previous value will be descarded."""
+        if reset:
+            self._suggested = None
         self.suggested = value if self._suggested is None else np.minimum(
             self._suggested, value)
 
     @property
     def suggested(self):
-        '''Suggested step size.'''
+        """Suggested step size."""
         if self._suggested is None:
             raise RuntimeError("No step size has been suggested, yet.")
         return self._suggested

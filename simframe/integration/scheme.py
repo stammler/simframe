@@ -65,7 +65,7 @@ class Scheme:
             raise ValueError("<value> has to be of type str.")
         self._description = value
 
-    def __call__(self, x0, Y0, dx, controller={}):
+    def __call__(self, x0, Y0, dx, *args, **kwargs):
         """Method for returning the new value of the variable to be integrated.
 
         Parameters
@@ -78,6 +78,8 @@ class Scheme:
             Stepsize of integration variable
         controller : dict, optional, default : {}
             Additional keyword arguments passed to integration scheme
+        args : additional positional arguments
+        kwargs : additional kewyowrd arguments
 
 
         Returns
@@ -85,7 +87,7 @@ class Scheme:
         Y1 : Field or False
             New value of the variable to be integrated.
             Functions needs to return ``False`` if integration failed."""
-        return self.scheme(x0, Y0, dx, controller=self.controller)
+        return self.scheme(x0, Y0, dx, *args, **kwargs)
 
     def __str__(self):
         return AbstractGroup.__str__(self)
