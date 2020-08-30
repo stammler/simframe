@@ -7,7 +7,7 @@ b0, b1, b2, b3 = 1/6, 1/3, 1/3, 1/6
 c1, c2 = 1/2, 1/2
 
 
-def _f_expl_4_runge_kutta(x0, Y0, dx, *args, **kwargs):
+def _f_expl_4_runge_kutta(x0, Y0, dx, *args, dYdx=None, **kwargs):
     """Explicit 4th-order classical Runge-Kutta method
 
     Parameters
@@ -18,6 +18,8 @@ def _f_expl_4_runge_kutta(x0, Y0, dx, *args, **kwargs):
         Variable to be integrated at the beginning of scheme
     dx : IntVar
         Stepsize of integration variable
+    dYdx : Field, optional, default : None
+        Current derivative. Will be calculated, if not set.
     args : additional positional arguments
     kwargs : additional keyworda arguments
 
@@ -36,7 +38,7 @@ def _f_expl_4_runge_kutta(x0, Y0, dx, *args, **kwargs):
          | 1/6 1/3 1/3 1/6
     """
 
-    k0 = Y0.derivative(x0, Y0)
+    k0 = Y0.derivative(x0, Y0) if dYdx is None else dYdx
     k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0*dx)
     k2 = Y0.derivative(x0 + c2*dx, Y0 + a21*k1*dx)
     k3 = Y0.derivative(x0 + dx, Y0 + k2*dx)

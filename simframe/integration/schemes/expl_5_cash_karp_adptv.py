@@ -15,7 +15,7 @@ e0, e2, e3, e4, e5 = b0-bs0, b2-bs2, b3-bs3, -bs4, b5-bs5
 c1, c2, c3, c5 = 1/5, 3/10, 3/10, 7/8
 
 
-def _f_expl_5_cash_karp_adptv(x0, Y0, dx, *args, econ=0.0001889568, eps=0.1, pgrow=-0.2, pshrink=-0.25, safety=0.9, **kwargs):
+def _f_expl_5_cash_karp_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.0001889568, eps=0.1, pgrow=-0.2, pshrink=-0.25, safety=0.9, **kwargs):
     """Explicit adaptive 5th-order Cash-Karp method
 
     Parameters
@@ -26,6 +26,8 @@ def _f_expl_5_cash_karp_adptv(x0, Y0, dx, *args, econ=0.0001889568, eps=0.1, pgr
         Variable to be integrated at the beginning of scheme
     dx : IntVar
         Stepsize of integration variable
+    dYdx : Field, optional, default : None
+        Current derivative. Will be calculated, if not set.
     econ : float, optional, default : 0.005832
         Error controll parameter for setting stepsize
     eps : float, optional, default : 0.9
@@ -57,7 +59,7 @@ def _f_expl_5_cash_karp_adptv(x0, Y0, dx, *args, econ=0.0001889568, eps=0.1, pgr
           |   37/378      0      250/621     125/594       0      512/1771
           | 2825/27648    0    18575/48384 13525/55296  277/14336   1/4
     """
-    k0 = Y0.derivative(x0, Y0)
+    k0 = Y0.derivative(x0, Y0) if dYdx is None else dYdx
     k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0 * dx)
     k2 = Y0.derivative(x0 + c2*dx, Y0 + (a20*k0 + a21*k1)*dx)
     k3 = Y0.derivative(x0 + c3*dx, Y0 + (a30*k0 + a31*k1 + a32*k2)*dx)

@@ -8,7 +8,7 @@ b0, b1, b2, b3 = 0.17476028, -0.55148066, 1.20553560, 0.17118478
 c1, c2 = 0.4,  0.45573725
 
 
-def _f_expl_4_ralston(x0, Y0, dx, *args, **kwargs):
+def _f_expl_4_ralston(x0, Y0, dx, *args, dYdx=None, **kwargs):
     """Explicit 4th-order Ralston's method
 
     Parameters
@@ -19,6 +19,8 @@ def _f_expl_4_ralston(x0, Y0, dx, *args, **kwargs):
         Variable to be integrated at the beginning of scheme
     dx : IntVar
         Stepsize of integration variable
+    dYdx : Field, optional, default : None
+        Current derivative. Will be calculated, if not set.
     args : additional positional arguments
     kwargs : additional keyworda arguments
 
@@ -37,7 +39,7 @@ def _f_expl_4_ralston(x0, Y0, dx, *args, **kwargs):
                 | 0.17476028 -0.55148066 1.20553560 0.17118478
     """
 
-    k0 = Y0.derivative(x0, Y0)
+    k0 = Y0.derivative(x0, Y0) if dYdx is None else dYdx
     k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0 * dx)
     k2 = Y0.derivative(x0 + c2*dx, Y0 + (a20*k0 + a21*k1)*dx)
     k3 = Y0.derivative(x0 + dx, Y0 + (a30*k0 + a31*k1 + a32*k2)*dx)

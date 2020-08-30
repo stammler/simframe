@@ -5,7 +5,7 @@ a10 = 0.5
 c1 = 0.5
 
 
-def _f_expl_2_midpoint(x0, Y0, dx, *args, **kwargs):
+def _f_expl_2_midpoint(x0, Y0, dx, *args, dYdx=None, **kwargs):
     """Explicit 2nd-order midpoint method
 
     Parameters
@@ -16,6 +16,8 @@ def _f_expl_2_midpoint(x0, Y0, dx, *args, **kwargs):
         Variable to be integrated at the beginning of scheme
     dx : IntVar
         Stepsize of integration variable
+    dYdx : Field, optional, default : None
+        Current derivative. Will be calculated, if not set.
     args : additional positional arguments
     kwargs : additional keyworda arguments
 
@@ -31,7 +33,7 @@ def _f_expl_2_midpoint(x0, Y0, dx, *args, **kwargs):
     -----|---------
          |  0   1
     """
-    k0 = Y0.derivative(x0, Y0)
+    k0 = Y0.derivative(x0, Y0) if dYdx is None else dYdx
     k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0*dx)
 
     return Y0 + dx*k1

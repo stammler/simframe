@@ -12,7 +12,7 @@ e0, e1, e2, e3 = b0-bs0, b1-bs1, b2-bs2, -bs3
 c1, c2 = 1/2, 3/4
 
 
-def _f_expl_3_bogacki_shampine_adptv(x0, Y0, dx, *args, econ=0.005832, eps=0.1, pgrow=-1/3, pshrink=-0.5, safety=0.9, **kwargs):
+def _f_expl_3_bogacki_shampine_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.005832, eps=0.1, pgrow=-1/3, pshrink=-0.5, safety=0.9, **kwargs):
     """Explicit adaptive 3rd-order Bogacki-Shampine method
 
     Parameters
@@ -23,6 +23,8 @@ def _f_expl_3_bogacki_shampine_adptv(x0, Y0, dx, *args, econ=0.005832, eps=0.1, 
         Variable to be integrated at the beginning of scheme
     dx : IntVar
         Stepsize of integration variable
+    dYdx : Field, optional, default : None
+        Current derivative. Will be calculated, if not set.
     econ : float, optional, default : 0.005832
         Error controll parameter for setting stepsize
     eps : float, optional, default : 0.9
@@ -52,7 +54,7 @@ def _f_expl_3_bogacki_shampine_adptv(x0, Y0, dx, *args, econ=0.005832, eps=0.1, 
          | 2/9  1/3 4/9  0
          | 7/24 1/4 1/3 1/8
     """
-    k0 = Y0.derivative(x0, Y0)
+    k0 = Y0.derivative(x0, Y0) if dYdx is None else dYdx
     k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0 * dx)
     k2 = Y0.derivative(x0 + c2*dx, Y0 + a21*k1 * dx)
     k3 = Y0.derivative(x0 + dx, Y0 + (a30*k0 + a31*k1 + a32*k2)*dx)
