@@ -1,4 +1,6 @@
+from datetime import timedelta
 import numpy as np
+from time import monotonic
 
 from simframe.frame.group import Group
 from simframe.frame.intvar import IntVar
@@ -6,6 +8,7 @@ from simframe.frame.intvar import IntVar
 from simframe.integration.integrator import Integrator
 from simframe.io.writer import Writer
 from simframe.io.progress import Progressbar
+from simframe.utils.color import colorize
 
 
 class Frame(Group):
@@ -23,7 +26,7 @@ class Frame(Group):
     _progressbar = None
     _writer = None
 
-    def __init__(self, integrator=None, writer=None, updater=None, verbosity=1, progressbar=None, description=""):
+    def __init__(self, integrator=None, writer=None, updater=None, verbosity=2, progressbar=None, description=""):
         """
         The parent Frame object.
 
@@ -35,7 +38,7 @@ class Frame(Group):
             Integrator with integration instructions
         updater : Heartbeat, Updater, callable, list or None, optional, default : None
             Updater for updating the frame
-        verbosity : int, optional, default : 1
+        verbosity : int, optional, default : 2
             Level of verbosity
         progressbar : Progresbar or None, optional, default : None
             Progressbar. If None, standard is used
@@ -132,6 +135,9 @@ class Frame(Group):
             raise RuntimeError(
                 "Integration variable already passed the largest snapshot.")
 
+        # Timekeeping
+        tini = monotonic()
+
         # Write initial conditions
         if self.integrator.var < self.integrator.var.snapshots[0]:
             self.writeoutput(0)
@@ -149,7 +155,7 @@ class Frame(Group):
 
             while self.integrator.var < nextsnapshot:
 
-                if self.verbosity > 0:
+                if self.verbosity > 1:
                     self.progressbar(self.integrator.var,
                                      prevsnapshot,
                                      nextsnapshot,
@@ -160,7 +166,14 @@ class Frame(Group):
                 self.integrator.var += self.integrator.var.stepsize
                 self.update()
 
-            if self.verbosity > 0:
+            if self.verbosity > 1:
                 self.progressbar._reset()
 
             self.writeoutput(i + 1)
+
+        # Timekeeping
+        tfin = monotonic()
+        t_exec = timedelta(seconds=np.int(tfin-tini))
+        if self.verbosity > 0:
+            msg = "Execution time: {}".format(colorize(t_exec, color="blue"))
+            print(msg)
