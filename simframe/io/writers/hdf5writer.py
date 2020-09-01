@@ -55,7 +55,7 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
         a prefix prepended to the name of each attribute when storing with h5py
     """
 
-    if obj._description is not None and prefix == "":
+    if hasattr(obj, "_description") and obj._description is not None and prefix == "":
         file.create_dataset(
             "description",
             data=obj._description
