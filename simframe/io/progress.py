@@ -49,7 +49,7 @@ class Progressbar(object):
         # Check if we're in an interactive shell. If not, we don't print progress bar.
         self._print = sys.stdout.isatty()
         # Time keeping for calculating ETA
-        self._N_speed = 10
+        self._N_speed = 25
         self._speedbuffer = np.zeros(self._N_speed)
         self._speed = None
         self._t = monotonic()
@@ -107,7 +107,10 @@ class Progressbar(object):
         if self._speed is None:
             return ""
         eta = (s1-x)/self._speed
-        dt = timedelta(seconds=np.int(eta))
+        try:
+            dt = timedelta(seconds=np.int(eta))
+        except:
+            dt = "N/A"
         ret = "ETA: {}".format(dt)
         return ret
 
