@@ -65,7 +65,7 @@ def _f_expl_2_fehlberg_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.0324, eps=0.1,
     # Integration successful
     if emax <= 1.:
         # Suggest new stepsize
-        dxnew = safety*dx*emax**pgrow if econ > emax else 5.*dx
+        dxnew = safety*dx*emax**pgrow if econ < emax else 5.*dx
         x0.suggest(dxnew)
         return Y0 + dx*(b0*k0 + b1*k1 + b2*k2)
     else:
