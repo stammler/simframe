@@ -25,8 +25,8 @@ def _f_expl_4_runge_kutta(x0, Y0, dx, *args, dYdx=None, **kwargs):
 
     Returns
     -------
-    Y1 : Field
-        New value of Y
+    dY : Field
+        Delta of variable to be integrated
 
     Butcher tableau
     ---------------
@@ -43,7 +43,7 @@ def _f_expl_4_runge_kutta(x0, Y0, dx, *args, dYdx=None, **kwargs):
     k2 = Y0.derivative(x0 + c2*dx, Y0 + a21*k1*dx)
     k3 = Y0.derivative(x0 + dx, Y0 + k2*dx)
 
-    return Y0 + dx*(b0*k0 + b1*k1 + b2*k2 + b3*k3)
+    return dx*(b0*k0 + b1*k1 + b2*k2 + b3*k3)
 
 
 expl_4_runge_kutta = Scheme(

@@ -19,8 +19,8 @@ def _f_expl_1_euler(x0, Y0, dx, *args, dYdx=None, **kwargs):
 
     Returns
     -------
-    Y1 : Field
-        New value of Y
+    dY : Field
+        Delta of variable to be integrated
 
     Butcher tableau
     ---------------
@@ -29,7 +29,7 @@ def _f_expl_1_euler(x0, Y0, dx, *args, dYdx=None, **kwargs):
        | 1 
     """
     k0 = Y0.derivative(x0, Y0) if dYdx is None else dYdx
-    return Y0 + dx*k0
+    return dx*k0
 
 
 expl_1_euler = Scheme(

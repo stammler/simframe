@@ -24,8 +24,8 @@ def _f_expl_2_ralston(x0, Y0, dx, *args, dYdx=None, **kwargs):
 
     Returns
     -------
-    Y1 : Field
-        New value of Y
+    dY : Field
+        Delta of variable to be integrated
 
     Butcher tableau
     ---------------
@@ -37,7 +37,7 @@ def _f_expl_2_ralston(x0, Y0, dx, *args, dYdx=None, **kwargs):
     k0 = Y0.derivative(x0, Y0) if dYdx is None else dYdx
     k1 = Y0.derivative(x0 + c1*dx, Y0 + a10*k0*dx)
 
-    return Y0 + dx*(b0*k0 + b1*k1)
+    return dx*(b0*k0 + b1*k1)
 
 
 expl_2_ralston = Scheme(

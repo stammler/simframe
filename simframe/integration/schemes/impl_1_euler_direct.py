@@ -34,8 +34,8 @@ def _f_impl_1_euler_direct(x0, Y0, dx, jac=None, *args, **kwargs):
         jac = Y0.jacobian(x0 + dx)
     N = jac.shape[0]
     eye = np.eye(N)
-    A = eye - dx*jac
-    return np.dot(np.linalg.inv(A), Y0)
+    A = eye - dx[0] * jac
+    return (np.linalg.inv(A) - eye) @ Y0
 
 
 impl_1_euler_direct = Scheme(

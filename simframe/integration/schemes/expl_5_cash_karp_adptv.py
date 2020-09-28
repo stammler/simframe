@@ -43,8 +43,8 @@ def _f_expl_5_cash_karp_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.0001889568, e
 
     Returns
     -------
-    Y1 : Field or False
-        New value of Y
+    dY : Field
+        Delta of variable to be integrated
         False if step size too large
 
     Butcher tableau
@@ -78,7 +78,7 @@ def _f_expl_5_cash_karp_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.0001889568, e
         # Suggest new stepsize
         dxnew = safety*dx*emax**pgrow if econ < emax else 5.*dx
         x0.suggest(dxnew)
-        return Y0 + dx*(b0*k0 + b2*k2 + b3*k3 + b5*k5)
+        return dx*(b0*k0 + b2*k2 + b3*k3 + b5*k5)
     else:
         # Suggest new stepsize
         dxnew = np.maximum(safety*dx*emax**pshrink, 0.1*dx)

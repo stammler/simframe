@@ -184,7 +184,7 @@ class Field(np.ndarray, AbstractGroup):
             return deriv
         jac = self.jacobinator.beat(self._owner, x)
         if jac is not None:
-            return np.dot(jac, Y)
+            return jac @ Y
         else:
             return None
 
@@ -224,7 +224,4 @@ class Field(np.ndarray, AbstractGroup):
         value = np.asarray(value)
         if value.shape == ():
             value = np.array([value])
-        if value.shape != self.shape:
-            raise ValueError("Shape mismatch: " +
-                             repr(self.shape) + ", " + repr(value.shape))
         self.setfield(value, self.dtype)

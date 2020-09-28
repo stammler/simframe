@@ -42,7 +42,7 @@ def _f_impl_1_euler_gmres(x0, Y0, dx, jac=None, gmres_opt={}, *args, **kwargs):
     if state != 0:
         return False
     else:
-        return res
+        return res - Y0
 
 
 impl_1_euler_gmres = Scheme(

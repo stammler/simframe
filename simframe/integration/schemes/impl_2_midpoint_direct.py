@@ -39,7 +39,7 @@ def _f_impl_2_midpoint_direct(x0, Y0, dx, jac=None, *args, **kwargs):
     Ainv = np.linalg.inv(A)
     k1 = np.dot(Ainv, np.dot(jac, Y0))
 
-    return Y0 + dx*k1
+    return dx*k1
 
 
 impl_2_midpoint_direct = Scheme(

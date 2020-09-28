@@ -158,9 +158,6 @@ class Integrator:
             if i >= self.maxit:
                 raise StopIteration(
                     "Maximum number of integration attempts exceeded.")
-            # Reset buffers
-            for inst in self.instructions:
-                inst.Y._buffer = 0
             # Safe all return values in list
             ret = deque([])
             for inst in self.instructions:
@@ -169,6 +166,9 @@ class Integrator:
             if not np.any(np.array(ret) == False):
                 status = True
             else:
+                # Reset buffers if integration failed
+                for inst in self.instructions:
+                    inst.Y._buffer = None
                 self._failoperation()
                 i += 1
         # Update the variables.

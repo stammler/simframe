@@ -18,8 +18,9 @@ def _update(x0, Y0, dx, *args, **kwargs):
     Returns
     -------
     dY : True"""
-    Y0._setvalue(Y0._buffer)
-    Y0._buffer = None
+    if Y0.buffer is not None:
+        Y0._setvalue(Y0 + Y0._buffer)
+        Y0._buffer = None
     return True
 
 
