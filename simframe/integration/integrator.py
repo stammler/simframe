@@ -16,12 +16,12 @@ class Integrator:
     _description = ""
     _instructions = []
     _failop = Heartbeat(None)
-    _finalization = Heartbeat(None)
+    _finalizer = Heartbeat(None)
     _maxit = 500
-    _preparation = Heartbeat(None)
+    _preparator = Heartbeat(None)
     _var = None
 
-    def __init__(self, var, instructions=[], failop=None, preparation=None, finalization=None, maxit=500, description=""):
+    def __init__(self, var, instructions=[], failop=None, preparator=None, finalizer=None, maxit=500, description=""):
         """Integrator
 
         Parameters
@@ -32,9 +32,9 @@ class Integrator:
             List of the instegration instructions
         failop : Heartbeat, Updater, callable, or None, optional, default : None
             Fail operation that is executed if any instruction failed
-        preparation : Heartbeat, Updater, callable, or None, optional, default : None
+        preparator : Heartbeat, Updater, callable, or None, optional, default : None
             Heartbeat that will be executed before the integration
-        finalization : Heartbeat, Updater, callable, or None, optional, default : None
+        finalizer : Heartbeat, Updater, callable, or None, optional, default : None
             Heartbeat that will be executed after the integration
         maxit : int, optional, default : 5000
             Maximum number of integration iterations
@@ -42,10 +42,10 @@ class Integrator:
             Description of integrator"""
         self.description = description
         self.failop = failop
-        self.finalization = finalization
+        self.finalizer = finalizer
         self.instructions = instructions
         self.maxit = maxit
-        self.preparation = preparation
+        self.preparator = preparator
         self.var = var
 
     def __str__(self):
@@ -78,16 +78,16 @@ class Integrator:
             self._failop = Heartbeat(value)
 
     @property
-    def finalization(self):
+    def finalizer(self):
         '''``Heartbeat`` object that is called after the integration was successful.'''
-        return self._finalization
+        return self._finalizer
 
-    @finalization.setter
-    def finalization(self, value):
+    @finalizer.setter
+    def finalizer(self, value):
         if isinstance(value, Heartbeat):
-            self._finalization = value
+            self._finalizer = value
         else:
-            self._finalization = Heartbeat(value)
+            self._finalizer = Heartbeat(value)
 
     @property
     def instructions(self):
@@ -119,16 +119,16 @@ class Integrator:
         self._maxit = value
 
     @property
-    def preparation(self):
+    def preparator(self):
         '''``Heartbeat`` object that is called before the integration instructions will be executed.'''
-        return self._preparation
+        return self._preparator
 
-    @preparation.setter
-    def preparation(self, value):
+    @preparator.setter
+    def preparator(self, value):
         if isinstance(value, Heartbeat):
-            self._preparation = value
+            self._preparator = value
         else:
-            self._preparation = Heartbeat(value)
+            self._preparator = Heartbeat(value)
 
     @property
     def var(self):
@@ -195,7 +195,7 @@ class Integrator:
 
     def _prepare(self, *args, **kwargs):
         """This operation will be executed before the integration. It will execute the
-        ``Heartbeat`` of ``Integrator.preparation``.
+        ``Heartbeat`` of ``Integrator.preparator``.
 
         Parameters
         ----------
@@ -205,11 +205,11 @@ class Integrator:
         Notes
         -----
         args, and kwargs will only be passed to the ``updater``, NOT ``systole`` and ``diastole``."""
-        self.preparation.beat(self.var._owner, *args, **kwargs)
+        self.preparator.beat(self.var._owner, *args, **kwargs)
 
     def _finalize(self, *args, **kwargs):
         """This operation will be executed before the integration. It will execute the
-        ``Heartbeat`` of ``Integrator.finalization``.
+        ``Heartbeat`` of ``Integrator.finalizer``.
 
         Parameters
         ----------
@@ -219,4 +219,4 @@ class Integrator:
         Notes
         -----
         args, and kwargs will only be passed to the ``updater``, NOT ``systole`` and ``diastole``."""
-        self.finalization.beat(self.var._owner, *args, **kwargs)
+        self.finalizer.beat(self.var._owner, *args, **kwargs)
