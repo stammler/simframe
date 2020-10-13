@@ -186,7 +186,8 @@ class Field(np.ndarray, AbstractGroup):
         if jac is not None:
             return jac @ Y
         else:
-            return None
+            # If no differentiator or jacobian is set we return zeros.
+            return np.zeros_like(self)
 
     def jacobian(self, x=None, *args, **kwargs):
         """If ``jacobinator`` is set, this returns the Jacobi matrix of the ``Field``.

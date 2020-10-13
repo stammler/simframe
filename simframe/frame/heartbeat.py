@@ -105,9 +105,16 @@ class Heartbeat(object):
         -------
         ret : Return value of updater."""
 
+        # Perform systole operation
         self.systole.update(owner)
+
+        # Perform update operation and save return value.
         ret = self.updater.update(owner, *args, **kwargs)
+        # If Y is given and a return value was received, then beat is updating a field.
+        # The new field value needs to be set here, so the diastole has access to the new value.
         if Y is not None and ret is not None:
-            Y._setvalue(ret)
+            Y[...] = ret
+
+        # Perform diastole operation.
         self.diastole.update(owner)
         return ret
