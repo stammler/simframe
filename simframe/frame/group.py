@@ -38,10 +38,8 @@ class Group(AbstractGroup):
     def __setattr__(self, name, value):
         """Function to set an attribute including fields.
         This function allows the user to change the value of fields instead of replacing them."""
-        if isinstance(value, Field):
-            self.__dict__[name] = value
-        elif name in self.__dict__ and isinstance(self.__dict__[name], Field):
-            self.__dict__[name]._setvalue(value)
+        if name in self.__dict__ and isinstance(self.__dict__[name], Field):
+            self.__dict__[name][...] = value
         else:
             super().__setattr__(name, value)
 
