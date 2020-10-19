@@ -11,8 +11,9 @@ from simframe.integration.schemes.expl_2_heun_euler_adptv import expl_2_heun_eul
 from simframe.integration.schemes.expl_2_midpoint import expl_2_midpoint
 from simframe.integration.schemes.expl_2_ralston import expl_2_ralston
 from simframe.integration.schemes.expl_3_bogacki_shampine_adptv import expl_3_bogacki_shampine_adptv
-from simframe.integration.schemes.expl_3_kutta import expl_3_kutta
+from simframe.integration.schemes.expl_3_gottlieb_shu_adptv import expl_3_gottlieb_shu_adptv
 from simframe.integration.schemes.expl_3_heun import expl_3_heun
+from simframe.integration.schemes.expl_3_kutta import expl_3_kutta
 from simframe.integration.schemes.expl_3_ralston import expl_3_ralston
 from simframe.integration.schemes.expl_3_ssprk import expl_3_ssprk
 from simframe.integration.schemes.expl_4_38rule import expl_4_38rule
@@ -33,6 +34,7 @@ __all__ = ["expl_1_euler",
            "expl_2_midpoint",
            "expl_2_ralston",
            "expl_3_bogacki_shampine_adptv",
+           "expl_3_gottlieb_shu_adptv",
            "expl_3_heun",
            "expl_3_kutta",
            "expl_3_ralston",
