@@ -1,4 +1,5 @@
 from simframe.frame.abstractgroup import AbstractGroup
+from simframe.frame.field import Field
 from simframe.frame.group import Group
 from simframe.io.reader import Reader
 from simframe.io.writer import Writer
@@ -75,7 +76,7 @@ class _namespacewriter(Writer):
         Notes
         -----
         WARNING: This cannot be undone."""
-        self._buffer = deque([])
+        self._buffer.clear()
 
 
 class namespacereader(Reader):
@@ -85,13 +86,22 @@ class namespacereader(Reader):
         super().__init__(writer)
 
     def all(self):
-        """Reads all outputs
+        """Functions that reads all output files and combines them into a single ``SimpleNamespace``.
 
         Returns
         -------
-        n : SimpleNamespace
-            Namespace containing data"""
-        return _zip(self._writer._buffer)
+        dataset : SimpleNamespace
+            Namespace of data set.
+
+        Notes
+        -----
+        This function is reading one output files to get the structure of the data and
+        calls ``read.sequence()`` for every field in the data structure."""
+        if self._writer._buffer == deque([]):
+            raise RuntimeError("Writer buffer is empty.")
+        # Read first file to get structure
+        data0 = self._writer._buffer[0]
+        return self._expand(data0)
 
     def output(self, i):
         """Reading a single output
@@ -108,11 +118,65 @@ class namespacereader(Reader):
         if i >= len(self._writer._buffer):
             raise RuntimeError("Output {} does not exist.".format(i))
 
-        return _converttodict(SimpleNamespace(**self._writer._buffer[i]))
+        return self._writer._buffer[i]
+
+    def sequence(self, field):
+        """Reading the entire sequence of a specific field.
+
+        Parameters
+        ----------
+        field : string
+            String with location of requested field
+
+        Returns
+        -------
+        seq : array
+            Array with requested values
+
+        Notes
+        -----
+        ``field`` is addressing the values just as in the parent frame object.
+        E.g. ``"groupA.groupB.fieldC"`` is addressing ``Frame.groupA.groupB.fieldC``."""
+        if self._writer._buffer == deque([]):
+            raise RuntimeError("Writer buffer is empty.")
+        if not isinstance(field, str):
+            raise TypeError("<field> has to be string.")
+        loc = field.split(".")
+        N = len(self._writer._buffer)
+        ret = []
+        for i in range(N):
+            A = np.array(_getvaluefrombuffer(self._writer._buffer[i], loc))
+            if A.shape == (1,):
+                ret.append(A[0])
+            else:
+                ret.append(A)
+        return np.array(ret)
 
 
-def _converttodict(o):
-    """Converts an object into a dictionary
+def _getvaluefrombuffer(buf, loc):
+    """Returns a requested value from buffer.
+    Function is called recursively.
+
+    Parameters
+    ----------
+    buf : dict
+        Buffer object
+    loc : list
+        List of strings with the requested location within buf
+
+    Returns
+    -------
+    ret : object
+        Reqested value in buf at position loc"""
+    if len(loc) > 1:
+        return _getvaluefrombuffer(buf.__dict__[loc[0]], loc[1:])
+    if not hasattr(buf, loc[0]):
+        raise KeyError("Requested <field> does not exist.")
+    return buf.__dict__[loc[0]]
+
+
+def _converttonamespace(o):
+    """Converts an object into a namespace
 
     Parameters
     ----------
@@ -121,12 +185,13 @@ def _converttodict(o):
 
     Returns
     -------
-    d : dict
-        Nested dictionary with the data in Frame object
+    ns : SimpleNamespace
+        Nested namespace with the data in Frame object
 
     Notes
     -----
-    Attributes beginning with underscore _ are being ignored."""
+    Attributes beginning with underscore _ are being ignored.
+    So are fields with Field.save == False."""
     ret = {}
 
     # These things are written directy into the dictionary.
@@ -135,46 +200,18 @@ def _converttodict(o):
 
     for key, val in o.__dict__.items():
 
+        # Ignore hidden variables
         if key.startswith("_"):
+            continue
+        # Skip fields that should not be stored
+        if isinstance(val, Field) and val.save == False:
             continue
 
         if val is not None and isinstance(val, direct):
             ret[key] = copy.copy(val)
         else:
-            ret[key] = _converttodict(val)
+            ret[key] = _converttonamespace(val)
 
-    return ret
-
-
-def _zip(dicts):
-    """Stitches together list of dicts and creates namespace
-
-    Parameters
-    ----------
-    dicts : list
-        list of dicts
-
-    Returns
-    -------
-    n : SimpleNamespace
-        Namespace of concatenated dicts
-    """
-    N = len(dicts)
-    ret = {}
-    for key, val in dicts[0].items():
-        if isinstance(val, dict):
-            d = deque([])
-            for i in range(N):
-                d.append(dicts[i][key])
-            ret[key] = _zip(d)
-        else:
-            l = deque([])
-            for i in range(N):
-                v = dicts[i][key]
-                if hasattr(v, "shape") and v.shape == (1,):
-                    v = v[0]
-                l.append(v)
-            ret[key] = np.array(l)
     return SimpleNamespace(**ret)
 
 
@@ -190,7 +227,7 @@ def _writeframetonamespace(frame):
     -------
     n : SimpleNamespace
         Namespace with data"""
-    d = _converttodict(frame)
+    d = _converttonamespace(frame)
     return d
 
 

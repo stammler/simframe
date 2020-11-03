@@ -61,17 +61,32 @@ class Reader(object):
             Path to file that should be read.
 
         Returns
+        -------
         data : SimpleNamespace
             Data set of a single output file."""
-        pass
+        raise NotImplementedError("<read.output> is not implemented.")
 
-    def listfiles(self, datadir=None):
-        """Method to list all data files in a directory
+    def sequence(self, field):
+        """Function that returns the entire sequence of a specific field.
 
         Parameters
         ----------
-        datadir : str, optional, default : None
-            Path to dara directory. If None it looks automatically in the data directory specified by the writer.
+        field : str
+            String with location of requested field
+
+        Returns
+        -------
+        seq : array
+            Array with requested values
+
+        Notes
+        -----
+        ``field`` is addressing the values just as in the parent frame object.
+        E.g. ``"groupA.groupB.fieldC"`` is addressing ``Frame.groupA.groupB.fieldC``."""
+        raise NotImplementedError("<read.sequence> is not implemented.")
+
+    def listfiles(self):
+        """Method to list all data files in a directory
 
         Returns
         -------
@@ -82,7 +97,7 @@ class Reader(object):
         -----
         Function only searches for files that match the pattern specified by the ``Writer``'s
         ``filename`` and ``extension`` attributes."""
-        datadir = datadir or self._writer.datadir
+        datadir = self._writer.datadir
         ext = self._writer.extension if self._writer.extension != "" else "." + \
             self._writer.extension
         wildcard = os.path.join(datadir, self._writer.filename + "*" + ext)
@@ -90,51 +105,40 @@ class Reader(object):
         files = sorted(files, key=str.casefold)
         return files
 
-    def all(self, datadir=None):
+    def all(self):
         """Functions that reads all output files and combines them into a single ``SimpleNamespace``.
 
-        Parameters
-        ----------
-        datadir : str, optional, default : None
-            Path to data directory. File need to be found by ``Reader.listfiles()``
-
         Returns
         -------
         dataset : SimpleNamespace
-            Namespace of data set."""
-        files = self.listfiles(datadir)
-        dicts = deque([])
-        for file in files:
-            dicts.append(self.output(file).__dict__)
-        return self._zip(dicts)
+            Namespace of data set.
 
-    def _zip(self, dicts):
-        """Helper function that stitches toghether ``SimpleNamespaces``. The depth of the data sets is caught by iteratively
-        calling the function.
+        Notes
+        -----
+        This function is reading one output files to get the structure of the data and
+        calls ``read.sequence()`` for every field in the data structure."""
+        files = self.listfiles()
+        if files == []:
+            raise RuntimeError("Data directory does not exist or is empty.")
+        # Read first file to get structure
+        data0 = self.output(files[0])
+        # print(data0.__dict__.keys())
+        return self._expand(data0)
+
+    def _expand(self, ns, prefix=""):
+        """This is a function that get recursively called to fill a data structure with sequences.
 
         Parameters
         ----------
-        dicts : list
-            List of dictionaries containing the data
-
-        Returns
-        -------
-        dataset : SimpleNamespace
-            Namespace of the datasets."""
-        N = len(dicts)
+        ns : SimpleNamespace
+            Name space to read sequences from
+        prefix : string, optional default: ""
+            prefix of data to get into depth of the structure"""
         ret = {}
-        for key, val in dicts[0].items():
+        for key, val in ns.__dict__.items():
+            new_prefix = ".".join(filter(None, [prefix, key]))
             if isinstance(val, SimpleNamespace):
-                d = deque([])
-                for i in range(N):
-                    d.append(dicts[i][key].__dict__)
-                ret[key] = self._zip(d)
+                ret[key] = self._expand(val, prefix=new_prefix)
             else:
-                l = deque([])
-                for i in range(N):
-                    v = dicts[i][key]
-                    if hasattr(v, "shape") and v.shape == (1,):
-                        v = v[0]
-                    l.append(v)
-                ret[key] = np.array(l)
+                ret[key] = self.sequence(new_prefix)
         return SimpleNamespace(**ret)

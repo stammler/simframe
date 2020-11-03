@@ -7,6 +7,7 @@ import os
 
 from simframe.io.reader import Reader
 from simframe.io.writer import Writer
+from simframe.frame.field import Field
 
 
 def _hdf5wrapper(obj, filename, com="lzf", comopts=None):
@@ -19,7 +20,7 @@ def _hdf5wrapper(obj, filename, com="lzf", comopts=None):
     obj : object
         the object to be stored in a file
     filename : string
-        path to file 
+        path to file
 
     Keywords
     --------
@@ -37,6 +38,7 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
     """Writes a given object to a h5py file.
 
     By default all attributes of the object are written out, excluding the ones that start with an underscore.
+    Fields with attribute Field.save == False will be skipped.
 
     Parameters:
     ----------
@@ -63,8 +65,11 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
 
     for key, val in obj.__dict__.items():
 
-        # Ignore private variables
+        # Ignore hidden variables
         if key.startswith('_'):
+            continue
+        # Skip fields that should not be stored
+        if isinstance(val, Field) and val.save == False:
             continue
 
         name = prefix + key
@@ -162,8 +167,41 @@ class hdf5reader(Reader):
         with h5py.File(filename, "r") as hdf5file:
             return self._readgroup(hdf5file)
 
+    def sequence(self, field):
+        """Reading the entire sequence of a specific field.
+
+        Parameters
+        ----------
+        field : string
+            String with location of requested field
+
+        Returns
+        -------
+        seq : array
+            Array with requested values
+
+        Notes
+        -----
+        ``field`` is addressing the values just as in the parent frame object.
+        E.g. ``"groupA.groupB.fieldC"`` is addressing ``Frame.groupA.groupB.fieldC``."""
+        files = self.listfiles()
+        if files == []:
+            raise RuntimeError("<datadir> does not exist or is empty.")
+        if not isinstance(field, str):
+            raise TypeError("<field> has to be of type string.")
+        loc = field.replace(".", "/")
+        ret = []
+        for f in files:
+            with h5py.File(f, "r") as hdf5file:
+                A = np.array(hdf5file[loc][()])
+                if A.shape == (1,):
+                    ret.append(A[0])
+                else:
+                    ret.append(A)
+        return np.array(ret)
+
     def _readgroup(self, gr):
-        """Helper function that is interatively called to get the depth of the data set.
+        """Helper function that is iteratively called to get the depth of the data set.
 
         Parameters
         ----------

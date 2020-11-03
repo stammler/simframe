@@ -25,9 +25,10 @@ class Field(np.ndarray, AbstractGroup):
     _differentiator = Heartbeat(None)
     _jacobinator = Heartbeat(None)
     _constant = False
+    _save = True
     _buffer = None
 
-    def __new__(cls, owner, value, updater=None, differentiator=None, jacobinator=None, description="", constant=False, copy=False):
+    def __new__(cls, owner, value, updater=None, differentiator=None, jacobinator=None, description="", constant=False, save=True, copy=False):
         """Parameters
         ----------
         owner : Frame
@@ -43,7 +44,9 @@ class Field(np.ndarray, AbstractGroup):
         description : string, optional, default : ""
             Descriptive string for the field
         constant : boolean, optional, default : False
-            True if the field is immutable.?
+            True if the field is immutable.
+        save : boolean, optional, default : True
+            If False the field is not written into output files
         copy : boolean, optional, default : False
             If True <value> will be copied, not referenced"""
         obj = np.array(value, copy=copy).view(cls)
@@ -55,6 +58,7 @@ class Field(np.ndarray, AbstractGroup):
         obj.jacobinator = Heartbeat(jacobinator)
         obj.description = description
         obj.constant = constant
+        obj.save = save
         return obj
 
     def __array_finalize__(self, obj):
@@ -98,6 +102,21 @@ class Field(np.ndarray, AbstractGroup):
                 self._constant = True
             else:
                 self._constant = False
+        else:
+            raise TypeError("<value> hat to be of type bool.")
+
+    @property
+    def save(self):
+        '''If False, ``Field`` will not be stored in output files.'''
+        return self._save
+
+    @save.setter
+    def save(self, value):
+        if isinstance(value, np.int):
+            if value:
+                self._save = True
+            else:
+                self._save = False
         else:
             raise TypeError("<value> hat to be of type bool.")
 

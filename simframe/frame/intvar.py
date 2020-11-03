@@ -21,7 +21,7 @@ class IntVar(Field):
     _snapshots = []
     _suggested = None
 
-    def __new__(cls, owner, value=0, snapshots=[], updater=None, description="", copy=False):
+    def __new__(cls, owner, value=0, snapshots=[], updater=None, description="", save=True, copy=False):
         """Parameters
         ----------
         owner : Frame
@@ -35,10 +35,12 @@ class IntVar(Field):
             Updater for calculating stepsize
         description : string, optional, default : ""
             Descriptive string for the field
+        save : boolean, optional, default : True
+            If False the integration variable is not written into output files
         copy : boolean, optional, default : True
             If True <value> will be copied, not referenced"""
         obj = super().__new__(cls, owner, value, updater=updater,
-                              description=description, constant=False, copy=copy)
+                              description=description, constant=False, save=save, copy=copy)
         obj.snapshots = snapshots
         return obj
 
