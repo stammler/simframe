@@ -20,6 +20,7 @@ class IntVar(Field):
 
     _snapshots = []
     _suggested = None
+    _prevstepsize = None
 
     def __new__(cls, owner, value=0, snapshots=[], updater=None, description="", save=True, copy=False):
         """Parameters
@@ -144,3 +145,8 @@ class IntVar(Field):
     def maxstepsize(self):
         '''Maximum possible step size, i.e., to next snapshot.'''
         return self.nextsnapshot - self.getfield(dtype=self.dtype)
+
+    @property
+    def prevstepsize(self):
+        """Previously taken step size."""
+        return self._prevstepsize
