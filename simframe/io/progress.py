@@ -13,6 +13,8 @@ class Progressbar(object):
 
     _line1 = ""
     _line2 = ""
+    _N1 = 0
+    _N2 = 0
 
     def __init__(self, prefix=" ", suffix="| ", fill="▶", empty=" ", length=25, color="blue", spinner=None):
         """This class controls the output of a progress bar on screen.
@@ -177,9 +179,11 @@ class Progressbar(object):
             End point of simulation"""
         # Only print if interactive
         if self._print:
+            self._N1 = len(self._line1)
+            self._N2 = len(self._line2)
+            self._setlines(x, x0, x1, s0, s1)
             if not (x == x0 or x == s0):
                 self._reset()
-            self._setlines(x, x0, x1, s0, s1)
             msg = "\x1b[?25l\n{}\n{}".format(self._line1, self._line2)
             print(msg)
             sys.stdout.flush()
@@ -190,9 +194,9 @@ class Progressbar(object):
         # Only print if interactive
         if self._print:
             msg = "\033[3A\r\n{}\n{}\033[3A\r\x1b[?25h".format(
-                len(self._line1)*" ", len(self._line2)*" ")
-            self._line1 = ""
-            self._line2 = ""
+                self._N1*" ", self._N2*" ")
+            self._N1 = 0
+            self._N2 = 0
             print(msg)
             sys.stdout.flush()
 
