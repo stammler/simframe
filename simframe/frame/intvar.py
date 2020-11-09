@@ -20,7 +20,7 @@ class IntVar(Field):
 
     _snapshots = []
     _suggested = None
-    _prevstepsize = None
+    _prevstepsize = 0.
 
     def __new__(cls, owner, value=0, snapshots=[], updater=None, description="", save=True, copy=False):
         """Parameters
@@ -43,6 +43,7 @@ class IntVar(Field):
         obj = super().__new__(cls, owner, value, updater=updater,
                               description=description, constant=False, save=save, copy=copy)
         obj.snapshots = snapshots
+        obj._prevstepsize = 0.
         return obj
 
     def __array_finalize__(self, obj):
@@ -50,6 +51,7 @@ class IntVar(Field):
             return
         super().__array_finalize__(obj)
         self.snapshots = getattr(obj, "snapshots", [])
+        self._prevstepsize = 0.
 
     def __str__(self):
         ret = "{}".format(str(self.__name__))
