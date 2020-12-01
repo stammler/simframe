@@ -1,4 +1,4 @@
-Documentation of ``simframe``!
+``simframe`` documentation
 =========================================
 
 | ``simframe`` is a framework to flexibly build scientific simulations.
