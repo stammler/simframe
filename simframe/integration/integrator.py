@@ -176,6 +176,8 @@ class Integrator:
             if inst.Y._buffer is None:
                 continue
             update(None, inst.Y, None)
+        # Store the taken stepsize
+        self.var._prevstepsize = stepsize
         # Finalization
         self._finalize()
 

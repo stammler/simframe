@@ -195,8 +195,6 @@ class Progressbar(object):
         if self._print:
             msg = "\033[3A\r\n{}\n{}\033[3A\r\x1b[?25h".format(
                 self._N1*" ", self._N2*" ")
-            self._N1 = 0
-            self._N2 = 0
             print(msg)
             sys.stdout.flush()
 
