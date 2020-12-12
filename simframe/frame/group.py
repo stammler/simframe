@@ -33,6 +33,7 @@ class Group(AbstractGroup):
         in the order in which they should be updated. It will create a callable function from that list."""
         self._description = description
         self._owner = owner
+        self._updateorder = None
         self.updater = updater
 
     def __setattr__(self, name, value):
@@ -124,6 +125,15 @@ class Group(AbstractGroup):
 
         return ret
 
+    @property
+    def updateorder(self):
+        '''Update order if updater was set with list of strings. ``None`` otherwise.'''
+        return self._updateorder
+
+    @updateorder.setter
+    def updateorder(self):
+        raise RuntimeError("Do not set this attribute manually.")
+
     # We need to overwrite the updater property of AbstractGroup, because we want the group to be able
     # to take lists of attributes as value.
     @property
@@ -138,11 +148,14 @@ class Group(AbstractGroup):
     def updater(self, value):
         if isinstance(value, Heartbeat):
             self._updater = value
+            self._updateorder = None
         elif isinstance(value, list):
             self._checkupdatelist(value)
             self._updater = Heartbeat(self._createupdatefromlist(value))
+            self._updateorder = value.copy()
         else:
             self._updater = Heartbeat(value)
+            self._updateorder = None
 
     @property
     def toc(self):
