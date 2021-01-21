@@ -1,5 +1,7 @@
 import dill
 import numpy as np
+import random
+import string
 import os
 
 from simframe.frame.field import Field
@@ -282,7 +284,11 @@ class Writer(object):
 
         This is a "dirty fix". The reason why ``dill`` does not work correctly the first time is unknown.
         """
-        filename = "temp.dmp"
+        while(True):
+            filename = "temp_" + "".join(random.choice(string.ascii_uppercase)
+                                         for i in range(5)) + ".dmp"
+            if not os.path.isfile(filename):
+                break
         temp = IntVar(None, 0., snapshots=[0.])
         writedump(temp, filename)
         temp = Field(None, 0.)
