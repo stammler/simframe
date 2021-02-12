@@ -163,7 +163,8 @@ class Frame(Group):
                                      self.integrator.var.snapshots[-1])
 
                 self.integrator.integrate()
-                self.integrator.var += self.integrator.var.stepsize
+                self.integrator.var += self.integrator.var._prevstepsize
+
                 self.update()
 
             if self.verbosity > 1:
