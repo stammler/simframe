@@ -166,7 +166,7 @@ class Group(AbstractGroup):
     def toc(self, value):
         pass
 
-    def addfield(self, name, value, updater=None, differentiator=None, description="", constant=False, copy=True):
+    def addfield(self, name, value, updater=None, differentiator=None, description="", constant=False, save=True, copy=True):
         """Function to add a new ``Field`` to the object.
 
         Parameters
@@ -183,11 +183,13 @@ class Group(AbstractGroup):
             Descriptive string for the field
         constant : boolean, optional, default : False
             True if the field is immutable
+        save : boolean, optional, default : True
+            If True field will be stored in output files
         copy : boolean, optional, default : True
             If True <value> will be copied, not referenced
         """
         self.__dict__[name] = Field(self._owner, value, updater=updater,
-                                    differentiator=differentiator, description=description, constant=constant, copy=copy)
+                                    differentiator=differentiator, description=description, constant=constant, save=save, copy=copy)
 
     def addgroup(self, name, updater=None, description=""):
         """Function to add a new ``Group`` to the object.
