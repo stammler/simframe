@@ -82,8 +82,6 @@ class Writer(object):
 
     @description.setter
     def description(self, value):
-        if value is None:
-            self._description = ""
         if not isinstance(value, str):
             raise TypeError("description has to be of type str or None.")
         self._description = value
@@ -184,7 +182,6 @@ class Writer(object):
 
     @zfill.setter
     def zfill(self, value):
-        value = int(value)
         if not isinstance(value, int):
             raise TypeError("zfill has to be integer.")
         self._zfill = value
