@@ -122,7 +122,6 @@ class Reader(object):
             raise RuntimeError("Data directory does not exist or is empty.")
         # Read first file to get structure
         data0 = self.output(files[0])
-        # print(data0.__dict__.keys())
         return self._expand(data0)
 
     def _expand(self, ns, prefix=""):
