@@ -110,7 +110,7 @@ class Progressbar(object):
             return ""
         eta = (s1-x)/self._speed
         try:
-            dt = timedelta(seconds=np.int(eta))
+            dt = timedelta(seconds=int(eta))
         except:
             dt = "N/A"
         ret = "ETA: {}".format(dt)
@@ -135,7 +135,7 @@ class Progressbar(object):
         line : string
             Progress bar line"""
         f = (x-x0)/(x1-x0)
-        filled = np.int(np.floor(f*self._length))
+        filled = int(np.floor(f*self._length))
         line = "{:10s}{}{:5.1f} %".format(text, self._getbar(filled), f*100.)
         return line
 

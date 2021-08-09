@@ -144,7 +144,7 @@ class Writer(object):
 
     @overwrite.setter
     def overwrite(self, value):
-        if not isinstance(value, np.int):
+        if not isinstance(value, int):
             raise TypeError("<overwrite> has to be of type bool.")
         if value:
             self._overwrite = True
@@ -158,7 +158,7 @@ class Writer(object):
 
     @dumping.setter
     def dumping(self, value):
-        if not isinstance(value, np.int):
+        if not isinstance(value, int):
             raise TypeError("<dumping> has to be of type bool.")
         if value:
             self._dumping = True
@@ -173,7 +173,7 @@ class Writer(object):
 
     @verbosity.setter
     def verbosity(self, value):
-        if not isinstance(value, np.int):
+        if not isinstance(value, int):
             raise TypeError("<verbosity> has to be of type int.")
         self._verbosity = value
 
@@ -184,8 +184,8 @@ class Writer(object):
 
     @zfill.setter
     def zfill(self, value):
-        value = np.int(value)
-        if not isinstance(value, np.int):
+        value = int(value)
+        if not isinstance(value, int):
             raise TypeError("zfill has to be integer.")
         self._zfill = value
 

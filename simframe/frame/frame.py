@@ -82,7 +82,7 @@ class Frame(Group):
 
     @verbosity.setter
     def verbosity(self, value):
-        if not isinstance(value, np.int):
+        if not isinstance(value, int):
             raise TypeError("<verbosity> has to be of type int.")
         self._verbosity = value
 
@@ -174,7 +174,7 @@ class Frame(Group):
 
         # Timekeeping
         tfin = monotonic()
-        t_exec = timedelta(seconds=np.int(tfin-tini))
+        t_exec = timedelta(seconds=int(tfin-tini))
         if self.verbosity > 0:
             msg = "Execution time: {}".format(colorize(t_exec, color="blue"))
             print(msg)

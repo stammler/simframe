@@ -97,7 +97,7 @@ class Field(np.ndarray, AbstractGroup):
 
     @constant.setter
     def constant(self, value):
-        if isinstance(value, np.int):
+        if isinstance(value, int):
             if value:
                 self._constant = True
             else:
@@ -112,7 +112,7 @@ class Field(np.ndarray, AbstractGroup):
 
     @save.setter
     def save(self, value):
-        if isinstance(value, np.int):
+        if isinstance(value, int):
             if value:
                 self._save = True
             else:

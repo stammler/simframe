@@ -50,7 +50,7 @@ class Instruction(Scheme):
 
     @fstep.setter
     def fstep(self, value):
-        value = np.float(value)
+        value = float(value)
         if value <= 0. or value > 1.:
             msg = "{}: {}".format(
                 colorize("Warning", "yellow"), "<fstep> is not in (0, 1].")

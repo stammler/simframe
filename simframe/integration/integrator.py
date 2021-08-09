@@ -111,8 +111,8 @@ class Integrator:
 
     @maxit.setter
     def maxit(self, value):
-        value = np.int(value)
-        if not isinstance(value, np.int):
+        value = int(value)
+        if not isinstance(value, int):
             raise TypeError("maxit has to be of type int.")
         if value <= 0:
             raise ValueError("maxit has to be larger 0.")
