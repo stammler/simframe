@@ -171,7 +171,7 @@ def _getvaluefrombuffer(buf, loc):
     if len(loc) > 1:
         return _getvaluefrombuffer(buf.__dict__[loc[0]], loc[1:])
     if not hasattr(buf, loc[0]):
-        raise KeyError("Requested <field> does not exist.")
+        raise RuntimeError("Requested <field> does not exist.")
     return buf.__dict__[loc[0]]
 
 
