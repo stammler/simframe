@@ -284,8 +284,8 @@ class Writer(object):
         while(True):
             filename = "temp_" + "".join(random.choice(string.ascii_uppercase)
                                          for i in range(5)) + ".dmp"
-            if not os.path.isfile(filename):
-                break
+            if not os.path.isfile(filename):    # pragma: no cover
+                break                           # Impossible to test due to randomness
         temp = IntVar(None, 0., snapshots=[0.])
         writedump(temp, filename)
         temp = Field(None, 0.)
@@ -302,13 +302,13 @@ class Writer(object):
         i : int
             Number of output
         forceoverwrite : boolean
-            If ``True`` it will forces and overwrite of the file if it exists.
+            If ``True`` it will forces and overwrite of the file if it exists independent of the writer attribute
         filename : string
             If this is not "" the writer will use this filename instead of the standard scheme"""
 
         if filename == "":
             filename = self._getfilename(i)
-            self.checkdatadir(createdir=True)
+        self.checkdatadir(createdir=True)
         if not forceoverwrite:
             if not self.overwrite:
                 if os.path.isfile(filename):
