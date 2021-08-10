@@ -84,10 +84,12 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
                 name,
                 data=val
             )
-        # Check for tuple/list/dict
-        elif type(val) in [tuple, list, dict]:
+        # Check for tuple/list
+        elif type(val) in [tuple, list]:
+            if None in val:
+                raise ValueError("HDF5 cannot store None values.")
             # special case for list of strings
-            if all([type(_v) == str for _v in val]):
+            if any([type(_v) == str for _v in val]):
                 file.create_dataset(
                     name,
                     data=np.array(val, dtype=object),
@@ -121,12 +123,13 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
                     compression=com,
                     compression_opts=comopts
                 )
+        # Dicts not implemented, yet
+        elif type(val) == dict:
+            raise NotImplementedError(
+                "Storing dict not yet implemented in hdf5writer.")
         # Check for None
         elif val is None:
-            file.create_dataset(
-                name,
-                data=0
-            )
+            raise ValueError("HDF5 cannot store None values.")
         # Other objects
         else:
             _writehdf5(val, file, com=com,
