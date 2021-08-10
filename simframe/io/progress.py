@@ -1,3 +1,4 @@
+import copy
 from datetime import timedelta
 from itertools import cycle
 import numpy as np
@@ -89,7 +90,7 @@ class Progressbar(object):
                 :self._N_speed]
             self._speed = self._speedbuffer.mean()
         self._t = t
-        self._x = x.copy()
+        self._x = copy.copy(x)
 
     def _geteta(self, x, s1):
         '''Returns the current ETA
