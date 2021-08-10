@@ -9,7 +9,7 @@ class Color(object):
                "purple": "\033[95m",
                "cyan": "\033[96m",
                "white": "\033[98m",
-               "reset": "\033[98m"}
+               "reset": "\033[0m"}
     _cstr = "\033[0m"
     _reset = "\033[0m"
     _color = None
