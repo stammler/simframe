@@ -50,11 +50,10 @@ class Instruction(Scheme):
 
     @fstep.setter
     def fstep(self, value):
-        value = float(value)
+        if not isinstance(value, float):
+            raise TypeError("<fstep> has to be of type float.")
         if value <= 0. or value > 1.:
-            msg = "{}: {}".format(
-                colorize("Warning", "yellow"), "<fstep> is not in (0, 1].")
-            print(msg)
+            raise ValueError("<fstep> is not in (0, 1].")
         self._fstep = value
 
     def __call__(self, dx=None):

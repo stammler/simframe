@@ -30,7 +30,7 @@ def _f_expl_5_cash_karp_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.0001889568, e
         Current derivative. Will be calculated, if not set.
     econ : float, optional, default : 0.005832
         Error controll parameter for setting stepsize
-    eps : float, optional, default : 0.9
+    eps : float, optional, default : 0.1
         Desired maximum relative error
     prgrow : float, optional, default : -1/3
         Power for increasing step size

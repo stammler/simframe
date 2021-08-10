@@ -22,7 +22,7 @@ def _f_expl_2_heun_euler_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.0324, eps=0.
         Current derivative. Will be calculated, if not set.
     econ : float, optional, default : 0.0324
         Error controll parameter for setting stepsize
-    eps : float, optional, default : 0.9
+    eps : float, optional, default : 0.1
         Desired maximum relative error
     prgrow : float, optional, default : -0.5
         Power for increasing step size

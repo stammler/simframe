@@ -62,7 +62,7 @@ class Scheme:
     @description.setter
     def description(self, value):
         if not isinstance(value, str):
-            raise ValueError("<value> has to be of type str.")
+            raise TypeError("<value> has to be of type str.")
         self._description = value
 
     def __call__(self, x0, Y0, dx, *args, **kwargs):

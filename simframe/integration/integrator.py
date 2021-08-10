@@ -62,7 +62,7 @@ class Integrator:
     @description.setter
     def description(self, value):
         if not isinstance(value, str):
-            raise ValueError("<value> has to be of type str.")
+            raise TypeError("<value> has to be of type str.")
         self._description = value
 
     @property
@@ -111,7 +111,6 @@ class Integrator:
 
     @maxit.setter
     def maxit(self, value):
-        value = int(value)
         if not isinstance(value, int):
             raise TypeError("maxit has to be of type int.")
         if value <= 0:
