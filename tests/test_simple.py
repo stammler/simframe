@@ -27,3 +27,4 @@ def test_simple():
     f.integrator.instructions = [Instruction(schemes.expl_1_euler, f.Y)]
     f.run()
     assert f.Y == 0.
+    assert f.x.prevstepsize == 1.
