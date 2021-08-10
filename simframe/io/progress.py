@@ -109,7 +109,10 @@ class Progressbar(object):
         self._update_speed(x)
         if self._speed is None:
             return ""
-        eta = (s1-x)/self._speed
+        if self._speed > 0.:
+            eta = (s1-x)/self._speed
+        else:
+            eta = np.nan
         try:
             dt = timedelta(seconds=int(eta))
         except:
