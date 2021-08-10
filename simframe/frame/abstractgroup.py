@@ -26,7 +26,7 @@ class AbstractGroup(object):
     @description.setter
     def description(self, value):
         if not isinstance(value, str):
-            raise ValueError("<value> has to be of type str.")
+            raise TypeError("<value> has to be of type str.")
         self._description = value
 
     @property
