@@ -47,8 +47,6 @@ class IntVar(Field):
         return obj
 
     def __array_finalize__(self, obj):
-        if obj is None:
-            return
         super().__array_finalize__(obj)
         self.snapshots = getattr(obj, "snapshots", [])
         self._prevstepsize = 0.
@@ -65,11 +63,6 @@ class IntVar(Field):
                               "Do not update the integration variable by hand.")
         print(msg)
 
-    def _update(self, u, *args, upd=False, **kwargs):
-        msg = "{}: {}".format(colorize("Warning", "yellow"),
-                              "Do not update the integration variable by hand.")
-        print(msg)
-
     def suggest(self, value, reset=False):
         """Suggest a step size
 
@@ -82,7 +75,7 @@ class IntVar(Field):
         value : Field
             Suggested step size
         reset : boolean, optional, default : False
-            If True, the previous value will be descarded."""
+            If True, the previous value will be discarded."""
         if reset:
             self._suggested = None
         self.suggested = value if self._suggested is None else np.minimum(
