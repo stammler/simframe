@@ -131,7 +131,7 @@ class Group(AbstractGroup):
         return self._updateorder
 
     @updateorder.setter
-    def updateorder(self):
+    def updateorder(self, value):
         raise RuntimeError("Do not set this attribute manually.")
 
     # We need to overwrite the updater property of AbstractGroup, because we want the group to be able
@@ -239,9 +239,8 @@ class Group(AbstractGroup):
                 raise ValueError("List has to be list of strings.")
         for val in ls:
             if val not in self.__dict__:
-                msg = "{}: {} is not an attribute of the group".format(colorize("Warning", "yellow"),
-                                                                       val)
-                print(msg)
+                raise RuntimeError(
+                    "{} is not an attribute of the group".format(val))
 
     def _createupdatefromlist(self, ls):
         """This method creates an update method from a list.
