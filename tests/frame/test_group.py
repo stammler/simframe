@@ -30,6 +30,13 @@ def test_group_repr_str():
     assert isinstance(str(f), str)
 
 
+def test_group_change_constant_field():
+    f = Frame()
+    f.addfield("Y", 0, constant=True)
+    with pytest.raises(RuntimeError):
+        f.Y = 1
+
+
 def test_group_updateorder():
     f = Frame()
     f.addfield("x", 1.)
