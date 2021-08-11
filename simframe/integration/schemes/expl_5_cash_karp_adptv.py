@@ -3,7 +3,7 @@ from simframe.integration.scheme import Scheme
 import numpy as np
 
 # Butcher coefficients
-a10 = 1/2
+a10 = 1/5
 a20, a21 = 3/40, 9/40
 a30, a31, a32 = 3/10, -9/10, 6/5
 a40, a41, a42, a43 = -11/54, 5/2, -70/27, 35/27
