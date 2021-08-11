@@ -29,7 +29,7 @@ def test_adaptive():
         schemes.expl_5_cash_karp_adptv, f.Y)]
 
     f.run()
-    assert f.Y < 1.e-3
+    assert f.Y == 5.34990702474703e-3
 
 
 def test_adaptive_fail():
@@ -76,4 +76,4 @@ def test_adaptive_update():
                                  Instruction(schemes.update, f.Y)]
 
     f.run()
-    assert f.Y < 1.e-3
+    assert f.Y == 5.34990702474703e-3

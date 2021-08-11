@@ -20,6 +20,7 @@ from simframe.integration.schemes.expl_4_38rule import expl_4_38rule
 from simframe.integration.schemes.expl_4_ralston import expl_4_ralston
 from simframe.integration.schemes.expl_4_runge_kutta import expl_4_runge_kutta
 from simframe.integration.schemes.expl_5_cash_karp_adptv import expl_5_cash_karp_adptv
+from simframe.integration.schemes.expl_5_dormand_prince_adptv import expl_5_dormand_prince_adptv
 
 from simframe.integration.schemes.impl_1_euler_direct import impl_1_euler_direct
 from simframe.integration.schemes.impl_1_euler_gmres import impl_1_euler_gmres
@@ -43,6 +44,7 @@ __all__ = ["expl_1_euler",
            "expl_4_ralston",
            "expl_4_runge_kutta",
            "expl_5_cash_karp_adptv",
+           "expl_5_dormand_prince_adptv",
 
            "impl_1_euler_direct",
            "impl_1_euler_gmres",

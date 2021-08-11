@@ -384,7 +384,32 @@ def test_expl_5_cash_karp_adptv():
     ]
 
     f.run()
-    assert np.allclose(f.Y, 4.552326547961997e-05)
+    assert np.allclose(f.Y, 4.57114092616805e-05)
+
+
+def test_expl_5_dormand_prince_adptv():
+    f = Frame()
+    f.addfield("Y", 1.)
+
+    def dYdx(f, x, Y):
+        return -Y
+    f.Y.differentiator = dYdx
+    f.addintegrationvariable("x", 0.)
+
+    def dx(f):
+        return f.x.suggested
+    f.x.updater = dx
+    f.x.snapshots = [10.]
+    f.x.suggest(0.1)
+
+    f.integrator = Integrator(f.x)
+    f.integrator.instructions = [
+        Instruction(schemes.expl_5_dormand_prince_adptv,
+                    f.Y, controller={"eps": 1.e-2})
+    ]
+
+    f.run()
+    assert np.allclose(f.Y, 1.8016162079480785e-06)
 
 
 def test_impl_1_euler_direct():
