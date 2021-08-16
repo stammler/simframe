@@ -13,7 +13,7 @@ def test_write_read_dump():
     f.addfield("x", 0.)
     f.addgroup("A")
     f.A.addfield("x", 1.)
-    f.writer = writers.hdf5writer
+    f.writer = writers.hdf5writer()
     dumpfile = os.path.join(f.writer.datadir, "test.dmp")
     f.writer.writedump(f, filename=dumpfile)
     f.writer.verbosity = 0

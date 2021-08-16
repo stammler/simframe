@@ -11,13 +11,13 @@ from simframe import writers
 
 
 def test_namespacewriter_attributes():
-    writer = writers.namespacewriter
+    writer = writers.namespacewriter()
     assert isinstance(repr(writer), str)
     assert isinstance(str(writer), str)
 
 
 def test_namespacewriter_getfilename():
-    writer = writers.namespacewriter
+    writer = writers.namespacewriter()
     assert writer._getfilename() == None
 
 
@@ -38,7 +38,8 @@ def test_namespacewriter_simple():
     f.x.snapshots = [1.]
     f.integrator = Integrator(f.x)
     f.integrator.instructions = [Instruction(schemes.expl_1_euler, f.Y)]
-    f.writer = writers.namespacewriter
+    f.writer = writers.namespacewriter()
+    f.writer.dumping = True
     f.run()
     Y = f.writer.read.sequence("Y")
     assert np.all(Y == [1., 0.])
@@ -53,7 +54,7 @@ def test_namespacewriter_simple():
 def test_namespacewriter_read_empty():
     f = Frame()
     f.addfield("Y", 1.)
-    f.writer = writers.namespacewriter
+    f.writer = writers.namespacewriter()
     with pytest.raises(RuntimeError):
         Y = f.writer.read.sequence("Y")
     with pytest.raises(RuntimeError):
@@ -63,7 +64,7 @@ def test_namespacewriter_read_empty():
 def test_namespacewriter_read_out_of_bounds():
     f = Frame()
     f.addfield("Y", 1.)
-    f.writer = writers.namespacewriter
+    f.writer = writers.namespacewriter()
     f.writer.verbosity = 0
     f.writer.dumping = False
     f.writer.write(f)
@@ -78,7 +79,7 @@ def test_namespacewriter_read_sequence():
     f = Frame()
     f.addfield("Y", [1., 0])
     f.addfield("x", 0, save=False)
-    f.writer = writers.namespacewriter
+    f.writer = writers.namespacewriter()
     f.writer.write(f)
     with pytest.raises(TypeError):
         f.writer.read.sequence(1)

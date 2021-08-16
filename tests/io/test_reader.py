@@ -63,7 +63,7 @@ def test_simple_read_files():
     f.x.snapshots = [1.]
     f.integrator = Integrator(f.x)
     f.integrator.instructions = [Instruction(schemes.expl_1_euler, f.Y)]
-    f.writer = writers.hdf5writer
+    f.writer = writers.hdf5writer()
     f.run()
     x = f.writer.read.sequence("x")
     assert np.all(x == [0., 1.])

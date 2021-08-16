@@ -25,7 +25,7 @@ def test_group_repr_str():
     assert isinstance(repr(f.A), str)
     assert isinstance(str(f.A), str)
     f.integrator = Integrator(f.x)
-    f.writer = writers.namespacewriter
+    f.writer = writers.namespacewriter()
     assert isinstance(repr(f), str)
     assert isinstance(str(f), str)
 

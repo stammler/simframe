@@ -10,6 +10,14 @@ from simframe.io.writer import Writer
 from simframe.frame.field import Field
 
 
+class hdf5writer(Writer):
+    """Class for writing HDF5 output files."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_hdf5wrapper, extension="hdf5", description="HDF5 file format using h5py",
+                         options={"com": "lzf", "comopts": None}, reader=hdf5reader, *args, **kwargs)
+
+
 def _hdf5wrapper(obj, filename, com="lzf", comopts=None):
     """Wrapper to write object to HDF5 file.
 
@@ -222,7 +230,3 @@ class hdf5reader(Reader):
             else:
                 ret[ds] = gr[ds][()]
         return SimpleNamespace(**ret)
-
-
-hdf5writer = Writer(_hdf5wrapper, extension="hdf5", description="HDF5 file format using h5py", options={
-                    "com": "lzf", "comopts": None}, reader=hdf5reader)

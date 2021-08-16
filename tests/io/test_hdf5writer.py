@@ -10,7 +10,7 @@ from simframe import writers
 
 def test_hdf5writer_skip():
     f = Frame()
-    f.writer = writers.hdf5writer
+    f.writer = writers.hdf5writer()
     f.addfield("x", 0., save=False)
     f.writeoutput(0)
     with pytest.raises(KeyError):
@@ -23,7 +23,7 @@ def test_hdf5writer_strings():
     f = Frame()
     f.addfield("s", string)
     f.t = string
-    f.writer = writers.hdf5writer
+    f.writer = writers.hdf5writer()
     f.writeoutput(0)
     f.writeoutput(1)
     data0000 = f.writer.read.output(0)
@@ -42,7 +42,7 @@ def test_hdf5writer_strings():
 def test_hdf5writer_none():
     f = Frame()
     f.n = None
-    f.writer = writers.hdf5writer
+    f.writer = writers.hdf5writer()
     with pytest.raises(ValueError):
         f.writeoutput(0)
     f.n = [1, None]
@@ -57,7 +57,7 @@ def test_hdf5writer_none():
 def test_hdf5writer_dict():
     f = Frame()
     f.n = {1: 1}
-    f.writer = writers.hdf5writer
+    f.writer = writers.hdf5writer()
     with pytest.raises(NotImplementedError):
         f.writeoutput(0)
     shutil.rmtree(f.writer.datadir)
@@ -66,7 +66,7 @@ def test_hdf5writer_dict():
 def test_hdf5writer_number():
     f = Frame()
     f.n = 1
-    f.writer = writers.hdf5writer
+    f.writer = writers.hdf5writer()
     f.writeoutput(0)
     f.writeoutput(1)
     data0000 = f.writer.read.output(0)
@@ -81,7 +81,7 @@ def test_hdf5writer_number():
 def test_hdf5writer_single_value_array():
     f = Frame()
     f.n = np.array(1)
-    f.writer = writers.hdf5writer
+    f.writer = writers.hdf5writer()
     f.writeoutput(0)
     f.writeoutput(1)
     data0000 = f.writer.read.output(0)
@@ -96,7 +96,7 @@ def test_hdf5writer_single_value_array():
 def test_hdf5writer_list():
     f = Frame()
     f.n = [1, 1]
-    f.writer = writers.hdf5writer
+    f.writer = writers.hdf5writer()
     f.writeoutput(0)
     f.writeoutput(1)
     data0000 = f.writer.read.output(0)

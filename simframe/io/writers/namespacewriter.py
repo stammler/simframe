@@ -12,29 +12,14 @@ import numpy as np
 from types import SimpleNamespace
 
 
-class _namespacewriter(Writer):
-    """Modified class to write ``Frame`` object to namespace"""
+class namespacewriter(Writer):
+    """Class to write ``Frame`` object to namespace"""
 
     _buffer = deque([])
 
-    def __init__(self, func, datadir="data", zfill=0, dumping=True, reader=None, description="Temporary namespace writer"):
-        """
-        Parameters
-        ----------
-        func : callable
-            Function that writes Frame object.
-        datadir : str, optional, default : "data"
-            Path to data directory. Only used for dump files
-        zfill : int, optional default : 4
-            leading zeros of output numbers
-        dumping : boolean, optional, default : True
-            if True dump files are written
-        reader, Reader, optional, default : None
-            Reader to read the outputs
-        description : str, optional, default : "Namespace writer"
-        """
-        super().__init__(func, datadir=datadir, filename="_", zfill=zfill, extension="",
-                         overwrite=False, dumping=dumping, reader=reader, description=description)
+    def __init__(self, *args, **kwargs):
+        super().__init__(_writeframetonamespace, dumping=False, description="Temporary namespace writer",
+                         reader=namespacereader, *args, **kwargs)
 
     def __repr__(self):
         ret = self.__str__()+"\n"
@@ -49,7 +34,7 @@ class _namespacewriter(Writer):
         """Filenames are not required for this class."""
         pass
 
-    def write(self, owner, i=0, forceoverwrite=False, filename=""):
+    def write(self, owner, i=0, *args, **kwargs):
         """Writes output to namespace
 
         Parameters
@@ -229,7 +214,3 @@ def _writeframetonamespace(frame):
         Namespace with data"""
     d = _converttonamespace(frame)
     return d
-
-
-namespacewriter = _namespacewriter(
-    _writeframetonamespace, reader=namespacereader, description="Namespace writer")

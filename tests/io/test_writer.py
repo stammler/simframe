@@ -74,7 +74,8 @@ def test_writer_extension_handling():
 
 def test_write():
     f = Frame()
-    f.writer = writers.hdf5writer
+    f.writer = writers.hdf5writer()
+    f.writer.verbosity = 0
     filename = os.path.join(f.writer.datadir, "test.out")
     f.writer.write(f, 0, True, filename=filename)
     assert os.path.isfile(filename)
