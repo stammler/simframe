@@ -37,13 +37,12 @@ class Scheme:
 
     @scheme.setter
     def scheme(self, value):
-        if not hasattr(value, "__call__"):
-            raise TypeError("Scheme function needs to be callable.")
-        # Initialize the object, if user only gave the class
         if inspect.isclass(value):
-            self._scheme = value()
-        else:
-            self._scheme = value
+            value = value()
+        if not (hasattr(value, "__call__") or isinstance(value, Scheme)):
+            raise TypeError("<scheme> has to be callable or of type Scheme.")
+        # Initialize the object, if user only gave the class
+        self._scheme = value
 
     @property
     def controller(self):
