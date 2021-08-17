@@ -3,8 +3,6 @@ class Updater():
 
     __name__ = "Updater"
 
-    _func = None
-
     def __init__(self, func=None):
         """Contains update instructions.
 

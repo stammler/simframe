@@ -22,12 +22,6 @@ class Field(np.ndarray, AbstractGroup):
 
     __name__ = "Field"
 
-    _differentiator = Heartbeat(None)
-    _jacobinator = Heartbeat(None)
-    _constant = False
-    _save = True
-    _buffer = None
-
     def __new__(cls, owner, value, updater=None, differentiator=None, jacobinator=None, description="", constant=False, save=True, copy=False):
         """Parameters
         ----------
@@ -59,6 +53,7 @@ class Field(np.ndarray, AbstractGroup):
         obj.description = description
         obj.constant = constant
         obj.save = save
+        obj._buffer = None
         return obj
 
     def __array_finalize__(self, obj):
@@ -70,6 +65,8 @@ class Field(np.ndarray, AbstractGroup):
         self.jacobinator = getattr(obj, "jacobinator", Heartbeat(None))
         self.description = getattr(obj, "description", "")
         self.constant = getattr(obj, "constant", False)
+        self._save = getattr(obj, "_save", True)
+        self._buffer = getattr(obj, "_buffer", None)
 
     def __str__(self):
         ret = AbstractGroup.__str__(self)

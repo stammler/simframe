@@ -42,5 +42,9 @@ def _f_expl_3_heun(x0, Y0, dx, *args, dYdx=None, **kwargs):
     return dx*(b0*k0 + b2*k2)
 
 
-expl_3_heun = Scheme(
-    _f_expl_3_heun, description="Explicit 3rd-order Heun's method")
+class expl_3_heun(Scheme):
+    """Class for explicit 3rd-order Heun's method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_3_heun,
+                         description="Explicit 3rd-order Heun's method", *args, **kwargs)

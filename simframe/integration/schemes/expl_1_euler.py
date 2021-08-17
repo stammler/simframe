@@ -32,5 +32,9 @@ def _f_expl_1_euler(x0, Y0, dx, *args, dYdx=None, **kwargs):
     return dx*k0
 
 
-expl_1_euler = Scheme(
-    _f_expl_1_euler, description="Explicit 1st-order Euler method")
+class expl_1_euler(Scheme):
+    """Class for explicit 1st-order Euler method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_1_euler,
+                         description="Explicit adaptive 1st-order Euler method", *args, **kwargs)

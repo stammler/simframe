@@ -13,10 +13,7 @@ class AbstractGroup(object):
     ``AbstractGroup`` should not be instanciated directly."""
 
     __name__ = ""
-
     _description = ""
-    _owner = None
-    _updater = Heartbeat(None)
 
     @property
     def description(self):

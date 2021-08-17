@@ -10,9 +10,6 @@ class Instruction(Scheme):
 
     __name__ = "Instruction"
 
-    _Y = None
-    _fstep = 1.
-
     def __init__(self, scheme, Y, fstep=1., controller={}, description=""):
         """Integration instruction
 

@@ -15,11 +15,10 @@ from types import SimpleNamespace
 class namespacewriter(Writer):
     """Class to write ``Frame`` object to namespace"""
 
-    _buffer = deque([])
-
     def __init__(self, *args, **kwargs):
         super().__init__(_writeframetonamespace, dumping=False, description="Temporary namespace writer",
                          reader=namespacereader, *args, **kwargs)
+        self._buffer = deque([])
 
     def __repr__(self):
         ret = self.__str__()+"\n"

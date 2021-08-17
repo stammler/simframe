@@ -38,5 +38,9 @@ def _f_impl_1_euler_direct(x0, Y0, dx, jac=None, *args, **kwargs):
     return (np.linalg.inv(A) - eye) @ Y0
 
 
-impl_1_euler_direct = Scheme(
-    _f_impl_1_euler_direct, description="Implicit 1st-order direct Euler method")
+class impl_1_euler_direct(Scheme):
+    """Class for implicit 1st-order direct Euler method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_impl_1_euler_direct,
+                         description="Implicit 1st-order direct Euler method", *args, **kwargs)

@@ -13,14 +13,6 @@ class Integrator:
 
     __name__ = "Integrator"
 
-    _description = ""
-    _instructions = []
-    _failop = Heartbeat(None)
-    _finalizer = Heartbeat(None)
-    _maxit = 500
-    _preparator = Heartbeat(None)
-    _var = None
-
     def __init__(self, var, instructions=[], failop=None, preparator=None, finalizer=None, maxit=500, description=""):
         """Integrator
 
@@ -171,10 +163,11 @@ class Integrator:
                 self._failoperation()
                 i += 1
         # Update the variables.
+        upd = update()
         for i, inst in enumerate(self.instructions):
             if inst.Y._buffer is None:
                 continue
-            update(None, inst.Y, None)
+            upd(None, inst.Y, None)
         # Store the taken stepsize
         self.var._prevstepsize = stepsize
         # Finalization

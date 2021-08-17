@@ -69,5 +69,9 @@ def _f_expl_2_heun_euler_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.0324, eps=0.
         return False
 
 
-expl_2_heun_euler_adptv = Scheme(
-    _f_expl_2_heun_euler_adptv, description="Explicit adaptive 2nd-order Heun-Euler method")
+class expl_2_heun_euler_adptv(Scheme):
+    """Class for explicit adaptive 2nd-order Heun-Euler method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_2_heun_euler_adptv,
+                         description="Explicit adaptive 2nd-order Heun-Euler method", *args, **kwargs)

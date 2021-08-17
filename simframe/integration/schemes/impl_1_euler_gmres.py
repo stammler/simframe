@@ -45,5 +45,9 @@ def _f_impl_1_euler_gmres(x0, Y0, dx, jac=None, gmres_opt={"atol": 0.}, *args, *
         return res - Y0
 
 
-impl_1_euler_gmres = Scheme(
-    _f_impl_1_euler_gmres, description="Implicit 1st-order Euler method with GMRES solver")
+class impl_1_euler_gmres(Scheme):
+    """Class for implicit 1st-order Euler method with GMRES solver"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_impl_1_euler_gmres,
+                         description="Implicit 1st-order Euler method with GMRES solver", *args, **kwargs)

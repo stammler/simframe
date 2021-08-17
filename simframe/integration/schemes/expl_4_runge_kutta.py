@@ -46,5 +46,9 @@ def _f_expl_4_runge_kutta(x0, Y0, dx, *args, dYdx=None, **kwargs):
     return dx*(b0*k0 + b1*k1 + b2*k2 + b3*k3)
 
 
-expl_4_runge_kutta = Scheme(
-    _f_expl_4_runge_kutta, description="Explicit 4th-order classical Runge-Kutta method")
+class expl_4_runge_kutta(Scheme):
+    """Class for explicit 4th-order classical Runge-Kutta method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_4_runge_kutta,
+                         description="Explicit 4th-order classical Runge-Kutta method", *args, **kwargs)

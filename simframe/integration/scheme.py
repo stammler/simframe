@@ -1,5 +1,7 @@
 from simframe.frame.abstractgroup import AbstractGroup
 
+import inspect
+
 
 class Scheme:
     """Class for an integration ``Scheme`` that can be used as template for creating custom schemes.
@@ -11,10 +13,6 @@ class Scheme:
     step sizes. If the step size was not small enough the fail operation can reduce it further."""
 
     __name__ = "Scheme"
-
-    _description = ""
-    _controller = {}
-    _scheme = None
 
     def __init__(self, scheme, controller={}, description=""):
         """Abstract integration scheme.
@@ -41,7 +39,11 @@ class Scheme:
     def scheme(self, value):
         if not hasattr(value, "__call__"):
             raise TypeError("Scheme function needs to be callable.")
-        self._scheme = value
+        # Initialize the object, if user only gave the class
+        if inspect.isclass(value):
+            self._scheme = value()
+        else:
+            self._scheme = value
 
     @property
     def controller(self):

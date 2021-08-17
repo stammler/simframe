@@ -41,5 +41,9 @@ def _f_impl_2_midpoint_direct(x0, Y0, dx, jac=None, *args, **kwargs):
     return dx*k1
 
 
-impl_2_midpoint_direct = Scheme(
-    _f_impl_2_midpoint_direct, description="Implicit 2nd-order direct midpoint method")
+class impl_2_midpoint_direct(Scheme):
+    """Class for implicit 2nd-order direct midpoint method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_impl_2_midpoint_direct,
+                         description="Implicit 2nd-order direct midpoint method", *args, **kwargs)

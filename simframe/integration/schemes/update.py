@@ -24,4 +24,8 @@ def _update(x0, Y0, dx, *args, **kwargs):
     return True
 
 
-update = Scheme(_update, description="Instruction to update Y")
+class update(Scheme):
+    """Class to update a field after integration."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_update, *args, **kwargs)

@@ -1,4 +1,5 @@
 from datetime import timedelta
+import inspect
 import numpy as np
 from time import monotonic
 
@@ -20,11 +21,6 @@ class Frame(Group):
     ``Frame`` has additional functionality for writing output files and for integration."""
 
     __name__ = "Frame"
-
-    _integrator = None
-    _verbosity = None
-    _progressbar = None
-    _writer = None
 
     def __init__(self, integrator=None, writer=None, updater=None, verbosity=2, progressbar=None, description=""):
         """
@@ -93,6 +89,8 @@ class Frame(Group):
 
     @writer.setter
     def writer(self, value):
+        if inspect.isclass(value):
+            value = value()
         if value is not None and not isinstance(value, Writer):
             raise TypeError("writer hat to be of type Writer or None.")
         self._writer = value

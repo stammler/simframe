@@ -20,9 +20,6 @@ class Reader(object):
 
     __name__ = "Reader"
 
-    _description = ""
-    _writer = None
-
     def __init__(self, writer, description=""):
         """General ``Reader`` class
 

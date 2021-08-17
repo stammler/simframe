@@ -86,5 +86,9 @@ def _f_expl_5_cash_karp_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.0001889568, e
         return False
 
 
-expl_5_cash_karp_adptv = Scheme(
-    _f_expl_5_cash_karp_adptv, description="Explicit adaptive 5th-order Cash-Karp method")
+class expl_5_cash_karp_adptv(Scheme):
+    """Class for explicit adaptive 5th-order Cash-Karp method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_5_cash_karp_adptv,
+                         description="Explicit adaptive 5th-order Cash-Karp method", *args, **kwargs)

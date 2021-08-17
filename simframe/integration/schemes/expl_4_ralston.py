@@ -47,5 +47,9 @@ def _f_expl_4_ralston(x0, Y0, dx, *args, dYdx=None, **kwargs):
     return dx*(b0*k0 + b1*k1 + b2*k2 + b3*k3)
 
 
-expl_4_ralston = Scheme(
-    _f_expl_4_ralston, description="Explicit 4th-order Ralston's method")
+class expl_4_ralston(Scheme):
+    """Class for explicit 4th-order Ralston's method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_4_ralston,
+                         description="Explicit 4th-order Ralston's method", *args, **kwargs)

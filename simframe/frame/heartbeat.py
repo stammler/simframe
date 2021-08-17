@@ -15,10 +15,6 @@ class Heartbeat(object):
 
     __name__ = "Heartbeat"
 
-    _systole = None
-    _updater = None
-    _diastole = None
-
     def __init__(self, updater=None, systole=None, diastole=None):
         """``Heartbeat`` class
 

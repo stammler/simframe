@@ -76,5 +76,9 @@ def _f_expl_3_gottlieb_shu_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.005832, ep
         return False
 
 
-expl_3_gottlieb_shu_adptv = Scheme(
-    _f_expl_3_gottlieb_shu_adptv, description="Explicit adaptive 3rd-order Gottlieb-Shu method")
+class expl_3_gottlieb_shu_adptv(Scheme):
+    """Class for explicit adaptive 3rd-order Gottlieb-Shu method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_3_gottlieb_shu_adptv,
+                         description="Explicit adaptive 3rd-order Gottlieb-Shu method", *args, **kwargs)

@@ -90,5 +90,9 @@ def _f_expl_5_dormand_prince_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.00018895
         return False
 
 
-expl_5_dormand_prince_adptv = Scheme(
-    _f_expl_5_dormand_prince_adptv, description="Explicit adaptive 5th-order Dormand-Prince method")
+class expl_5_dormand_prince_adptv(Scheme):
+    """Class for explicit adaptive 5th-order Dormand-Prince method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_5_dormand_prince_adptv,
+                         description="Explicit adaptive 5th-order Dormand-Prince method", *args, **kwargs)

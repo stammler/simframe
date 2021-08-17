@@ -18,9 +18,7 @@ class IntVar(Field):
     ``IntVar.update()`` does not update the integration variable. Try not to update the integration variable by hand.
     Let the ``Integrator`` do it for you."""
 
-    _snapshots = []
-    _suggested = None
-    _prevstepsize = 0.
+    __name__ = "IntVar"
 
     def __new__(cls, owner, value=0, snapshots=[], updater=None, description="", save=True, copy=False):
         """Parameters
@@ -44,12 +42,14 @@ class IntVar(Field):
                               description=description, constant=False, save=save, copy=copy)
         obj.snapshots = snapshots
         obj._prevstepsize = 0.
+        obj._suggested = None
         return obj
 
     def __array_finalize__(self, obj):
         super().__array_finalize__(obj)
         self.snapshots = getattr(obj, "snapshots", [])
-        self._prevstepsize = 0.
+        self._prevstepsize = getattr(obj, "_prevstepsize", 0.)
+        self._suggested = getattr(obj, "_suggested", None)
 
     def __str__(self):
         ret = "{}".format(str(self.__name__))

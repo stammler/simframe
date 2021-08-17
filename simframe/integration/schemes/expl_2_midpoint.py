@@ -39,5 +39,9 @@ def _f_expl_2_midpoint(x0, Y0, dx, *args, dYdx=None, **kwargs):
     return dx*k1
 
 
-expl_2_midpoint = Scheme(
-    _f_expl_2_midpoint, description="Explicit 2nd-order midpoint method")
+class expl_2_midpoint(Scheme):
+    """Class for explicit 2nd-order midpoint method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_2_midpoint,
+                         description="Explicit 2nd-order midpoint method", *args, **kwargs)

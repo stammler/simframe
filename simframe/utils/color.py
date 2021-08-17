@@ -1,6 +1,8 @@
 class Color(object):
     """Class to decorate strings with color tags."""
 
+    __name__ = "Color"
+
     _colors = {"black": "\033[30m",
                "red": "\033[91m",
                "green": "\033[92m",

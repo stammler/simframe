@@ -78,5 +78,9 @@ def _f_expl_3_bogacki_shampine_adptv(x0, Y0, dx, *args, dYdx=None, econ=0.005832
         return False
 
 
-expl_3_bogacki_shampine_adptv = Scheme(
-    _f_expl_3_bogacki_shampine_adptv, description="Explicit adaptive 3rd-order Bogacki-Shampine method")
+class expl_3_bogacki_shampine_adptv(Scheme):
+    """Class for explicit adaptive 3rd-order Bogacki-Shampine method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_3_bogacki_shampine_adptv,
+                         description="Explicit adaptive 3rd-order Bogacki-Shampine method", *args, **kwargs)

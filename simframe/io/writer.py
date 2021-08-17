@@ -17,17 +17,6 @@ class Writer(object):
 
     __name__ = "Writer"
 
-    _datadir = "data"
-    _description = ""
-    _dumping = True
-    _extension = "out"
-    _filename = "data"
-    _options = {}
-    _read = None
-    _overwrite = False
-    _verbosity = 1
-    _zfill = 4
-
     def __init__(self, func, datadir="data", filename="data", zfill=4, extension="out", overwrite=False, dumping=True,
                  reader=None, verbosity=1, description="", options={}):
         """Parameters

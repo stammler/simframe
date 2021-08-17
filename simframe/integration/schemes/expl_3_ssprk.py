@@ -42,5 +42,9 @@ def _f_expl_3_ssprk(x0, Y0, dx, *args, dYdx=None, **kwargs):
     return dx*(b0*k0 + b1*k1 + b2*k2)
 
 
-expl_3_ssprk = Scheme(
-    _f_expl_3_ssprk, description="Explicit 3rd-order Strong Stability Preserving Runge-Kutta method")
+class expl_3_ssprk(Scheme):
+    """Class for explicit 3rd-order Strong Stability Preserving Runge-Kutta method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_3_ssprk,
+                         description="Explicit 3rd-order Strong Stability Preserving Runge-Kutta method", *args, **kwargs)

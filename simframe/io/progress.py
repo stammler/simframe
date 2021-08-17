@@ -12,10 +12,7 @@ from simframe.utils.color import Color
 class Progressbar(object):
     """Class for printing progress bar to terminal."""
 
-    _line1 = ""
-    _line2 = ""
-    _N1 = 0
-    _N2 = 0
+    __name__ = "Progressbar"
 
     def __init__(self, prefix=" ", suffix="| ", fill="▶", empty=" ", length=25, color="blue", spinner=None):
         """This class controls the output of a progress bar on screen.
@@ -57,6 +54,10 @@ class Progressbar(object):
         self._speed = None
         self._t = monotonic()
         self._x = None
+        self._line1 = ""
+        self._line2 = ""
+        self._N1 = 0
+        self._N2 = 0
 
     def _getbar(self, filled):
         """Returns actual progress bar between and including prefix and suffix

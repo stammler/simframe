@@ -46,5 +46,9 @@ def _f_expl_4_38rule(x0, Y0, dx, *args, dYdx=None, **kwargs):
     return dx*(b0*k0 + b1*k1 + b2*k2 + b3*k3)
 
 
-expl_4_38rule = Scheme(
-    _f_expl_4_38rule, description="Explicit 4th-order 3/8 rule method")
+class expl_4_38rule(Scheme):
+    """Class for explicit 4th-order 3/8 rule method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_4_38rule,
+                         description="Explicit 4th-order 3/8 rule method", *args, **kwargs)

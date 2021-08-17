@@ -43,5 +43,9 @@ def _f_expl_3_kutta(x0, Y0, dx, *args, dYdx=None, **kwargs):
     return dx*(b0*k0 + b1*k1 + b2*k2)
 
 
-expl_3_kutta = Scheme(
-    _f_expl_3_kutta, description="Explicit 3rd-order Kutta's method")
+class expl_3_kutta(Scheme):
+    """Class for explicit 3rd-order Kutta's method"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(_f_expl_3_kutta,
+                         description="Explicit 3rd-order Kutta's method", *args, **kwargs)
