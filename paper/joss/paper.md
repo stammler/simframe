@@ -22,7 +22,7 @@ date: 11 August 2021
 
 `Simframe` is a Python framework to facilitate scientific simulations. It can be used to easily integrate differential equations.
 
-Conceptually, upon initialization `Simframe` is an empty frame that can be filled with `Field`s containing the data. `Field`s are derived from `numpy.ndarray`s, but with extend functionality. The user can then specify differential equations to those data fields and can set up an integrator which is integrating those fields according the given differential equations.
+Conceptually, upon initialization `Simframe` is an empty frame that can be filled with `Field`s containing the data. `Field`s are derived from `numpy.ndarray`s, but with extended functionality. The user can then specify differential equations to those data fields and can set up an integrator which is integrating those fields according the given differential equations.
 
 Fields that should not be integrated but are still required for the model can be assigned an update function, according to which they will be updated once per integration step.
 
