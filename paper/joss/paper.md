@@ -16,6 +16,7 @@ affiliations:
   - name: University Observatory, Faculty of Physics, Ludwig-Maximilians-Universität München, Scheinerstr. 1, 81679 Munich, Germany
     index: 1
 date: 11 August 2021
+bibliography: paper.bib
 ---
 
 # Summary
