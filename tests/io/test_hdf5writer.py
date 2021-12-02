@@ -27,7 +27,7 @@ def test_hdf5writer_strings():
     f.writeoutput(0)
     f.writeoutput(1)
     data0000 = f.writer.read.output(0)
-    assert data0000.s == string
+    assert data0000.s[()] == string
     assert data0000.t == string
     s = f.writer.read.sequence("s")
     assert np.all(s == [string, string])
