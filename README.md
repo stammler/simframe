@@ -1,6 +1,9 @@
 # Simframe
 
-[![Documentation Status](https://readthedocs.org/projects/simframe/badge/?version=latest)](https://simframe.readthedocs.io/en/latest/?badge=latest) ![PyPI - License](https://img.shields.io/pypi/l/simframe) [![status](https://joss.theoj.org/papers/0ef61e034c57445e846b2ec383c920a6/status.svg)](https://joss.theoj.org/papers/0ef61e034c57445e846b2ec383c920a6) ![PyPI - Downloads](https://img.shields.io/pypi/dm/simframe)
+[![Documentation Status](https://readthedocs.org/projects/simframe/badge/?version=latest)](https://simframe.readthedocs.io/en/latest/?badge=latest) 
+![PyPI - License](https://img.shields.io/pypi/l/simframe) 
+[![status](https://joss.theoj.org/papers/0ef61e034c57445e846b2ec383c920a6/status.svg)](https://joss.theoj.org/papers/0ef61e034c57445e846b2ec383c920a6) 
+![PyPI - Downloads](https://img.shields.io/pypi/dm/simframe?label=PyPI%20downloads)
 
 Framework for scientific simulations
 
