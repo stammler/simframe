@@ -23,6 +23,10 @@ It comes with a variety of integration schemes and some infrastrcuture for writi
 
 [Module Reference](https://simframe.readthedocs.io/en/latest/api.html)
 
+## Contributing
+
+To contribute to the software, please read the [contribution guidelines](https://github.com/stammler/simframe/blob/master/.github/CONTRIBUTING.md).
+
 ## Ackowledgements
 
 `simframe` has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme under grant agreement No 714769.
