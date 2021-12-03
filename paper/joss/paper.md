@@ -23,7 +23,7 @@ bibliography: paper.bib
 
 `Simframe` is a Python framework to facilitate scientific simulations. It can be used to easily integrate differential equations.
 
-Conceptually, upon initialization `Simframe` is an empty frame that can be filled with `Field`s containing the data. `Field`s are derived from `numpy.ndarray`s, but with extended functionality. The user can then specify differential equations to those data fields and can set up an integrator which is integrating those fields according the given differential equations.
+Conceptually, upon initialization `Simframe` is an empty frame that can be filled with `Field`s containing the data. `Field`s are derived from `numpy.ndarray`s [@harris2020Natur.585..357H], but with extended functionality. The user can then specify differential equations to those data fields and can set up an integrator which is integrating those fields according the given differential equations.
 
 Fields that should not be integrated but are still required for the model can be assigned an update function, according to which they will be updated once per integration step.
 
@@ -35,7 +35,7 @@ Due to its modular structure, `Simframe` can be extended at will, for example, b
 
 Solving differential equations is part of the daily work of scientists. `Simframe` facilitates this by providing the infrastructure: Data structures, integration schemes, and methods to write and read output files.
 
-One one hand, `Simframe` can be used to quickly solve small scientific problems, and, on the other hand, can be easily extended to larger projects due to its versatility and modular structure.
+On one hand, `Simframe` can be used to quickly solve small scientific problems, and, on the other hand, can be easily extended to larger projects due to its versatility and modular structure.
 
 Furthermore, `Simframe` is ideal for beginners without programming experience who are taking their first steps in solving differential equations. It can therefore be used to design lectures or practical courses at schools and universities, as it allows students to concentrate on the essentials without having to write larger programs on their own.
 
@@ -85,3 +85,5 @@ If configured by the user, `Simframe` is writing dump files, from which the simu
 # Acknowledgements
 
 The authors acknowledge funding from the European Research Council (ERC) under the European Union's Horizon 2020 research and innovation programme under grant agreement No 714769 and funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Ref no. FOR 2634/1 and under Germany's Excellence Strategy - EXC-2094 - 390783311.
+
+# References
