@@ -12,6 +12,6 @@ If you have an idea of a feature, that is missing in `simframe`, of if you want 
 
 ## Contributing code
 
-To contribute code please open a new [pull request]() and describe the changes to the software your pull request introduces.
+To contribute code please open a new pull request and describe the changes to the software your pull request introduces.
 
 Please note, that we want to achieve a code coverage of 100%. Any addition to the software must therefore also come with unit tests. Additional features must also be described in the documentation.
