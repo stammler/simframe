@@ -49,7 +49,7 @@ The data fields of `Simframe` are subclassed `NumPy` `ndarray`s. The full `NumPy
 
 ## Integration schemes
 
-`Simframe` includes a number of integration schemes by default. All of the implemented schemes are Runge-Kutta methods of different orders. Some of the methods are adaptive, i.e., they are embedded Runge-Kutta methods, that return an optimal step size for the integration variable, such that the desired accuracy is achieved. The implicit methods require a matrix inversion that is either done directly by `NumPy` or by using the GMRES solver provided by `SciPy`.
+`Simframe` includes a number of integration schemes by default [@Hairer:1993]. All of the implemented schemes are Runge-Kutta methods of different orders. Some of the methods are adaptive, i.e., they are embedded Runge-Kutta methods, that return an optimal step size for the integration variable, such that the desired accuracy is achieved. The implicit methods require a matrix inversion that is either done directly by `NumPy` or by using the GMRES solver provided by `SciPy` [@Virtanen:2020].
 
 Here is a list of all implemented integration schemes:
 
