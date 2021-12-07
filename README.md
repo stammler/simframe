@@ -5,10 +5,11 @@
 [![status](https://joss.theoj.org/papers/0ef61e034c57445e846b2ec383c920a6/status.svg)](https://joss.theoj.org/papers/0ef61e034c57445e846b2ec383c920a6) 
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/simframe?label=PyPI%20downloads)
 
-Framework for scientific simulations
+### Framework for scientific simulations
 
-`simframe` is a framework to flexibly build scientific simulations.  
-It comes with a variety of integration schemes and some infrastrcuture for writing and reading data files.
+`Simframe` is a Python framework to facilitate scientific simulations. The scope of the software is to provide a framework which can hold data fields, which can be used to integrate differential equations, and which can read and write data files.
+
+Data fields are stored in modified `numpy.ndarray`s. Therefore, `Simframe` can only work with data, that can be stored in `NumPy` arrays.
 
 ## Installation
 
