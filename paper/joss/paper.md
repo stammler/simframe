@@ -23,7 +23,7 @@ bibliography: paper.bib
 
 `Simframe` is a Python framework to facilitate scientific simulations. The scope of the software is to provide a framework which can hold data fields, which can be used to integrate differential equations, and which can read and write data files.
 
-Conceptually, upon initialization `Simframe` is an empty frame that can be filled with `Field`s containing data. `Field`s are derived from `numpy.ndarray`s [@Harris:2020], but with extended functionality. The user can then specify differential equations to those data fields and can set up an integrator which is integrating those fields according the given differential equations. Therefore, `Simframe` can only work with data, that can be stored in a `NumPy` array.
+Conceptually, upon initialization `Simframe` is an empty frame that can be filled with `Field`s containing data. `Field`s are derived from `numpy.ndarray`s [@Harris:2020], but with extended functionality. The user can then specify differential equations to those data fields and can set up an integrator which is integrating those fields according the given differential equations. Therefore, `Simframe` can only work with data, that can be stored in `NumPy` arrays.
 
 Data fields that should not be integrated themselves, but are still required for the model, can have an update function assigned to them, according to which they will be updated once per integration step.
 
@@ -39,13 +39,13 @@ On one hand, `Simframe` can be used to quickly solve small scientific problems, 
 
 Furthermore, `Simframe` is ideal for beginners without programming experience who are taking their first steps in solving differential equations. It can therefore be used to design lectures or practical courses at schools and universities, as it allows students to concentrate on the essentials without having to write larger programs on their own.
 
-While plenty of ODE solver packages exist for Python, like `solve_ivp` or `odeint` in `SciPy`'s `integrate` module. These functions, however, do not provide data structures, nor input/output capabilities. `Simframe` offers a flexible framework to define, group, and describe data, define how it is updated, use existing integrators or define new ones, and to handle writing of data or serializing the entire simulation object, all in one modular package.
+While plenty of ODE solver packages exist for Python, like `solve_ivp` or `odeint` in `SciPy`'s `integrate` module. These functions, however, do not provide data structures, nor input/output capabilities. `Simframe` offers a flexible framework to define, group, and describe data, define how it is updated, use existing integrators or define new ones, and to handle writing of data or serializing the entire simulation object, all in one modular package. Existing integrators like `solve_ivp` or `odeint` can be used within `Simframe` by simply adding them to an integration scheme.
 
 # Features
 
 ## Data fields
 
-The data fields of `Simframe` are subclassed `NumPy` `ndarray`s. The full `NumPy` functionality can therefore be used on `Simframe` data fields. The `ndarray`s have been extended to store additional information about differential equations or update functions and a string description of the field.
+The data fields of `Simframe` are subclassed `NumPy` `ndarray`s. The full `NumPy` functionality can therefore be used on `Simframe` data fields. The `ndarray`s have been extended to store additional information about differential equations or update functions and a string description of the field. The data fields can be arranged in groups to facilitate a clear structure withing the data frame.
 
 ## Integration schemes
 
@@ -80,7 +80,7 @@ Here is a list of all implemented integration schemes:
 
 By default `Simframe` has two options for storing simulation results. One is by storing the data in a separate namespace within the `Simframe` object itself, useful for small simulations to access results without writing/reading data files. Another one is by storing the data in HDF5 data files using the `h5py` package [@Collette:2014].
 
-If configured by the user, `Simframe` is writing dump files, from which the simulation can be resumed, in case the program crashed unexpectedly. These dump files are serialized `Simframe` objects using the `dill` package [@McKerns:2021].
+If configured by the user, `Simframe` is writing dump files, from which the simulation can be resumed, in case the program crashed unexpectedly. These dump files are serialized `Simframe` objects using the `dill` package [@McKerns:2012].
 
 # Acknowledgements
 
