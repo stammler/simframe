@@ -1,6 +1,6 @@
 # Pull Requests
 
-Please have a look the [contributing guidelines](https://github.com/stammler/simframe/blob/master/.github/CONTRIBUTING.md).
+Please have a look the [contribution guidelines](https://github.com/stammler/simframe/blob/master/.github/CONTRIBUTING.md).
 
 ## Reference issue
 
