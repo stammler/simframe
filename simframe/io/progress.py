@@ -85,7 +85,7 @@ class Progressbar(object):
         t = monotonic()
         if self._x is not None:
             dx = x - self._x
-            dt = t - self._t
+            dt = t - self._t + 1.e-100
             speed = dx/dt
             self._speedbuffer = np.insert(self._speedbuffer, 0, speed)[
                 :self._N_speed]
