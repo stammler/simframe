@@ -67,9 +67,9 @@ def test_writer_extension_handling():
         pass
     writer = Writer(f)
     writer._extension = ".out"
-    assert writer._getfilename(0) == os.path.join("data", "data.out")
+    assert writer._getfilename(0) == os.path.join("data", "data0000.out")
     writer.extension = ""
-    assert writer._getfilename(0) == os.path.join("data", "data")
+    assert writer._getfilename(0) == os.path.join("data", "data0000")
 
 
 def test_write():
