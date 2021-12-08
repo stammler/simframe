@@ -39,7 +39,7 @@ On one hand, `Simframe` can be used to quickly solve small scientific problems, 
 
 Furthermore, `Simframe` is ideal for beginners without programming experience who are taking their first steps in solving differential equations. It can therefore be used to design lectures or practical courses at schools and universities, as it allows students to concentrate on the essentials without having to write larger programs on their own.
 
-While plenty of ODE solver packages exist for Python, like `solve_ivp` or `odeint` in `SciPy`'s `integrate` module. These functions, however, do not provide data structures, nor input/output capabilities. `Simframe` offers a flexible framework to define, group, and describe data, define how it is updated, use existing integrators or define new ones, and to handle writing of data or serializing the entire simulation object, all in one modular package. Existing integrators like `solve_ivp` or `odeint` can be used within `Simframe` by simply adding them to an integration scheme.
+Plenty of ODE solver packages already exist for Python, like `solve_ivp` or `odeint` in `SciPy`'s `integrate` module, however, these do not provide data structures, nor input/output capabilities. `Simframe` offers a flexible framework to define, group, and describe data, define how it is updated, use existing integrators or define new ones, and to handle writing of data or serializing the entire simulation object, all in one modular package. Existing integrators like `solve_ivp` or `odeint` can be used within `Simframe` by simply adding them to an integration scheme.
 
 # Features
 
