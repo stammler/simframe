@@ -84,6 +84,6 @@ If configured by the user, `Simframe` is writing dump files, from which the simu
 
 # Acknowledgements
 
-The authors acknowledge funding from the European Research Council (ERC) under the European Union's Horizon 2020 research and innovation programme under grant agreement No 714769 and funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Ref no. FOR 2634/1 and under Germany's Excellence Strategy - EXC-2094 - 390783311.
+The authors acknowledge funding from the European Research Council (ERC) under the European Union's Horizon 2020 research and innovation programme under grant agreement No 714769 and funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) - under Ref no. FOR-2634 - 325594231 and under Germany's Excellence Strategy - EXC-2094 - 390783311.
 
 # References
