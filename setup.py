@@ -19,7 +19,7 @@ def read_version():
 setup(
     name=package_name,
 
-    description="Framework for scientific simulations",
+    description="Framework for Scientific Simulations",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     keywords="numerical,simulation,integration,science,mathematics,physics",
@@ -29,18 +29,18 @@ setup(
                   "Documentation": "https://simframe.readthedocs.io/"
                   },
 
-    author="Sebastian Stammler, Til Birnstiel",
+    author="Sebastian Stammler, Tilman Birnstiel",
     author_email="sebastian.stammler@gmail.com, til.birnstiel@lmu.de",
     maintainer="Sebastian Stammler",
 
     version=read_version(),
-    license="GPLv3",
+    license="BSD",
 
-    classifiers=["Development Status :: 3 - Alpha",
+    classifiers=["Development Status :: 5 - Production/Stable",
                  "Environment :: Console",
                  "Intended Audience :: Developers",
                  "Intended Audience :: Science/Research",
-                 "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+                 "License :: OSI Approved :: BSD License",
                  "Natural Language :: English",
                  "Operating System :: OS Independent",
                  "Programming Language :: Python",

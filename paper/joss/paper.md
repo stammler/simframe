@@ -47,7 +47,7 @@ Plenty of ODE solver packages already exist for Python, like `solve_ivp` or `ode
 
 ## Data fields
 
-The data fields of `Simframe` are subclassed `NumPy` `ndarray`s. The full `NumPy` functionality can therefore be used on `Simframe` data fields. The `ndarray`s have been extended to store additional information about differential equations or update functions and a string description of the field. The data fields can be arranged in groups to facilitate a clear structure withing the data frame.
+The data fields of `Simframe` are subclassed `NumPy` `ndarray`s. The full `NumPy` functionality can therefore be used on `Simframe` data fields. The `ndarray`s have been extended to store additional information about differential equations or update functions and a string description of the field. The data fields can be arranged in groups to facilitate a clear structure within the data frame.
 
 ## Integration schemes
 
