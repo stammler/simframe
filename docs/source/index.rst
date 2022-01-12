@@ -1,8 +1,9 @@
 ``simframe`` documentation
 =========================================
 
-| ``simframe`` is a framework to flexibly build scientific simulations.
-| It comes with a variety of integration schemes and some infrastructure for writing and reading data files.
+| ``simframe`` is a Python framework to facilitate scientific simulations. The scope of the software is to provide a framework which can hold data fields, which can be used to integrate differential equations, and which can read and write data files.
+
+| Data fields are stored in modified ``numpy.ndarrays``. Therefore, ``simframe`` can only work with data, that can be stored in ``NumPy`` arrays.
 
 | To install ``simframe`` simply type
 | ``pip install simframe``
@@ -19,7 +20,9 @@
    4_custom_schemes
    5_adaptive_schemes
    6_implicit_integration
-   7_coupled_oscillators
+   example_coupled_oscillators
+   A_citation
+   B_contrib_bug_feature
    api
 
 
