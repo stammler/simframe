@@ -4,7 +4,7 @@ We invite everyone to contribute to the further development of `simframe`. Eithe
 
 ## Reporting bugs
 
-If you encountered a bug in `simframe`, please about a new [bug report issue](https://github.com/stammler/simframe/issues/new?template=bug_report.md&title=[BUG]+Descriptive+title+of+the+bug+report) and describe the bug, the expected behavior, and steps how to reproduce the bug.
+If you encountered a bug in `simframe`, please open a new [bug report issue](https://github.com/stammler/simframe/issues/new?template=bug_report.md&title=[BUG]+Descriptive+title+of+the+bug+report) and describe the bug, the expected behavior, and steps how to reproduce the bug.
 
 ## Requesting features
 
