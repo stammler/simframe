@@ -33,6 +33,26 @@ Data fields are stored in modified `numpy.ndarray`s. Therefore, `Simframe` can o
 
 To contribute to the software, please read the [contribution guidelines](https://github.com/stammler/simframe/blob/master/.github/CONTRIBUTING.md).
 
+## Citation
+
+If you use `Simframe`, please remember to cite [Stammler & Birnstiel (2022)](https://doi.org/10.21105/joss.03882).
+
+```
+@article{simframe,
+  doi = {10.21105/joss.03882},
+  url = {https://doi.org/10.21105/joss.03882},
+  year = {2022},
+  publisher = {The Open Journal},
+  volume = {7},
+  number = {69},
+  pages = {3882},
+  author = {Sebastian M. Stammler and Tilman Birnstiel},
+  title = {Simframe: A Python Framework for Scientific Simulations},
+  journal = {Journal of Open Source Software}
+}
+
+```
+
 ## Ackowledgements
 
 `simframe` has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme under grant agreement No 714769.
