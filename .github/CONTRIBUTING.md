@@ -8,7 +8,7 @@ If you encountered a bug in `simframe`, please open a new [bug report issue](htt
 
 ## Requesting features
 
-If you have an idea of a feature, that is missing in `simframe`, of if you want to suggest and improvement, please open a new [feature request issue](https://github.com/stammler/simframe/issues/new?template=feature_request.md&title=[FEATURE]+Descriptive+title+of+the+feature+request).
+If you have an idea of a new feature, that is missing in `simframe`, or if you want to suggest an improvement, please open a new [feature request issue](https://github.com/stammler/simframe/issues/new?template=feature_request.md&title=[FEATURE]+Descriptive+title+of+the+feature+request).
 
 ## Contributing code
 
