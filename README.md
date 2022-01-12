@@ -19,13 +19,13 @@ Data fields are stored in modified `numpy.ndarray`s. Therefore, `Simframe` can o
 
 [https://simframe.readthedocs.io/](https://simframe.readthedocs.io/)
 
-1. [Simple Integration](https://simframe.readthedocs.io/en/latest/1_simple_integration.html)
-2. [Advanced Integration](https://simframe.readthedocs.io/en/latest/2_advanced_integration.html)
-3. [Updating Groups and Fields](https://simframe.readthedocs.io/en/latest/3_updating.html)
-4. [Custom Integration Schemes](https://simframe.readthedocs.io/en/latest/4_custom_schemes.html)
-5. [Adaptive Integration Schemes](https://simframe.readthedocs.io/en/latest/5_adaptive_schemes.html)
-6. [Implicit Integration](https://simframe.readthedocs.io/en/latest/6_implicit_integration.html)
-7. [Coupled Oscillators](https://simframe.readthedocs.io/en/latest/7_coupled_oscillators.html)
+* [1. Simple Integration](https://simframe.readthedocs.io/en/latest/1_simple_integration.html)
+* [2. Advanced Integration](https://simframe.readthedocs.io/en/latest/2_advanced_integration.html)
+* [3. Updating Groups and Fields](https://simframe.readthedocs.io/en/latest/3_updating.html)
+* [4. Custom Integration Schemes](https://simframe.readthedocs.io/en/latest/4_custom_schemes.html)
+* [5. Adaptive Integration Schemes](https://simframe.readthedocs.io/en/latest/5_adaptive_schemes.html)
+* [6. Implicit Integration](https://simframe.readthedocs.io/en/latest/6_implicit_integration.html)
+* [Example: Coupled Oscillators](https://simframe.readthedocs.io/en/latest/example_coupled_oscillators.html)
 
 [Module Reference](https://simframe.readthedocs.io/en/latest/api.html)
 
