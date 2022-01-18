@@ -26,6 +26,7 @@ Data fields are stored in modified `numpy.ndarray`s. Therefore, `Simframe` can o
 * [5. Adaptive Integration Schemes](https://simframe.readthedocs.io/en/latest/5_adaptive_schemes.html)
 * [6. Implicit Integration](https://simframe.readthedocs.io/en/latest/6_implicit_integration.html)
 * [Example: Coupled Oscillators](https://simframe.readthedocs.io/en/latest/example_coupled_oscillators.html)
+* [Example: Double Pendulum](https://simframe.readthedocs.io/en/latest/example_double_pendulum.html)
 
 [Module Reference](https://simframe.readthedocs.io/en/latest/api.html)
 

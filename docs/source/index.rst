@@ -21,6 +21,7 @@
    5_adaptive_schemes
    6_implicit_integration
    example_coupled_oscillators
+   example_double_pendulum
    A_citation
    B_contrib_bug_feature
    api
