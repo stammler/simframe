@@ -6,3 +6,4 @@ include docs/make.bat
 include docs/requirements.txt
 include docs/source/*.rst
 include docs/source/*.py
+prune *tests*
