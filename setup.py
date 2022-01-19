@@ -51,7 +51,7 @@ setup(
                  "Topic :: Scientific/Engineering :: Physics",
                  ],
 
-    packages=find_packages(),
+    packages=find_packages(exclude=['*tests*']),
     install_requires=["dill", "h5py", "matplotlib", "numpy", "scipy"],
     include_package_data=True,
     zip_safe=False,
