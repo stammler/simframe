@@ -22,7 +22,7 @@
    6_implicit_integration
    example_coupled_oscillators
    example_double_pendulum
-   example_compartmental_model
+   example_compartmental_models
    A_citation
    B_contrib_bug_feature
    api
