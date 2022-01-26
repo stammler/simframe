@@ -1,4 +1,4 @@
-``simframe`` documentation
+``simframe`` Documentation
 =========================================
 
 | ``simframe`` is a Python framework to facilitate scientific simulations. The scope of the software is to provide a framework which can hold data fields, which can be used to integrate differential equations, and which can read and write data files.
@@ -22,6 +22,7 @@
    6_implicit_integration
    example_coupled_oscillators
    example_double_pendulum
+   example_compartmental_model
    A_citation
    B_contrib_bug_feature
    api
