@@ -4,6 +4,7 @@
 ![GitHub](https://img.shields.io/github/license/stammler/simframe) 
 [![status](https://joss.theoj.org/papers/0ef61e034c57445e846b2ec383c920a6/status.svg)](https://joss.theoj.org/papers/0ef61e034c57445e846b2ec383c920a6) 
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/simframe?label=PyPI%20downloads)
+[![Fedora package](https://img.shields.io/fedora/v/python3-simframe?color=blue&label=Fedora%20Linux&logo=fedora)](https://src.fedoraproject.org/rpms/python-simframe)
 
 ### Framework for scientific simulations
 
