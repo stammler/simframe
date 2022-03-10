@@ -293,7 +293,7 @@ def _mem_tree(obj, prefix=""):
         part1 = "{}- {}: ".format(prefix, colorize(key, "blue"))
         if isinstance(val, Group):
             part2, size_mb = _mem_tree(val, prefix=prefix)
-            ret += part1.ljust(52) + f'total {size_mb:.2f} MB'.rjust(16) + '\n' + part2 + '\n'
+            ret += part1.ljust(52) + f'total {size_mb:.2f} MB'.rjust(16) + '\n' + part2
         else:
             if isinstance(val, _np.ndarray):
                 size_mb = val.nbytes / 1024**2
