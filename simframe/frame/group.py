@@ -1,4 +1,6 @@
 from functools import partial
+import sys as _sys
+import numpy as _np
 
 from simframe.frame.abstractgroup import AbstractGroup
 from simframe.frame.field import Field
@@ -260,10 +262,55 @@ class Group(AbstractGroup):
         ret = _toc_tree(self)
         print(ret)
 
+    def memory_usage(self, output=True):
+        """determine memory usage of group
+
+        Parameters
+        ----------
+        output : bool, optional
+            if true, write out results on screen, by default True
+
+        Returns
+        -------
+        float
+            total memory usage of group in MB
+        """
+        res, total = _mem_tree(self)
+        if output:
+            print(res)
+            print(f'Total : {total:.2f} MB')
+        return total
+
+
+def _mem_tree(obj, prefix=""):
+    ret = ""
+    total = 0.0
+    prefix = prefix + 4 * " "
+    for key in sorted(obj.__dict__.keys(), key=str.casefold):
+        if key == '_owner':
+            continue
+        val = obj.__dict__[key]
+        part1 = "{}- {}: ".format(prefix, colorize(key, "blue"))
+        if isinstance(val, Group):
+            part2, size_mb = _mem_tree(val, prefix=prefix)
+            ret += part1.ljust(52) + f'total {size_mb:.2f} MB'.rjust(16) + '\n' + part2 + '\n'
+        else:
+            if isinstance(val, _np.ndarray):
+                size_mb = val.nbytes / 1024**2
+                shape = str(val.shape).replace(' ', '').rjust(13)
+            else:
+                size_mb = _sys.getsizeof(val) / 1024**2
+                shape = ' ' * 13
+            part2 = shape + f'{size_mb:.2f} MB'.rjust(10)
+            ret += (part1).ljust(45) + part2 + '\n'
+
+        total += size_mb
+    return ret, total
+
 
 def _toc_tree(obj, prefix=""):
     ret = colorize(obj.__str__(), "blue")
-    prefix = prefix + 4*" "
+    prefix = prefix + 4 * " "
     for key in sorted(obj.__dict__.keys(), key=str.casefold):
         if key.startswith("_"):
             continue
