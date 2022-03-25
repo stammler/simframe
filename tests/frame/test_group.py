@@ -79,3 +79,12 @@ def test_group_toc():
     f.addfield("x", 1.)
     f.toc
     f.toc = None
+
+
+def test_group_memory_usage():
+    f = Frame()
+    f.addgroup("A")
+    f.addfield("x", 1.)
+    assert f.memory_usage() == 197.
+    assert f.memory_usage(skip_hidden=True) == 8.
+    f.memory_usage(print_output=True)

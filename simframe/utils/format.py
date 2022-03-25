@@ -29,7 +29,7 @@ def byteformat(b):
     # Exponent to the base of 1024
     e = np.log(1.*b) / np.log(1024.)
     # Keep exponent inbound of labls
-    ef = np.minimum(int(e), 8)
+    ef = np.minimum(int(np.floor(e)), 8)
 
     # Do not show values smaller than 1 KiB
     if ef < 0:
