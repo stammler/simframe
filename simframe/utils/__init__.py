@@ -5,6 +5,8 @@ be called to add decorators to a string for colored output."""
 
 from simframe.utils.color import Color
 from simframe.utils.color import colorize
+from simframe.utils.format import byteformat
 
 __all__ = ["Color",
-           "colorize"]
+           "colorize",
+           "byteformat"]

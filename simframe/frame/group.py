@@ -1,5 +1,4 @@
 from functools import partial
-import sys as _sys
 import numpy as _np
 
 from simframe.frame.abstractgroup import AbstractGroup
@@ -7,6 +6,7 @@ from simframe.frame.field import Field
 from simframe.frame.intvar import IntVar
 from simframe.frame.heartbeat import Heartbeat
 from simframe.utils.color import colorize
+from simframe.utils.format import byteformat
 
 
 class Group(AbstractGroup):
@@ -262,49 +262,61 @@ class Group(AbstractGroup):
         ret = _toc_tree(self)
         print(ret)
 
-    def memory_usage(self, output=True):
-        """determine memory usage of group
+    def memory_usage(self, print_output=False, skip_hidden=False):
+        """Determine memory usage of a Group
+
+        Will only return the correct data size of Fields and Groups of Fields.
+        Other data types might deviate from the true memory usage.
 
         Parameters
         ----------
-        output : bool, optional
-            if true, write out results on screen, by default True
+        print_output : bool, optional, default : False
+            if True, print results on screen
+        skip_hidden : bool, optional, default : False
+            if True, hidden attributes will be ignored
 
         Returns
         -------
         float
-            total memory usage of group in MB
+            total memory usage of group in bytes
         """
-        res, total = _mem_tree(self)
-        if output:
+        res, total = _mem_tree(self, skip_hidden=skip_hidden)
+        if print_output:
             print(res)
-            print(f'Total : {total:.2f} MB')
+            print("Total: "+byteformat(total))
         return total
 
 
-def _mem_tree(obj, prefix=""):
+def _mem_tree(obj, prefix="", skip_hidden=True):
     ret = ""
     total = 0.0
     prefix = prefix + 4 * " "
     for key in sorted(obj.__dict__.keys(), key=str.casefold):
         if key == '_owner':
             continue
+        if skip_hidden & key.startswith("_"):
+            continue
         val = obj.__dict__[key]
         part1 = "{}- {}: ".format(prefix, colorize(key, "blue"))
         if isinstance(val, Group):
-            part2, size_mb = _mem_tree(val, prefix=prefix)
-            ret += part1.ljust(52) + f'total {size_mb:.2f} MB'.rjust(16) + '\n' + part2
+            part2, size = _mem_tree(val, prefix=prefix)
+            ret += part1.ljust(56) + \
+                "total: " + byteformat(size) + "\n" + part2
+            #f'total {size:.2f} MiB'.rjust(16) + '\n' + part2
         else:
             if isinstance(val, _np.ndarray):
-                size_mb = val.nbytes / 1024**2
-                shape = str(val.shape).replace(' ', '').rjust(13)
+                size = val.nbytes
+                shape = str(val.shape).rjust(17)
             else:
-                size_mb = _sys.getsizeof(val) / 1024**2
-                shape = ' ' * 13
-            part2 = shape + f'{size_mb:.2f} MB'.rjust(10)
+                #size = _sys.getsizeof(val)
+                size = val.__sizeof__()
+                shape = ' ' * 17
+            s = byteformat(size)
+            part2 = shape + " " + s
             ret += (part1).ljust(45) + part2 + '\n'
 
-        total += size_mb
+        s = byteformat(size)
+        total += size
     return ret, total
 
 
