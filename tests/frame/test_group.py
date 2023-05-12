@@ -2,6 +2,7 @@
 
 
 import pytest
+import sys
 from simframe import Frame
 from simframe import Integrator
 from simframe import writers
@@ -85,6 +86,11 @@ def test_group_memory_usage():
     f = Frame()
     f.addgroup("A")
     f.addfield("x", 1.)
-    assert f.memory_usage() == 181.
+    version = sys.version_info
+    if version.major == 3 and version.minor >= 11:
+        mem = 181.
+    else:
+        mem = 197.
+    assert f.memory_usage() == mem
     assert f.memory_usage(skip_hidden=True) == 8.
     f.memory_usage(print_output=True)

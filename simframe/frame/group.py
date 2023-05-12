@@ -292,7 +292,7 @@ def _mem_tree(obj, prefix="", skip_hidden=True):
     total = 0.0
     prefix = prefix + 4 * " "
     for key in sorted(obj.__dict__.keys(), key=str.casefold):
-        if key == '_owner':
+        if key == "_owner":
             continue
         if skip_hidden & key.startswith("_"):
             continue
@@ -302,18 +302,16 @@ def _mem_tree(obj, prefix="", skip_hidden=True):
             part2, size = _mem_tree(val, prefix=prefix)
             ret += part1.ljust(56) + \
                 "total: " + byteformat(size) + "\n" + part2
-            #f'total {size:.2f} MiB'.rjust(16) + '\n' + part2
         else:
             if isinstance(val, _np.ndarray):
                 size = val.nbytes
                 shape = str(val.shape).rjust(17)
             else:
-                #size = _sys.getsizeof(val)
                 size = val.__sizeof__()
-                shape = ' ' * 17
+                shape = " " * 17
             s = byteformat(size)
             part2 = shape + " " + s
-            ret += (part1).ljust(45) + part2 + '\n'
+            ret += (part1).ljust(45) + part2 + "\n"
 
         s = byteformat(size)
         total += size
