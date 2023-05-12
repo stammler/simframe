@@ -47,8 +47,6 @@ def test_not_implemented_functions():
 
 
 def test_simple_read_files():
-    global dx
-    global dYdx
     f = Frame()
     f.addgroup("A")
     f.A.addfield("B", [0., 0.])

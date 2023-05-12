@@ -1,11 +1,5 @@
-import dill
-import numpy as np
-import random
-import string
 import os
 
-from simframe.frame.field import Field
-from simframe.frame.intvar import IntVar
 from simframe.io.reader import Reader
 from simframe.io.dump import writedump
 from simframe.frame.abstractgroup import AbstractGroup
