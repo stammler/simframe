@@ -1,4 +1,3 @@
-dill
 h5py
 matplotlib
 numpy

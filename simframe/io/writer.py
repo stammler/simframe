@@ -149,7 +149,6 @@ class Writer(object):
             raise TypeError("<dumping> has to be of type bool.")
         if value:
             self._dumping = True
-            self._preparedump()
         else:
             self._dumping = False
 
@@ -261,25 +260,6 @@ class Writer(object):
             print(msg)
 
         writedump(frame, filename)
-
-    def _preparedump(self):
-        """This function dumps a template ``<simframe.frame.Field>`` and ``<simframe.frame.IntVar>`` to file
-        and deletes the file directly afterwards. For some reason ``dill`` does not correctly save ``Field`` and ``IntVar``
-        correctly the first time. This function is called everytime ``<Writer.dumping>`` is set to ``True``
-        to make sure dumping works correctly when needed.
-
-        This is a "dirty fix". The reason why ``dill`` does not work correctly the first time is unknown.
-        """
-        while(True):
-            filename = "temp_" + "".join(random.choice(string.ascii_uppercase)
-                                         for i in range(5)) + ".dmp"
-            if not os.path.isfile(filename):    # pragma: no cover
-                break                           # Impossible to test due to randomness
-        temp = IntVar(None, 0., snapshots=[0.])
-        writedump(temp, filename)
-        temp = Field(None, 0.)
-        writedump(temp, filename)
-        os.remove(filename)
 
     def write(self, owner, i, forceoverwrite, filename=""):
         """Writes output to file

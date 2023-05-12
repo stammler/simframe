@@ -86,6 +86,23 @@ class Field(np.ndarray, AbstractGroup):
             return self[0].__format__(format_spec)
         else:
             return super().__format__(format_spec)
+        
+    def __reduce__(self):
+        """
+        Custom ``__reduce__`` function that carries extra information about
+        custom attributes of ``Field`` class.
+        """
+        pickled_state = super(Field, self).__reduce__()
+        new_state = pickled_state[2] + (self.__dict__,)
+        return (pickled_state[0], pickled_state[1], new_state)
+
+    def __setstate__(self, state):
+        """
+        Custom ``__setstate__`` function that adds extra
+        custom attributes of ``Field`` class.
+        """
+        self.__dict__.update(state[-1])
+        super(Field, self).__setstate__(state[0:-1])
 
     @property
     def constant(self):
