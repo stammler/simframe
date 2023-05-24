@@ -22,6 +22,10 @@ def test_namespacewriter_getfilename():
 
 
 def test_namespacewriter_simple():
+
+    global dYdx
+    global dx
+
     f = Frame()
     f.addfield("Y", 1.)
     f.addgroup("A")

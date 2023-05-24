@@ -52,7 +52,7 @@ setup(
                  ],
 
     packages=find_packages(),
-    install_requires=["dill", "h5py", "matplotlib", "numpy", "scipy"],
+    install_requires=["h5py", "matplotlib", "numpy", "scipy"],
     include_package_data=True,
     zip_safe=False,
 )
