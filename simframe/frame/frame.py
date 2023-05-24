@@ -92,7 +92,7 @@ class Frame(Group):
         if inspect.isclass(value):
             value = value()
         if value is not None and not isinstance(value, Writer):
-            raise TypeError("writer hat to be of type Writer or None.")
+            raise TypeError("writer has to be of type Writer or None.")
         self._writer = value
 
     def writeoutput(self, i=0, forceoverwrite=False, filename="", **kwargs):
