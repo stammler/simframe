@@ -140,7 +140,7 @@ class Integrator:
         # And count the loops
         i = 0
         status = False
-        while(not status):
+        while (not status):
             # The suggested stepsize has to be reset in the beginning of every try.
             # We therefore have to copy the current stepsize in case the user is returning
             # the suggested stepsize in the stepsize function.
@@ -169,7 +169,7 @@ class Integrator:
                 continue
             upd(None, inst.Y, None)
         # Store the taken stepsize
-        self.var._prevstepsize = stepsize
+        self.var._prevstepsize = np.array(stepsize)
         # Finalization
         self._finalize()
 

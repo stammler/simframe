@@ -1,4 +1,4 @@
-import pickle
+import dill
 
 
 def writedump(object, filename="object.dmp"):
@@ -11,7 +11,7 @@ def writedump(object, filename="object.dmp"):
     filename : str, optional, default : "object.dmp"
         path to file to be written"""
     with open(filename, "wb") as dumpfile:
-        pickle.dump(object, dumpfile)
+        dill.dump(object, dumpfile)
 
 
 def readdump(filename):
@@ -32,5 +32,5 @@ def readdump(filename):
     Only read dump files from sources you trust.
     Malware can be injected."""
     with open(filename, "rb") as dumpfile:
-        obj = pickle.load(dumpfile)
+        obj = dill.load(dumpfile)
     return obj
