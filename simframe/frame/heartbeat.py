@@ -1,4 +1,5 @@
 from simframe.frame.updater import Updater
+from simframe.utils.color import colorize
 
 
 class Heartbeat(object):
@@ -35,7 +36,28 @@ class Heartbeat(object):
         return "{}".format(str(self.__name__))
 
     def __repr__(self):
-        return self.__str__()
+        s = self.__str__() + "\n"
+        s += (len(s)-1)*"-" + "\n"
+        s += "\n"
+        s += "{} {}".format(colorize("Systole: ", color="red"),
+                            str(self.systole._func)) + "\n"
+        s += "{} {}".format(colorize("Updater: ", color="red"),
+                            str(self.updater._func)) + "\n"
+        s += "{} {}".format(colorize("Diastole:", color="red"),
+                            str(self.diastole._func)) + "\n"
+        s += "\n"
+        s += "Docstrings" + "\n"
+        s += 10*"-" + "\n"
+        s += "\n"
+        s += colorize("Systole:", color="red") + "\n"
+        s += str(self.systole._func.__doc__ or None) + "\n"
+        s += "\n"
+        s += colorize("Updater:", color="red") + "\n"
+        s += str(self.updater._func.__doc__ or None) + "\n"
+        s += "\n"
+        s += colorize("Diastole:", color="red") + "\n"
+        s += str(self.diastole._func.__doc__ or None)
+        return s
 
     @property
     def systole(self):

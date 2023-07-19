@@ -1,3 +1,7 @@
+import inspect
+from simframe.utils.color import colorize
+
+
 class Updater():
     """Class that manages how a ``Group`` or ``Field`` is updated."""
 
@@ -25,7 +29,37 @@ class Updater():
             return self._func(owner, *args, **kwargs)
 
     def __str__(self):
-        return "{}".format(str(self.__name__))
+        s = "{}".format(str(self.__name__)) + "\n"
+        s += (len(s)-1)*"-" + "\n"
+        s += "\n"
+        # Signature
+        try:
+            sig = "{}{}".format(self._func.__name__,
+                                inspect.signature(self._func))
+            s += "{} {}".format(colorize("Signature:",
+                                color="red"), str(sig)) + "\n"
+        except:
+            pass
+        # Source/Docstring
+        try:
+            source = inspect.getsource(self._func)
+            cat = colorize("Source:", color="red") + "\n"
+        except:
+            source = self._func.__doc__
+            cat = colorize("Docstring:", color="red") + "\n"
+        if source is not None:
+            s += cat
+            s += source
+        # File
+        try:
+            fn = inspect.getfile(self._func)
+            s += "{} {}".format(colorize("File:", color="red"), fn) + "\n"
+        except:
+            pass
+        # Type
+        cls = self._func.__class__.__name__
+        s += "{} {}".format(colorize("Type:", color="red"), cls)
+        return s
 
     def __repr__(self):
         return self.__str__()
