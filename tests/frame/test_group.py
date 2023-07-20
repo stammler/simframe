@@ -51,6 +51,7 @@ def test_group_updateorder():
         f.updater = ["x", "z"]
     f.updater = ["y", "x"]
     assert f.updateorder == ["y", "x"]
+    assert repr(f.updater.updater._func) == "list_updater"
 
     def upd_x(f):
         return f.x * f.y
