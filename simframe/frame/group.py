@@ -256,7 +256,17 @@ class Group(AbstractGroup):
         -------
         func : callable
             Function that is reduced by <self> and <ls>."""
-        return partial(_dummyupdatewithlist, self, ls)
+
+        # To give meaningful information a new class of partial is created
+        # with a new __repr__ method
+        class list_updater(partial):
+
+            def __repr__(self):
+                return type(self).__name__
+
+        f = list_updater(_dummyupdatewithlist, self, ls)
+        f.__doc__ = f"The attributes in this group are updated in the order: \n{ls}."
+        return f
 
     def _toc(self):
         ret = _toc_tree(self)

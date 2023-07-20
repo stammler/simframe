@@ -43,13 +43,13 @@ class Updater():
         # Source/Docstring
         try:
             source = inspect.getsource(self._func)
-            cat = colorize("Source:", color="red") + "\n"
+            cat = colorize("Source:", color="red")
         except:
             source = self._func.__doc__
-            cat = colorize("Docstring:", color="red") + "\n"
+            cat = colorize("Docstring:", color="red")
         if source is not None:
-            s += cat
-            s += source
+            s += cat + "\n"
+            s += source + "\n"
         # File
         try:
             fn = inspect.getfile(self._func)
