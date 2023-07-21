@@ -156,26 +156,26 @@ class hdf5reader(Reader):
             Writer object to which the reaer belongs."""
         super().__init__(writer)
 
-    def output(self, filename):
+    def output(self, output):
         """Reads a single output file.
 
         Parameters
         ----------
-        filename : str
-            Path to filename to be read
+        output : str or int
+            Path to filename to be read or number of output
 
         Returns
         -------
         data : SimpleNamespace
             Namespace of data in file."""
 
-        if not isinstance(filename, str):
-            filename = self._writer._getfilename(filename)
+        if not isinstance(output, str):
+            output = self._writer._getfilename(output)
 
-        if not os.path.isfile(filename):
+        if not os.path.isfile(output):
             raise RuntimeError("File does not exist.")
 
-        with h5py.File(filename, "r") as hdf5file:
+        with h5py.File(output, "r") as hdf5file:
             return self._readgroup(hdf5file)
 
     def sequence(self, field):
