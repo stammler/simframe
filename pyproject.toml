@@ -1,0 +1,46 @@
+[build-system]
+build-backend = 'mesonpy'
+requires = ['meson-python', 'numpy']
+
+[project]
+name = 'simframe'
+version = '1.0.4'
+description = 'Framework for Scientific Simulations'
+readme = { file = 'README.md', content-type = 'text/markdown' }
+keywords = [
+    'numerical',
+    'simulation',
+    'integration',
+    'science',
+    'mathematics',
+    'physics',
+]
+authors = [
+    { name = 'Sebastian Stammler', email = 'sebastian.stammler@gmail.com' },
+    { name = 'Til Birnstiel', email = 'til.birnstiel@lmu.de' },
+]
+maintainers = [
+    { name = 'Sebastian Stammler', email = 'sebastian.stammler@gmail.com' },
+    { name = 'Tilman Birnstiel', email = 'til.birnstiel@lmu.de' },
+]
+license = { file = 'LICENSE' }
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Console',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: BSD License',
+    'Natural Language :: English',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3 :: Only',
+    'Topic :: Education',
+    'Topic :: Scientific/Engineering',
+    'Topic :: Scientific/Engineering :: Mathematics',
+    'Topic :: Scientific/Engineering :: Physics',
+]
+dependencies = ['dill', 'h5py', 'matplotlib', 'numpy', 'scipy']
+
+[project.urls]
+Repository = 'https://github.com/stammler/simframe/'
+Documentation = 'https://simframe.readthedocs.io/'

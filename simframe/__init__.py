@@ -4,11 +4,15 @@ from simframe.integration import Integrator
 from simframe.integration import schemes
 from simframe.io import writers
 
-__name__ = "simframe"
-__version__ = "1.0.4"
+from importlib import metadata as _md
 
-__all__ = ["Frame",
-           "Instruction",
-           "Integrator",
-           "schemes",
-           "writers"]
+__name__ = 'simframe'
+__version__ = _md.version('simframe')
+
+__all__ = [
+    'Frame',
+    'Instruction',
+    'Integrator',
+    'schemes',
+    'writers'
+]

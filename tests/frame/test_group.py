@@ -88,8 +88,10 @@ def test_group_memory_usage():
     f.addgroup("A")
     f.addfield("x", 1.)
     version = sys.version_info
-    if version.major == 3 and version.minor >= 11:
+    if version.major == 3 and version.minor == 11:
         mem = 181.
+    elif version.major == 3 and version.minor >= 12:
+        mem = 157.
     else:
         mem = 197.
     assert f.memory_usage() == mem
