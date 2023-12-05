@@ -12,3 +12,4 @@ scipy
 sphinx
 sphinx_rtd_theme
 sphinx-automodapi
+-e .
