@@ -12,4 +12,4 @@ scipy
 sphinx
 sphinx_rtd_theme
 sphinx-automodapi
--e .
+--no-build-isolation --editable .
