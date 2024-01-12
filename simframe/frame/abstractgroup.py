@@ -48,8 +48,18 @@ class AbstractGroup(object):
     def __repr__(self):
         return self.__str__()
 
+    def __iter__(self):
+        """
+        This is to make it possible to iterate over the non-hidden
+        members of a group.
+        """
+        return ((name, member)
+                for name, member in self.__dict__.items()
+                if not name.startswith("_"))
+
     def update(self, *args, **kwargs):
-        """Function to update the object.
+        """
+        Function to update the object.
         Ths functions calls the heartbeat instance of the object.
 
         Parameters
