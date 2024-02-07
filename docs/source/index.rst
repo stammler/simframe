@@ -23,6 +23,7 @@
    example_coupled_oscillators
    example_double_pendulum
    example_compartmental_models
+   example_nbody
    A_citation
    B_contrib_bug_feature
    C_changelog
