@@ -25,6 +25,7 @@
    example_compartmental_models
    A_citation
    B_contrib_bug_feature
+   C_changelog
    api
 
 
