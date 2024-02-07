@@ -45,3 +45,14 @@ def test_frame_run():
     f.x = 1.5
     f.run()
     assert np.all(f.x == 2.)
+
+
+def test_frame_iter():
+    f = Frame()
+    f.addfield("A", 0.)
+    f.addfield("B", 1.)
+    for name, field in f:
+        if name == "A":
+            assert field == 0.
+        if name == "B":
+            assert field == 1.
