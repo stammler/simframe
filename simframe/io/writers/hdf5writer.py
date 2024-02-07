@@ -2,12 +2,12 @@ import glob
 import h5py
 import numbers
 import numpy as np
-from types import SimpleNamespace
 import os
 
 from simframe.io.reader import Reader
 from simframe.io.writer import Writer
 from simframe.frame.field import Field
+from simframe.utils.simplenamespace import SimpleNamespace
 
 
 class hdf5writer(Writer):

@@ -1,15 +1,13 @@
-from simframe.frame.abstractgroup import AbstractGroup
 from simframe.frame.field import Field
-from simframe.frame.group import Group
 from simframe.io.reader import Reader
 from simframe.io.writer import Writer
 from simframe.utils.color import colorize
+from simframe.utils.simplenamespace import SimpleNamespace
 
 from collections import deque
 import copy
 import numbers
 import numpy as np
-from types import SimpleNamespace
 
 
 class namespacewriter(Writer):

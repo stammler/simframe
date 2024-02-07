@@ -1,10 +1,8 @@
-from collections import deque
 import glob
-import numpy as np
-from types import SimpleNamespace
 import os
 
 from simframe.frame.abstractgroup import AbstractGroup
+from simframe.utils.simplenamespace import SimpleNamespace
 
 
 class Reader(object):
