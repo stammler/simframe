@@ -2,6 +2,10 @@ import types
 
 
 class SimpleNamespace(types.SimpleNamespace):
+    """
+    This is a modified version of types.SimpleNamespace that
+    allows for the iteration over its members
+    """
 
     def __init__(self, /, **kwargs):
         super().__init__(**kwargs)
