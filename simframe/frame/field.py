@@ -44,8 +44,8 @@ class Field(np.ndarray, AbstractGroup):
         copy : boolean, optional, default : False
             If True <value> will be copied, not referenced"""
         obj = np.array(value, copy=copy).view(cls)
-        if obj.shape == ():
-            obj = np.array([value], copy=copy).view(cls)
+        if obj.size == 1:
+            obj = obj.squeeze()
         obj._owner = owner
         obj.updater = Heartbeat(updater)
         obj.differentiator = Heartbeat(differentiator)
@@ -76,17 +76,9 @@ class Field(np.ndarray, AbstractGroup):
 
     def __repr__(self):
         val = self.getfield(self.dtype)
-        if val.shape == (1,):
-            val = np.array(val[0])
-        ret = "{}".format(np.ndarray.__str__(val))
+        ret = f"{np.ndarray.__str__(val)}"
         return ret
 
-    def __format__(self, format_spec):
-        if self.shape == (1,):
-            return self[0].__format__(format_spec)
-        else:
-            return super().__format__(format_spec)
-        
     def __reduce__(self):
         """
         Custom ``__reduce__`` function that carries extra information about
@@ -217,7 +209,7 @@ class Field(np.ndarray, AbstractGroup):
             return deriv
         jac = self.jacobinator.beat(self._owner, x)
         if jac is not None:
-            return jac @ Y
+            return np.dot(jac, Y)
         else:
             # If no differentiator or jacobian is set we return zeros.
             return np.zeros_like(self)

@@ -34,11 +34,12 @@ def _f_impl_1_euler_gmres(x0, Y0, dx, jac=None, gmres_opt={"atol": 0.}, *args, *
        | 1 
     """
     jac = Y0.jacobian(x0 + dx) if jac is None else jac  # Jacobain
-    N = jac.shape[0]                                    # Problem size
+    N = jac.shape[0] if jac.ndim else 1                 # Problem size
     eye = np.eye(N)                                     # Identity matrix
 
     A = eye - dx*jac
-    res, state = linalg.gmres(A, Y0, **gmres_opt)
+    b = Y0[None] if Y0.shape == () else Y0
+    res, state = linalg.gmres(A, b, **gmres_opt)
     if state != 0:
         return False
     else:

@@ -205,10 +205,7 @@ class hdf5reader(Reader):
         for f in files:
             with h5py.File(f, "r") as hdf5file:
                 A = np.array(hdf5file[loc][()])
-                if A.shape == (1,):
-                    ret.append(A[0])
-                else:
-                    ret.append(A)
+                ret.append(A)
         return np.array(ret)
 
     def _readgroup(self, gr):

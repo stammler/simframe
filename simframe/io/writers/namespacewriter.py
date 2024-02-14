@@ -128,10 +128,7 @@ class namespacereader(Reader):
         ret = []
         for i in range(N):
             A = np.array(_getvaluefrombuffer(self._writer._buffer[i], loc))
-            if A.shape == (1,):
-                ret.append(A[0])
-            else:
-                ret.append(A)
+            ret.append(A)
         return np.array(ret)
 
 

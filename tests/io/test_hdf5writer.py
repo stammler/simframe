@@ -23,21 +23,21 @@ def test_hdf5writer_strings():
     # When read from HDF5 the string will be a byte literal
     string_cmpr = string.encode()
     f = Frame()
-    f.addfield("s", string)
+    f.addfield("s", [string, string])
     f.t = string
     f.writer = writers.hdf5writer()
     f.writeoutput(0)
     f.writeoutput(1)
     data0000 = f.writer.read.output(0)
-    assert data0000.s[0] == string_cmpr
+    assert np.all(data0000.s == string_cmpr)
     assert data0000.t == string_cmpr
     s = f.writer.read.sequence("s")
-    assert np.all(s == [string_cmpr, string_cmpr])
+    assert np.all(s == string_cmpr)
     t = f.writer.read.sequence("t")
-    assert np.all(t == [string_cmpr, string_cmpr])
+    assert np.all(t == string_cmpr)
     data = f.writer.read.all()
-    assert np.all(data.s == [string_cmpr, string_cmpr])
-    assert np.all(data.s == [string_cmpr, string_cmpr])
+    assert np.all(data.s == string_cmpr)
+    assert np.all(data.t == string_cmpr)
     shutil.rmtree(f.writer.datadir)
 
 
