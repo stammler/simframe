@@ -14,8 +14,19 @@ class hdf5writer(Writer):
     """Class for writing HDF5 output files."""
 
     def __init__(self, *args, **kwargs):
-        super().__init__(_hdf5wrapper, extension="hdf5", description="HDF5 file format using h5py",
-                         options={"com": "lzf", "comopts": None}, reader=hdf5reader, *args, **kwargs)
+        filename = kwargs.pop("filename", "data")
+        extension = kwargs.pop("extension", "hdf5")
+        description = kwargs.pop("description", "HDF5 file format using h5py")
+        options = kwargs.pop("options", {"com": "lzf", "comopts": None})
+        super().__init__(
+            _hdf5wrapper,
+            filename=filename,
+            extension=extension,
+            description=description,
+            options=options,
+            reader=hdf5reader,
+            *args, **kwargs
+        )
 
 
 def _hdf5wrapper(obj, filename, com="lzf", comopts=None):
