@@ -1,14 +1,14 @@
 import dill
 
 
-def writedump(object, filename="object.dmp"):
+def writedump(object, filename="frame.dmp"):
     """Writes object to dump file
 
     Parameters
     ----------
     object : object
         object to be written to file
-    filename : str, optional, default : "object.dmp"
+    filename : str, optional, default : "frame.dmp"
         path to file to be written"""
     with open(filename, "wb") as dumpfile:
         dill.dump(object, dumpfile)

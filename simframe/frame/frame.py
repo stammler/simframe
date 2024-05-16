@@ -95,16 +95,16 @@ class Frame(Group):
             raise TypeError("writer has to be of type Writer or None.")
         self._writer = value
 
-    def writeoutput(self, i=0, forceoverwrite=False, filename="", **kwargs):
+    def writeoutput(self, i=0, forceoverwrite=False, filename=None, **kwargs):
         """Writes output to file, if ``Writer`` is specified.
 
         Parameters
         ----------
         i : int, optional, default : 0
             Number of output
-        forceoverwrite : boolean, optional, default : False
+        forceoverwrite : boolean, optional, default: False
             If True, this overrules the seetings of the Writer and enforces the file to be overwritten.
-        filename : string, optional, default = ""
+        filename : string, optional, default: None
             if given this will write the output to this file. Otherwise, it uses the standard scheme.
         kwargs : additional keyword arguments
             Additional options that can be passed to the writer"""

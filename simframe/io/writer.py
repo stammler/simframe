@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from simframe.io.reader import Reader
 from simframe.io.dump import writedump
@@ -54,9 +54,7 @@ class Writer(object):
 
     @datadir.setter
     def datadir(self, value):
-        if not isinstance(value, str):
-            raise TypeError("datadir has to be of type str.")
-        self._datadir = value
+        self._datadir = Path(value)
 
     @property
     def description(self):
@@ -185,13 +183,13 @@ class Writer(object):
 
         datadir = self.datadir if datadir is None else datadir
 
-        if not os.path.exists(self.datadir) and createdir:
+        if (not datadir.exists()) and createdir:
             if self.verbosity > 0:
-                msg = "Creating data directory '{:s}'.".format(self.datadir)
+                msg = f"Creating data directory {str(datadir):s}."
                 print(msg)
-            os.makedirs(self.datadir)
+            datadir.mkdir(parents=True)
 
-        return os.path.exists(self.datadir)
+        return datadir.exists()
 
     def __str__(self):
         ret = AbstractGroup.__str__(self)
@@ -199,15 +197,15 @@ class Writer(object):
 
     def __repr__(self):
         ret = self.__str__()+"\n"
-        ret += "-" * (len(ret)-1) + "\n"
-        ret += "    Data directory : {}\n".format(self.datadir)
-        ret += "    File names     : {}\n".format(self._getfilename(0))
-        ret += "    Overwrite      : {}\n".format(
-            colorize(self.overwrite, "yellow") if self.overwrite else self.overwrite)
-        ret += "    Dumping        : {}\n".format(
-            colorize(self.dumping, "yellow") if not self.dumping else self.dumping)
-        ret += "    Options        : {}\n".format(self.options)
-        ret += "    Verbosity      : {}".format(self.verbosity)
+        ret += f"""{"-" * (len(self.__str__()))}\n"""
+        ret += f"""    Data directory : {str(self.datadir):s}\n"""
+        ret += f"""    File names     : {str(self._getfilename(0)):s}\n"""
+        ret += f"""    Overwrite      : {colorize(
+            self.overwrite, "yellow") if not self.overwrite else self.overwrite}\n"""
+        ret += f"""    Dumping        : {
+            colorize(self.dumping, "yellow") if not self.dumping else self.dumping}\n"""
+        ret += f"""    Options        : {self.options}\n"""
+        ret += f"""    Verbosity      : {self.verbosity}"""
         return ret
 
     def _getfilename(self, i):
@@ -226,15 +224,15 @@ class Writer(object):
         # Removing . from extension if given
         ext = self.extension
         if ext != "":
-            if ext[0] != ".":
+            if not ext.startswith("."):
                 ext = "." + ext
 
         number = str(i).zfill(self.zfill)
         filename = self.filename + number + ext
 
-        return os.path.join(self.datadir, filename)
+        return self.datadir.joinpath(filename)
 
-    def writedump(self, frame, filename=""):
+    def writedump(self, frame, filename=None):
         """Writes the ``Frame`` to dump file
 
         Parameters
@@ -245,17 +243,17 @@ class Writer(object):
             path to file to be written
             if not set, filename will be <writer.datadir>/frame.dmp."""
 
-        filename = os.path.join(
-            self.datadir, "frame.dmp") if filename == "" else filename
+        filename = self.datadir.joinpath(
+            "frame.dmp") if filename is None else Path(filename)
         self.checkdatadir(createdir=True)
 
         if self.verbosity > 0:
-            msg = "Writing dump file {}".format(colorize(filename, "blue"))
+            msg = f"Writing dump file {colorize(filename, 'blue')}"
             print(msg)
 
         writedump(frame, filename)
 
-    def write(self, owner, i, forceoverwrite, filename=""):
+    def write(self, owner, i, forceoverwrite, filename=None):
         """Writes output to file
 
         Parameters
@@ -269,17 +267,19 @@ class Writer(object):
         filename : string
             If this is not "" the writer will use this filename instead of the standard scheme"""
 
-        if filename == "":
+        if filename == None:
             filename = self._getfilename(i)
+        else:
+            filename = Path(filename)
         self.checkdatadir(createdir=True)
         if not forceoverwrite:
             if not self.overwrite:
-                if os.path.isfile(filename):
+                if filename.exists():
                     raise RuntimeError(
-                        "File {} already exists.".format(filename))
-        self._func(owner, filename, **self.options)
+                        f"File {str(filename)} already exists.")
         if self.verbosity > 0:
-            msg = "Writing file {}".format(colorize(filename, "blue"))
+            msg = f"Writing file {colorize(filename, 'blue')}"
             print(msg)
+        self._func(owner, filename, **self.options)
         if self.dumping:
             self.writedump(owner)

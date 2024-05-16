@@ -4,7 +4,6 @@
 import numpy as np
 from pathlib import Path
 import pytest
-import shutil
 from simframe import Frame
 from simframe import Instruction
 from simframe import Integrator
@@ -87,7 +86,10 @@ def test_simple_read_files():
     assert np.all(data0000.A.B == 0.)
     with pytest.raises(RuntimeError):
         f.writer.read.output(2)
-    shutil.rmtree(f.writer.datadir)
+    files = f.writer.datadir.glob("*")
+    for file in files:
+        file.unlink()
+    f.writer.datadir.rmdir()
     with pytest.raises(RuntimeError):
         f.writer.datadir = "temp"
         f.writer.read.all()

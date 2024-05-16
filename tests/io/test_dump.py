@@ -2,7 +2,6 @@
 
 
 import os
-import shutil
 from simframe import Frame
 from simframe import writers
 from simframe.io import readdump
@@ -21,4 +20,7 @@ def test_write_read_dump():
     d = readdump(dumpfile)
     assert d.x == 0.
     assert d.A.x == 1.
-    shutil.rmtree(f.writer.datadir)
+    files = f.writer.datadir.glob("*")
+    for file in files:
+        file.unlink()
+    f.writer.datadir.rmdir()

@@ -1,9 +1,6 @@
 # Tests for the Writer class
 
-
-import os
 import pytest
-import shutil
 from simframe import Frame
 from simframe import writers
 from simframe.io import Writer
@@ -50,16 +47,13 @@ def test_writer_attributes():
 
 
 def test_writer_checkdatadir():
-    string = "data"
-
     def f():
         pass
     writer = Writer(f)
     writer.verbosity = 0
-    writer.datadir = string
     writer.checkdatadir(createdir=True)
-    assert os.path.isdir(writer.datadir)
-    shutil.rmtree(writer.datadir)
+    assert writer.datadir.is_dir()
+    writer.datadir.rmdir()
 
 
 def test_writer_extension_handling():
@@ -67,24 +61,27 @@ def test_writer_extension_handling():
         pass
     writer = Writer(f)
     writer._extension = ".out"
-    assert writer._getfilename(0) == os.path.join("data", "data0000.out")
+    assert writer._getfilename(0) == writer.datadir.joinpath("data0000.out")
     writer.extension = ""
-    assert writer._getfilename(0) == os.path.join("data", "data0000")
+    assert writer._getfilename(0) == writer.datadir.joinpath("data0000")
 
 
 def test_write():
     f = Frame()
     f.writer = writers.hdf5writer
     f.writer.verbosity = 0
-    filename = os.path.join(f.writer.datadir, "test.out")
+    filename = f.writer.datadir.joinpath("test.out")
     f.writer.write(f, 0, True, filename=filename)
-    assert os.path.isfile(filename)
+    assert filename.is_file()
     with pytest.raises(RuntimeError):
         f.writer.write(f, 0, False, filename=filename)
-    os.remove(filename)
+    filename.unlink()
     f.writer.overwrite = True
     f.writer.dumping = False
     f.writer.verbosity = 1
     f.writer.write(f, 0, False, filename=filename)
-    assert os.path.isfile(filename)
-    shutil.rmtree(f.writer.datadir)
+    assert filename.is_file()
+    files = f.writer.datadir.glob("*")
+    for file in files:
+        file.unlink()
+    f.writer.datadir.rmdir()

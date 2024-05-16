@@ -3,7 +3,6 @@
 
 import numpy as np
 import pytest
-import shutil
 from simframe import Frame
 from simframe import writers
 
@@ -14,8 +13,11 @@ def test_hdf5writer_skip():
     f.addfield("x", 0., save=False)
     f.writeoutput(0)
     with pytest.raises(KeyError):
-        x = f.writer.read.sequence("x")
-    shutil.rmtree(f.writer.datadir)
+        f.writer.read.sequence("x")
+    files = f.writer.datadir.glob("*")
+    for file in files:
+        file.unlink()
+    f.writer.datadir.rmdir()
 
 
 def test_hdf5writer_strings():
@@ -38,7 +40,10 @@ def test_hdf5writer_strings():
     data = f.writer.read.all()
     assert np.all(data.s == string_cmpr)
     assert np.all(data.t == string_cmpr)
-    shutil.rmtree(f.writer.datadir)
+    files = f.writer.datadir.glob("*")
+    for file in files:
+        file.unlink()
+    f.writer.datadir.rmdir()
 
 
 def test_hdf5writer_none():
@@ -53,7 +58,10 @@ def test_hdf5writer_none():
     f.n = (1, None)
     with pytest.raises(ValueError):
         f.writeoutput(2)
-    shutil.rmtree(f.writer.datadir)
+    files = f.writer.datadir.glob("*")
+    for file in files:
+        file.unlink()
+    f.writer.datadir.rmdir()
 
 
 def test_hdf5writer_dict():
@@ -62,7 +70,10 @@ def test_hdf5writer_dict():
     f.writer = writers.hdf5writer()
     with pytest.raises(NotImplementedError):
         f.writeoutput(0)
-    shutil.rmtree(f.writer.datadir)
+    files = f.writer.datadir.glob("*")
+    for file in files:
+        file.unlink()
+    f.writer.datadir.rmdir()
 
 
 def test_hdf5writer_number():
@@ -77,7 +88,10 @@ def test_hdf5writer_number():
     assert np.all(n == [1, 1])
     data = f.writer.read.all()
     assert np.all(data.n == [1, 1])
-    shutil.rmtree(f.writer.datadir)
+    files = f.writer.datadir.glob("*")
+    for file in files:
+        file.unlink()
+    f.writer.datadir.rmdir()
 
 
 def test_hdf5writer_single_value_array():
@@ -92,7 +106,10 @@ def test_hdf5writer_single_value_array():
     assert np.all(n == [1, 1])
     data = f.writer.read.all()
     assert np.all(data.n == [1, 1])
-    shutil.rmtree(f.writer.datadir)
+    files = f.writer.datadir.glob("*")
+    for file in files:
+        file.unlink()
+    f.writer.datadir.rmdir()
 
 
 def test_hdf5writer_list():
@@ -107,4 +124,7 @@ def test_hdf5writer_list():
     assert np.all(n == [[1, 1], [1, 1]])
     data = f.writer.read.all()
     assert np.all(data.n == [[1, 1], [1, 1]])
-    shutil.rmtree(f.writer.datadir)
+    files = f.writer.datadir.glob("*")
+    for file in files:
+        file.unlink()
+    f.writer.datadir.rmdir()

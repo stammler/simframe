@@ -2,12 +2,10 @@
 # Running this test already covers more than 50% of the code base.
 
 
-import shutil
 from simframe import Frame
 from simframe import Instruction
 from simframe import Integrator
 from simframe import schemes
-from simframe import writers
 
 
 def test_simple():
