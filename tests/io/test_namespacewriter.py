@@ -39,7 +39,7 @@ def test_namespacewriter_simple():
     def dx(f):
         return 1.
     f.x.updater = dx
-    f.x.snapshots = [1.]
+    f.x.snapshots = [0., 1.]
     f.integrator = Integrator(f.x)
     f.integrator.instructions = [Instruction(schemes.expl_1_euler, f.Y)]
     f.writer = writers.namespacewriter()

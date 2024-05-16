@@ -136,8 +136,8 @@ class Frame(Group):
         # Timekeeping
         tini = monotonic()
 
-        # Write initial conditions
-        if self.integrator.var < self.integrator.var.snapshots[0]:
+        # Write initial conditions if at first given snapshot
+        if self.integrator.var == self.integrator.var.snapshots[0]:
             self.writeoutput(0)
 
         # Staring index of snapshots
@@ -168,7 +168,7 @@ class Frame(Group):
             if self.verbosity > 1:
                 self.progressbar._reset()
 
-            self.writeoutput(i + 1)
+            self.writeoutput(i)
 
         # Timekeeping
         tfin = monotonic()
