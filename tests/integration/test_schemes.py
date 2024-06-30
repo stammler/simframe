@@ -475,7 +475,7 @@ def test_impl_1_euler_gmres_fail():
     f.integrator = Integrator(f.x)
     f.integrator.instructions = [
         Instruction(schemes.impl_1_euler_gmres, f.Y,
-                    controller={"gmres_opt": {"atol": 0., "tol": 1.e-18, "maxiter": 1}})
+                    controller={"gmres_opt": {"atol": 0., "rtol": 1.e-18, "maxiter": 1}})
     ]
 
     with pytest.raises(StopIteration):
