@@ -43,7 +43,10 @@ class Field(np.ndarray, AbstractGroup):
             If False the field is not written into output files
         copy : boolean, optional, default : False
             If True <value> will be copied, not referenced"""
-        obj = np.array(value, copy=copy).view(cls)
+        if copy:
+            obj = np.array(value, copy=True).view(cls)
+        else:
+            obj = np.asarray(value).view(cls)
         if obj.size == 1:
             obj = obj.squeeze()
         obj._owner = owner
