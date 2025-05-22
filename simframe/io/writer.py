@@ -267,7 +267,7 @@ class Writer(object):
         filename : string
             If this is not "" the writer will use this filename instead of the standard scheme"""
 
-        if filename == None:
+        if filename is None:
             filename = self._getfilename(i)
         else:
             filename = Path(filename)
