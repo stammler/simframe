@@ -1,6 +1,7 @@
 from datetime import timedelta
 import inspect
 import numpy as np
+import signal
 from time import monotonic
 
 from simframe.frame.group import Group
@@ -10,6 +11,8 @@ from simframe.integration.integrator import Integrator
 from simframe.io.writer import Writer
 from simframe.io.progress import Progressbar
 from simframe.utils.color import colorize
+from simframe.utils.signalhandler import Listener
+from simframe.utils.signalhandler import events
 
 
 class Frame(Group):
@@ -22,7 +25,7 @@ class Frame(Group):
 
     __name__ = "Frame"
 
-    def __init__(self, integrator=None, writer=None, updater=None, verbosity=2, progressbar=None, description=""):
+    def __init__(self, integrator=None, listener=None, writer=None, updater=None, verbosity=2, progressbar=None, description=""):
         """
         The parent Frame object.
 
@@ -32,6 +35,8 @@ class Frame(Group):
             Object of type Writer fir writing output files
         integrator : Integrator, optional, default : None
             Integrator with integration instructions
+        listener : Listener, optional, default : None
+            Signalhandler
         updater : Heartbeat, Updater, callable, list or None, optional, default : None
             Updater for updating the frame
         verbosity : int, optional, default : 2
@@ -42,6 +47,19 @@ class Frame(Group):
             Descriptive string of the frame object"""
         super().__init__(self, updater=updater, description=description)
         self.integrator = integrator
+        # Setting up the default listener
+        if listener is None:
+            self.listener = Listener(
+                self,
+                [
+                    events.DUMPFILEEVENT,
+                    events.WRITEFILEEVENT,
+                    events.STOPFILEEVENT,
+                    events.STOPSIGNALEVENT,
+                ]
+            )
+        else:
+            self.listener = listener
         self.progressbar = progressbar
         self.verbosity = verbosity
         self.writer = writer
@@ -56,6 +74,17 @@ class Frame(Group):
         if integrator is not None and type(integrator) is not Integrator:
             raise TypeError("integrator has to be of type Integrator or None.")
         self._integrator = integrator
+
+    @property
+    def listener(self):
+        """Listener for file or system signals."""
+        return self._listener
+    
+    @listener.setter
+    def listener(self, listener):
+        if listener is not None and type(listener) is not Listener:
+            raise TypeError("listener has to be of type Listener or None.")
+        self._listener = listener
 
     @property
     def progressbar(self):
@@ -152,6 +181,10 @@ class Frame(Group):
             prevsnapshot = self.integrator.var.prevsnapshot if self.integrator.var.prevsnapshot is not None else startingvalue
 
             while self.integrator.var < nextsnapshot:
+
+                # Listen for signals if listener is set.
+                if self.listener is not None:
+                    self.listener.listen()
 
                 if self.verbosity > 1:
                     self.progressbar(self.integrator.var,

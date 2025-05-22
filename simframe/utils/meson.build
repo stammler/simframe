@@ -5,3 +5,5 @@ python_sources = [
     'simplenamespace.py',
 ]
 py3.install_sources(python_sources, subdir: 'simframe/utils')
+
+subdir('signalhandler')
