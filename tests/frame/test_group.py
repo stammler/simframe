@@ -95,10 +95,8 @@ def test_group_memory_usage():
             mem = 229.
         elif vmin>=11 and vmin<12:
             mem = 205.
-        elif vmin>=12 and vmin<13:
+        elif vmin>=12 and vmin<14:
             mem = 173.
-        elif vmin >=13 and vmin<14:
-            mem = 157.
         else:
             raise Exception(f"Unsupported Python version: {vmaj}.{vmin}.")
     else:
