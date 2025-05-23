@@ -45,7 +45,7 @@ class Listener(object):
             else:
                 events.append(event)
         self._events = events
-        self._handler = handlers
+        self._handlers = handlers
 
     def listen(self):
         """
