@@ -20,6 +20,7 @@
    4_custom_schemes
    5_adaptive_schemes
    6_implicit_integration
+   7_signal_handling
    example_coupled_oscillators
    example_double_pendulum
    example_compartmental_models
