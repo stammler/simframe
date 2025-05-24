@@ -44,6 +44,3 @@ dependencies = ['dill', 'h5py', 'matplotlib', 'numpy', 'scipy']
 [project.urls]
 Repository = 'https://github.com/stammler/simframe/'
 Documentation = 'https://simframe.readthedocs.io/'
-
-[tool.pytest.ini_options]
-addopts = "--cov=simframe --cov-report html"
