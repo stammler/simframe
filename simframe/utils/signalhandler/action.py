@@ -1,9 +1,12 @@
 class Action(object):
-    """Template class of an action that is performed once a signal is detected."""
+    """
+    Template class of an action that is performed once a signal is detected.
+    """
 
     def __init__(self):
         """
-        Callable action class that is performing an action on a ``simframe.Frame``.
+        Callable action class that is performing an action on a
+        ``simframe.Frame``.
         """
         super().__init__()
 

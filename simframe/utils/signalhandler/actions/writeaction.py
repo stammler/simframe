@@ -1,6 +1,7 @@
 from simframe.utils.signalhandler.action import Action
 from pathlib import Path
 
+
 class WriteAction(Action):
     """
     Action to write an output file named ``__OUTPUT__``.

@@ -1,6 +1,7 @@
 from pathlib import Path
 from simframe.utils.signalhandler.signal import Signal
 
+
 class FileSignal(Signal):
     """
     Signal class that is scaning for a file.
@@ -17,12 +18,11 @@ class FileSignal(Signal):
         super().__init__()
         self.file = file
 
-
     @property
     def file(self):
         """File to scan for."""
         return self._file
-    
+
     @file.setter
     def file(self, val):
         self._file = Path(val)
@@ -48,7 +48,7 @@ class FileSignal(Signal):
             if file.is_file():
                 return True
         return False
-    
+
     def _cleanup(self, frame):
         """
         Function deletes the file which was scanned for.

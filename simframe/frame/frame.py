@@ -25,7 +25,15 @@ class Frame(Group):
 
     __name__ = "Frame"
 
-    def __init__(self, integrator=None, listener=None, writer=None, updater=None, verbosity=2, progressbar=None, description=""):
+    def __init__(
+        self,
+        integrator=None,
+        writer=None,
+        updater=None,
+        verbosity=2,
+        progressbar=None,
+        description="",
+    ):
         """
         The parent Frame object.
 
@@ -35,8 +43,6 @@ class Frame(Group):
             Object of type Writer fir writing output files
         integrator : Integrator, optional, default : None
             Integrator with integration instructions
-        listener : Listener, optional, default : None
-            Signalhandler
         updater : Heartbeat, Updater, callable, list or None, optional, default : None
             Updater for updating the frame
         verbosity : int, optional, default : 2
@@ -48,18 +54,15 @@ class Frame(Group):
         super().__init__(self, updater=updater, description=description)
         self.integrator = integrator
         # Setting up the default listener
-        if listener is None:
-            self.listener = Listener(
-                self,
-                [
-                    events.DUMPFILEEVENT,
-                    events.WRITEFILEEVENT,
-                    events.STOPFILEEVENT,
-                    events.STOPSIGNALEVENT,
-                ]
-            )
-        else:
-            self.listener = listener
+        self.listener = Listener(
+            self,
+            [
+                events.DUMPFILEEVENT,
+                events.WRITEFILEEVENT,
+                events.STOPFILEEVENT,
+                events.STOPSIGNALEVENT,
+            ],
+        )
         self.progressbar = progressbar
         self.verbosity = verbosity
         self.writer = writer

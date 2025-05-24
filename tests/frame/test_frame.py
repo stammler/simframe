@@ -13,6 +13,8 @@ def test_frame_attributes():
     with pytest.raises(TypeError):
         f.integrator = 1
     with pytest.raises(TypeError):
+        f.listener = 1
+    with pytest.raises(TypeError):
         f.progressbar = 1
     f.progressbar = Progressbar()
     with pytest.raises(TypeError):

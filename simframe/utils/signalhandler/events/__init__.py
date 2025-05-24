@@ -2,11 +2,11 @@
 Pre-defined events to be used in a Listener.
 
 ``DUMPFILEEVENT`` writes a dump file, if the file ``DUMP`` is detected.
-``STOPFILEEVENT`` writes an output file, a dump file and stops the simulation, 
+``STOPFILEEVENT`` writes an output file, a dump file and stops the simulation,
 if the file "STOP" is detected.
 ``WRITEFILEEVENT`` writes an output file, if the file ``WRITE`` is detected.
-``STOPSIGNALEVENT`` writes an output file, a dump file and stops the simulation, 
-if the user defined system signal ``SIGUSR2 (12)`` is detected.
+``STOPSIGNALEVENT`` writes an output file, a dump file and stops the
+simulation, if the user defined system signal ``SIGUSR2 (12)`` is detected.
 """
 
 from signal import SIGUSR2

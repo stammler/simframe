@@ -3,6 +3,7 @@ from signal import Signals
 from simframe.utils.signalhandler.action import Action
 from simframe.utils.signalhandler.signal import Signal
 
+
 class Event(object):
     """
     Callable event class that holds signal-actions combinations.
@@ -28,7 +29,7 @@ class Event(object):
     def actions(self):
         """Action to be performed after triggered signal."""
         return self._actions
-    
+
     @actions.setter
     def actions(self, val):
         # Make list if not iterable
@@ -37,25 +38,25 @@ class Event(object):
         # Check fo valid actions.
         for action in val:
             if not isinstance(action, Action):
-                raise RuntimeError("Invalid Action.")
+                raise TypeError("Invalid Action.")
         self._actions = val
-        
+
     @property
     def signal(self):
         """Signal to scan for."""
         return self._signal
-    
+
     @signal.setter
     def signal(self, val):
         # Check for valid signal
         if not isinstance(val, (Signal, Signals)):
-            raise RuntimeError("Invalid Signal.")
+            raise TypeError("Invalid Signal.")
         self._signal = val
-        
+
     def __call__(self, frame):
         """
         Scanning for signal and performing actions if triggered.
-        
+
         Parameters
         ----------
         frame : Frame

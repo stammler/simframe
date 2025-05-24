@@ -1,5 +1,6 @@
 from simframe.utils.signalhandler.action import Action
 
+
 class StopAction(Action):
     """
     Action stops the simulation.
@@ -10,7 +11,6 @@ class StopAction(Action):
         Action to stop the simulation.
         """
         super().__init__()
-
 
     def _do(self, frame):
         """

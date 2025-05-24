@@ -41,7 +41,7 @@ class Signal(object):
             False : signal not detected
         """
         return self._listen(*args, **kwargs)
-    
+
     def _cleanup(self, *args, **kwargs):
         """
         Instruction that is performed to clean up after signal is detected.

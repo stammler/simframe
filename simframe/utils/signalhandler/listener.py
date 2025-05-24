@@ -3,6 +3,7 @@ from functools import partial
 import signal
 from simframe.utils.signalhandler.event import Event
 
+
 class Listener(object):
     """
     Listener class to handle multiple events.
@@ -23,21 +24,21 @@ class Listener(object):
         self._owner = owner
         self.events = events
         self._handlers = []
-        
+
     @property
     def events(self):
         """List of events to listen for."""
         return self._events
-    
+
     @events.setter
     def events(self, val):
         events = []
-        handlers = [] # Handlers for system signals
+        handlers = []  # Handlers for system signals
         if not isinstance(val, Iterable):
             val = [val]
         for event in val:
             if not isinstance(event, Event):
-                raise RuntimeError("Invalid event.")
+                raise TypeError("Invalid event.")
             # If signal is system signal, prepare asyncronous handler and
             # remove from events.
             if isinstance(event.signal, signal.Signals):
@@ -58,7 +59,7 @@ class Listener(object):
     def _handler(signum, sigframe, frame, *args, actions=[], **kwargs):
         """
         Static template method for system signal handling.
-        
+
         Parameters
         ----------
         signum : Int

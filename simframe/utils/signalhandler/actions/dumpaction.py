@@ -1,5 +1,6 @@
 from simframe.utils.signalhandler.action import Action
 
+
 class DumpAction(Action):
     """
     Action writes a dump file of the simulation frame.
@@ -12,7 +13,6 @@ class DumpAction(Action):
         with dumping instructions assigned.
         """
         super().__init__()
-
 
     def _do(self, frame):
         """
