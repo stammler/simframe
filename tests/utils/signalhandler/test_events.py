@@ -9,7 +9,7 @@ from simframe.utils.signalhandler import signals
 
 def test_event_class():
     f = Frame(writer=writers.hdf5writer())
-    event = Event(signal=signal.Signals.SIGUSR2, actions=actions.STOP)
+    event = Event(signal=signal.Signals.SIGTERM, actions=actions.STOP)
     assert not event(f)
     with pytest.raises(TypeError):
         event.signal = None

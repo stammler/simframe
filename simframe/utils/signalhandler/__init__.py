@@ -15,7 +15,7 @@ will write the dump file twice. If the "STOP" file is detected, Simframe will
 perform both operations and then abort the simulation. In all cases the "DUMP",
 "WRITE", or "STOP" files will be deleted afterwards.
 
-By default, if the system signal SIGUSR2 (12) is detected, Simframe will
+By default, if the system signal SIGTERM (15) is detected, Simframe will
 behave as if the "STOP" file was present. This can be used to safe data
 shortly before the timeout limit of a SLURM job.
 """

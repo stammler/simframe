@@ -14,10 +14,10 @@ def test_listener():
     listener = Listener(f, event)
     with pytest.raises(TypeError):
         listener.events = None
-    events = [event, Event(signal.SIGUSR2, actions.STOP)]
+    events = [event, Event(signal.SIGTERM, actions.STOP)]
     listener.events = events
     with pytest.raises(SystemExit):
-        signal.raise_signal(signal.SIGUSR2)
+        signal.raise_signal(signal.SIGTERM)
     f.writer.datadir.mkdir()
     stopfile = f.writer.datadir / "STOP"
     stopfile.touch()
