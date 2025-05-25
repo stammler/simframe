@@ -43,8 +43,8 @@ class Listener(object):
             # remove from events.
             if isinstance(event.signal, signal.Signals):
                 handlers.append(self._sethandler(event.signal, event.actions))
-            else:
-                events.append(event)
+            # else:
+            events.append(event)
         self._events = events
         self._handlers = handlers
 
