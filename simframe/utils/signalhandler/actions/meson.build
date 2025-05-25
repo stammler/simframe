@@ -1,6 +1,7 @@
 python_sources = [
     '__init__.py',
     'dumpaction.py',
+    'slurmrequeueaction.py',
     'stopaction.py',
     'writeaction.py',
 ]

@@ -1,3 +1,4 @@
+import os
 import pytest
 import signal
 from simframe import Frame
@@ -22,4 +23,16 @@ def test_event_class():
     with pytest.raises(SystemExit):
         event(f)
     assert not stopfile.is_file()
+    f.writer.datadir.rmdir()
+
+
+def test_slurm_requeue_event():
+    f = Frame(writer=writers.hdf5writer())
+    os.environ["SLURM_JOB_ID"] = "1"
+    with pytest.raises(FileNotFoundError):
+        signal.raise_signal(signal.SIGTERM)
+    datafile = f.writer.datadir / "__OUTPUT__"
+    dumpfile = f.writer.datadir / "frame.dmp"
+    datafile.unlink()
+    dumpfile.unlink()
     f.writer.datadir.rmdir()
