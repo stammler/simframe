@@ -23,7 +23,6 @@ class Listener(object):
         super().__init__()
         self._owner = owner
         self.events = events
-        self._handlers = []
 
     @property
     def events(self):
@@ -33,7 +32,6 @@ class Listener(object):
     @events.setter
     def events(self, val):
         events = []
-        handlers = []  # Handlers for system signals
         if not isinstance(val, Iterable):
             val = [val]
         for event in val:
@@ -42,11 +40,9 @@ class Listener(object):
             # If signal is system signal, prepare asyncronous handler and
             # remove from events.
             if isinstance(event.signal, signal.Signals):
-                handlers.append(self._sethandler(event.signal, event.actions))
-            # else:
+                self._sethandler(event.signal, event.actions)
             events.append(event)
         self._events = events
-        self._handlers = handlers
 
     def listen(self):
         """
@@ -56,7 +52,7 @@ class Listener(object):
             event(self._owner)
 
     @staticmethod
-    def _handler(signum, sigframe, frame, *args, actions=[], **kwargs):
+    def _handler(signum, sigframe, frame, *args, actions=[], from_simframe=True, **kwargs):
         """
         Static template method for system signal handling.
 
@@ -83,5 +79,5 @@ class Listener(object):
         Function returns a valid handler for system signal handling.
         The additional parameters are reduced with functools.partial.
         """
-        handler = partial(Listener._handler, frame=self._owner, actions=actions)
+        handler = partial(Listener._handler, frame=self._owner, actions=actions, from_simframe=True)
         return signal.signal(sig, handler)
