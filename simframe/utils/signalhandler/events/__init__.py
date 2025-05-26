@@ -7,10 +7,10 @@ if the file "STOP" is detected.
 ``WRITEFILEEVENT`` writes an output file, if the file ``WRITE`` is detected.
 ``STOPSIGNALEVENT`` writes an output file, a dump file, requeues the SLURM job,
 if a job id is found, and stops the simulation, if the termination system
-signal ``SIGTERM (15)`` is detected.
+signal ``SIGABRT (6)`` is detected.
 """
 
-from signal import SIGTERM
+from signal import SIGABRT
 from simframe.utils.signalhandler.event import Event
 from simframe.utils.signalhandler.actions import DUMP
 from simframe.utils.signalhandler.actions import SLURMREQUEUE
@@ -23,7 +23,7 @@ from simframe.utils.signalhandler.signals import WRITEFILE
 DUMPFILEEVENT = Event(DUMPFILE, [DUMP])
 STOPFILEEVENT = Event(STOPFILE, [WRITE, DUMP, STOP])
 WRITEFILEEVENT = Event(WRITEFILE, [WRITE, DUMP])
-STOPSIGNALEVENT = Event(SIGTERM, [WRITE, DUMP, SLURMREQUEUE, STOP])
+STOPSIGNALEVENT = Event(SIGABRT, [WRITE, DUMP, SLURMREQUEUE, STOP])
 
 __all__ = [
     "DUMPFILEEVENT",

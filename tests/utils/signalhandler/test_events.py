@@ -30,7 +30,7 @@ def test_slurm_requeue_event():
     f = Frame(writer=writers.hdf5writer())
     os.environ["SLURM_JOB_ID"] = "1"
     with pytest.raises(FileNotFoundError):
-        signal.raise_signal(signal.SIGTERM)
+        signal.raise_signal(signal.SIGABRT)
     datafile = f.writer.datadir / "__OUTPUT__"
     dumpfile = f.writer.datadir / "frame.dmp"
     datafile.unlink()
