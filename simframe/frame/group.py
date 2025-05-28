@@ -189,9 +189,23 @@ class Group(AbstractGroup):
             If True field will be stored in output files
         copy : boolean, optional, default : True
             If True <value> will be copied, not referenced
+
+        Returns
+        -------
+        field : simframe.frame.Field
+            Returns the field for convenience
         """
-        self.__dict__[name] = Field(self._owner, value, updater=updater,
-                                    differentiator=differentiator, description=description, constant=constant, save=save, copy=copy)
+        field = Field(
+            self._owner, value,
+            updater=updater,
+            differentiator=differentiator,
+            description=description,
+            constant=constant,
+            save=save,
+            copy=copy,
+        )
+        self.__dict__[name] = field
+        return field
 
     def addgroup(self, name, updater=None, description=""):
         """Function to add a new ``Group`` to the object.
@@ -204,9 +218,19 @@ class Group(AbstractGroup):
             Updater for field update
         description : string, optional, default : ""
             Descriptive string for the group
+
+        Returns
+        -------
+        group : simframe.frame.Group
+            Returns the group for convenience
         """
-        self.__dict__[name] = Group(
-            self._owner, updater=updater, description=description)
+        group = Group(
+            self._owner,
+            updater=updater,
+            description=description,
+        )
+        self.__dict__[name] = group
+        return group
 
     def addintegrationvariable(self, name, value, snapshots=[], updater=None, description="", copy=True):
         """Function to add a new integration variable ``IntVar`` to the object.
@@ -225,9 +249,21 @@ class Group(AbstractGroup):
             Descriptive string for the field
         copy : boolean, optional, default : True
             If True <value> will be copied, not referenced
+
+        Returns
+        -------
+        field : simframe.frame.IntVar
+            Returns the integration variable for convenience
         """
-        self.__dict__[name] = IntVar(
-            self._owner, value, updater=updater, snapshots=snapshots, description=description, copy=copy)
+        intvar = IntVar(
+            self._owner, value,
+            updater=updater,
+            snapshots=snapshots,
+            description=description,
+            copy=copy,
+        )
+        self.__dict__[name] = intvar
+        return intvar
 
     def _checkupdatelist(self, ls):
         """This function checks if a list is suitable to be used as update.

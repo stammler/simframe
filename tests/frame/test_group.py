@@ -7,16 +7,22 @@ from simframe import Frame
 from simframe import Integrator
 from simframe import writers
 from simframe.frame import Heartbeat
+from simframe.frame import Field
+from simframe.frame import Group
+from simframe.frame import IntVar
 
 
 def test_group_repr_str():
     f = Frame()
     assert isinstance(repr(f), str)
     assert isinstance(str(f), str)
-    f.addintegrationvariable("x", 0)
-    f.addfield("Y", 1.)
+    intvar = f.addintegrationvariable("x", 0)
+    assert isinstance(intvar, IntVar)
+    field = f.addfield("Y", 1.)
+    assert isinstance(field, Field)
     f.addfield("abcdefghijklm", 0.)
-    f.addgroup("A")
+    group = f.addgroup("A")
+    assert isinstance(group, Group)
     f.addgroup("BCDEFGHIJKLMN")
     f.C = None
     f.abcdef1234567 = None
