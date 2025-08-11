@@ -1,9 +1,8 @@
+from collections import deque
 import copy
 from datetime import timedelta
-from itertools import cycle
 import numpy as np
 from time import monotonic
-from time import strftime
 import sys
 
 from simframe.utils.color import Color
@@ -224,8 +223,6 @@ class Progressbar(object):
 class Spinner(object):
     """This is a class for displaying some information that the simulation is still runnging."""
 
-    _cycle = None
-
     def __init__(self, charlist=["●", "○"]):
         """This class is cycling through a list of characters that are displayed after every successfully
         executed timestep.
@@ -234,8 +231,10 @@ class Spinner(object):
         ----------
         charlist : list of strings, optional, default : ["●", "○"]
             List of characters to cycle through"""
-        self._cycle = cycle(charlist)
+        self._cycle = deque(charlist, maxlen=len(charlist))
 
     def next(self):
         """Function returns the next character in list"""
-        return next(self._cycle)
+        char = self._cycle[0]
+        self._cycle.append(char)
+        return char
