@@ -431,7 +431,7 @@ def _toc_tree(obj, prefix=""):
         if callable(val):
             continue
         # Color the name of the attribute blue
-        ret += f"\n{prefix}- {colorize(key, "blue")}: "
+        ret += f'\n{prefix}- {colorize(key, "blue")}: '
         # If the attribute is a group itself, recursively call the function
         if isinstance(val, Group):
             ret += _toc_tree(val, prefix=prefix)
