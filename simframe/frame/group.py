@@ -56,9 +56,32 @@ class Group(AbstractGroup):
         # return value
         ret = ""
 
-        for key, val in self.__dict__.items():
-            # Don't show private attributes
+        # Iterate over all members of the group
+        for key in self.__dir__():
+
+            # Skip hidden attributes
             if key.startswith("_"):
+                continue
+
+            # When iterating over the group attributes some keys need to be skipped
+            if key in [
+                "description",
+                "ini",
+                "integrator",
+                "listener",
+                "updater",
+                "updateorder",
+                "toc",
+                "verbosity",
+                "writer"
+            ]:
+                continue
+
+            # Get the attribute
+            val = self.__getattribute__(key)
+
+            # Skip if it is a callable function
+            if callable(val):
                 continue
 
             # Sort attributes by group, field and else
@@ -166,7 +189,7 @@ class Group(AbstractGroup):
 
     @toc.setter
     def toc(self, value):
-        pass
+        raise RuntimeError("This field is reserved for the table of content and cannot be set.")
 
     def addfield(self, name, value, updater=None, differentiator=None, description="", constant=False, save=True, copy=True):
         """Function to add a new ``Field`` to the object.
@@ -276,9 +299,9 @@ class Group(AbstractGroup):
             if not isinstance(val, str):
                 raise ValueError("List has to be list of strings.")
         for val in ls:
-            if val not in self.__dict__:
+            if val not in self.__dir__():
                 raise RuntimeError(
-                    "{} is not an attribute of the group".format(val))
+                    f"{val} is not an attribute of the group")
 
     def _createupdatefromlist(self, ls):
         """This method creates an update method from a list.
@@ -365,16 +388,54 @@ def _mem_tree(obj, prefix="", skip_hidden=True):
 
 
 def _toc_tree(obj, prefix=""):
+    """
+    Function is recursively building the table of content.
+    
+    Parameters
+    ----------
+    obj : simframe.frame.Group
+        Group to print the table of content from
+    prefix : str, optional, default : ""
+        prefix to be used for intendation for deeper levels
+
+    Returns
+    -------
+    toc : str
+        table of content to be printed
+    """
+    # Colorize the base group blue
     ret = colorize(obj.__str__(), "blue")
+    # Increase the level of intendation
     prefix = prefix + 4 * " "
-    for key in sorted(obj.__dict__.keys(), key=str.casefold):
+    # Iterate over the group attributes by using __dir__ to also get class attributes like properties
+    for key in sorted(obj.__dir__(), key=str.casefold):
+        # Skip hidden attributes
         if key.startswith("_"):
             continue
-        val = obj.__dict__[key]
-        ret += "\n{}- {}: ".format(
-            prefix, colorize(key, "blue"))
+        # When iterating over the group attributes some keys need to be skipped
+        if key in [
+                "description",
+                "ini",
+                "integrator",
+                "listener",
+                "updater",
+                "updateorder",
+                "toc",
+                "verbosity",
+                "writer"
+            ]:
+            continue
+        # Get the attribute
+        val = obj.__getattribute__(key)
+        # Skip if it is a callable function
+        if callable(val):
+            continue
+        # Color the name of the attribute blue
+        ret += f"\n{prefix}- {colorize(key, "blue")}: "
+        # If the attribute is a group itself, recursively call the function
         if isinstance(val, Group):
             ret += _toc_tree(val, prefix=prefix)
+        # Else add the descriptive string of the attribute
         else:
             ret += val.__str__()
     return ret
@@ -398,4 +459,4 @@ def _dummyupdatewithlist(grp, ls, owner, *args, **kwargs):
     -----
     args and kwargs are only passed to the updater of the Heartbeat, NOT systole or diastole."""
     for val in ls:
-        grp.__dict__[val].update(*args, **kwargs)
+        grp.__getattribute__(val).update(*args, **kwargs)

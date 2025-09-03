@@ -86,7 +86,8 @@ def test_group_toc():
     f.addgroup("A")
     f.addfield("x", 1.)
     f.toc
-    f.toc = None
+    with pytest.raises(RuntimeError):
+        f.toc = None
 
 
 def test_group_memory_usage():
