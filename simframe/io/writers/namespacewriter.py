@@ -8,6 +8,7 @@ from collections import deque
 import copy
 import numbers
 import numpy as np
+from typing import types
 
 
 class namespacewriter(Writer):
@@ -177,13 +178,24 @@ def _converttonamespace(o):
     direct = (numbers.Number, np.number, tuple,
               list, np.ndarray, str)
 
-    for key, val in o.__dict__.items():
+    #for key, val in o.__dict__.items():
+    for key in o.__dir__():
 
         # Ignore hidden variables
-        if key.startswith("_"):
+        if key.startswith('_'):
             continue
+        # Skipping blacklisted items
+        if hasattr(o, "_blacklist") and key in o._blacklist:
+            continue
+
+        # Storing the object for easier use later
+        val = o.__getattribute__(key)
+        
         # Skip fields that should not be stored
         if isinstance(val, Field) and val.save == False:
+            continue
+        # Skipping methods
+        if isinstance(val, types.MethodType):
             continue
 
         if val is not None and isinstance(val, direct):

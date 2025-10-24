@@ -15,6 +15,18 @@ class AbstractGroup(object):
     __name__ = ""
     _description = ""
 
+    _blacklist = [
+        "description",
+        "integrator",
+        "listener",
+        "progressbar",
+        "toc",
+        "updater",
+        "updateorder",
+        "verbosity",
+        "writer",
+    ]
+
     @property
     def description(self):
         '''Description of the instance.'''

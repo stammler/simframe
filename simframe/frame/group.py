@@ -64,17 +64,7 @@ class Group(AbstractGroup):
                 continue
 
             # When iterating over the group attributes some keys need to be skipped
-            if key in [
-                "description",
-                "ini",
-                "integrator",
-                "listener",
-                "updater",
-                "updateorder",
-                "toc",
-                "verbosity",
-                "writer"
-            ]:
+            if key in self._blacklist:
                 continue
 
             # Get the attribute

@@ -1,7 +1,7 @@
-import glob
 import h5py
 import numbers
 import numpy as np
+from typing import types
 import os
 
 from simframe.io.reader import Reader
@@ -82,13 +82,23 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
             data=obj._description
         )
 
-    for key, val in obj.__dict__.items():
+    for key in obj.__dir__():
 
         # Ignore hidden variables
         if key.startswith('_'):
             continue
+        # Skipping blacklisted items
+        if hasattr(obj, "_blacklist") and key in obj._blacklist:
+            continue
+
+        # Storing the object for easier use later
+        val = obj.__getattribute__(key)
+        
         # Skip fields that should not be stored
         if isinstance(val, Field) and val.save == False:
+            continue
+        # Skipping methods
+        if isinstance(val, types.MethodType):
             continue
 
         name = prefix + key
