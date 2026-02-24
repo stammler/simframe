@@ -25,6 +25,7 @@ class AbstractGroup(object):
         "updateorder",
         "verbosity",
         "writer",
+        "boundary",
     ]
 
     @property
