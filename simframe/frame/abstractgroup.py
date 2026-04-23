@@ -15,7 +15,7 @@ class AbstractGroup(object):
     __name__ = ""
     _description = ""
 
-    _blacklist = [
+    _skiplist = [
         "description",
         "integrator",
         "listener",

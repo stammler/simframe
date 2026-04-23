@@ -64,7 +64,7 @@ class Group(AbstractGroup):
                 continue
 
             # When iterating over the group attributes some keys need to be skipped
-            if key in self._blacklist:
+            if key in self._skiplist:
                 continue
 
             # Get the attribute
