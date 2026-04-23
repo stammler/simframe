@@ -48,10 +48,13 @@ def test_hdf5writer_strings():
 
 def test_hdf5writer_none():
     f = Frame()
-    f.n = None
     f.writer = writers.hdf5writer()
-    with pytest.raises(ValueError):
-        f.writeoutput(0)
+    f.n = None
+    f.writeoutput(0)
+    data = f.writer.read.output(0)
+    assert data.n is None
+    data = f.writer.read.sequence("n")
+    assert data[0] is None
     f.n = [1, None]
     with pytest.raises(ValueError):
         f.writeoutput(1)

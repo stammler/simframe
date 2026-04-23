@@ -115,7 +115,7 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
         # Check for tuple/list
         elif type(val) in [tuple, list]:
             if None in val:
-                raise ValueError("HDF5 cannot store None values.")
+                raise ValueError("HDF5 cannot store None values in lists or tuples.")
             # special case for list of strings
             if any([type(_v) is str for _v in val]):
                 file.create_dataset(

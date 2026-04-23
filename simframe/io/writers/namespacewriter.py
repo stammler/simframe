@@ -178,14 +178,14 @@ def _converttonamespace(o):
     direct = (numbers.Number, np.number, tuple,
               list, np.ndarray, str)
 
-    #for key, val in o.__dict__.items():
     for key in o.__dir__():
 
         # Ignore hidden variables
         if key.startswith('_'):
             continue
-        # Skipping blacklisted items
-        if hasattr(o, "_blacklist") and key in o._blacklist:
+
+        # Skipping items not meant for saving
+        if hasattr(o, "_skiplist") and key in o._skiplist:
             continue
 
         # Storing the object for easier use later
