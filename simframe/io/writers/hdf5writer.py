@@ -6,7 +6,6 @@ import os
 
 from simframe.io.reader import Reader
 from simframe.io.writer import Writer
-from simframe.frame.field import Field
 from simframe.utils.simplenamespace import SimpleNamespace
 
 
@@ -87,16 +86,18 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
         # Ignore hidden variables
         if key.startswith('_'):
             continue
-        # Skipping blacklisted items
-        if hasattr(obj, "_blacklist") and key in obj._blacklist:
+
+        # Skipping items that should not be stored
+        if hasattr(obj, "_skiplist") and key in obj._skiplist:
             continue
 
         # Storing the object for easier use later
         val = obj.__getattribute__(key)
-        
+
         # Skip fields that should not be stored
-        if isinstance(val, Field) and val.save == False:
+        if hasattr(val, "save") and not val.save:
             continue
+
         # Skipping methods
         if isinstance(val, types.MethodType):
             continue
@@ -109,35 +110,30 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
 
         # Check for number
         if isinstance(val, (numbers.Number, np.number)):
-            file.create_dataset(
-                name,
-                data=val
-            )
+            file.create_dataset(name, data=val)
+
         # Check for tuple/list
         elif type(val) in [tuple, list]:
             if None in val:
                 raise ValueError("HDF5 cannot store None values.")
             # special case for list of strings
-            if any([type(_v) == str for _v in val]):
+            if any([type(_v) is str for _v in val]):
                 file.create_dataset(
                     name,
                     data=np.array(val, dtype=object),
                     dtype=h5py.special_dtype(vlen=str),
                     compression=com,
-                    compression_opts=comopts)
+                    compression_opts=comopts,
+                )
             else:
                 file.create_dataset(
-                    name,
-                    data=val,
-                    compression=com,
-                    compression_opts=comopts
+                    name, data=val, compression=com, compression_opts=comopts
                 )
+
         # Check for string
         elif type(val) is str:
-            file.create_dataset(
-                name,
-                data=val
-            )
+            file.create_dataset(name, data=val)
+
         # Check for Numpy array
         elif isinstance(val, np.ndarray):
             if val.shape == ():
@@ -147,18 +143,21 @@ def _writehdf5(obj, file, com="lzf", comopts=None, prefix=""):
                 )
             else:
                 file.create_dataset(
-                    name,
-                    data=val,
-                    compression=com,
-                    compression_opts=comopts
+                    name, data=val, compression=com, compression_opts=comopts
                 )
+
         # Dicts not implemented, yet
-        elif type(val) == dict:
-            raise NotImplementedError(
-                "Storing dict not yet implemented in hdf5writer.")
+        elif type(val) is dict:
+            raise NotImplementedError("Storing dict not yet implemented in hdf5writer.")
+
         # Check for None
         elif val is None:
-            raise ValueError("HDF5 cannot store None values.")
+            dset = file.create_dataset(
+                name,
+                data=0,
+            )
+            dset.attrs["None"] = True
+
         # Other objects
         else:
             _writehdf5(val, file, com=com,
@@ -225,7 +224,11 @@ class hdf5reader(Reader):
         ret = []
         for f in files:
             with h5py.File(f, "r") as hdf5file:
-                A = np.array(hdf5file[loc][()])
+                dset = hdf5file[loc]
+                if dset.attrs.get("None", False):
+                    A = None
+                else:
+                    A = np.array(hdf5file[loc][()])
                 ret.append(A)
         return np.array(ret)
 
@@ -246,5 +249,9 @@ class hdf5reader(Reader):
             if isinstance(gr[ds], h5py._hl.group.Group):
                 ret[ds] = self._readgroup(gr[ds])
             else:
-                ret[ds] = gr[ds][()]
+                dset = gr[ds]
+                if dset.attrs.get("None", False):
+                    ret[ds] = None
+                else:
+                    ret[ds] = gr[ds][()]
         return SimpleNamespace(**ret)
